@@ -1,0 +1,9 @@
+# Folders
+/api/node_modules/
+/api/**/*.js
+ecommerce/build/
+ecommerce/node_modules/
+# Files
+/api/models/config.json
+/api/package-lock.json
+/ecommerce/package-lock.json
