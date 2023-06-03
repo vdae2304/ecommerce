@@ -1,7 +1,7 @@
 import * as express from 'express';
-import { router as products } from './constrollers/products';
-import { router as categories } from './constrollers/categories';
-import { router as brands } from './constrollers/brands';
+import { router as products } from './controllers/products';
+import { router as categories } from './controllers/categories';
+import { router as brands } from './controllers/brands';
 
 const app = express();
 const port = 3000;

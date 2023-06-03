@@ -110,7 +110,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // this.fetchData("products");
+    this.fetchData("products");
     this.fetchData("categories");
     this.fetchData("brands");
   }
