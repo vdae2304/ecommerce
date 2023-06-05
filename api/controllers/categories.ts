@@ -1,18 +1,19 @@
 import * as express from 'express';
-import { Database, QueryBuilder } from '../models/database'
+import { DB, QueryBuilder } from '../models/database'
 
 export const router = express.Router();
 
 router.get('/', function (request: express.Request,
                           response: express.Response) {
-    const DB = new Database();
     DB.table('ecwid_catalogoproducto')
       .select("DISTINCT CATEGORIA1 AS name")
       .orderBy('name')
       .query(function (error, results) {
             if (error) {
-                response.status(500);
+                console.log(error);
+                response.sendStatus(500);
+            } else {
+                response.json(results);
             }
-            response.json(results);
         });
 });

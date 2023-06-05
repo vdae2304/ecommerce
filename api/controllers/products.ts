@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { Database, QueryBuilder } from '../models/database'
+import { DB, QueryBuilder } from '../models/database'
 
 export const router = express.Router();
 
@@ -15,14 +15,13 @@ type ReqQuery = {
 
 router.get('/', function (request: express.Request<{}, {}, {}, ReqQuery>,
                           response: express.Response) {
-    const DB = new Database();
     const query: QueryBuilder = DB.table('ecwid_catalogoproducto')
         .select("REF as sku",
             "DESCRIPCION AS name",
             "FORMAT(PRECIOVENTA, 2) AS price",
             "CATEGORIA1 AS category",
             "MARCA AS brand",
-            "IMAGEN AS image",);
+            "IMAGEN AS image");
     if (request.query.q) {
         query.where('DESCRIPCION', 'LIKE', `%${request.query.q}%`);
     }
@@ -42,8 +41,33 @@ router.get('/', function (request: express.Request<{}, {}, {}, ReqQuery>,
         .offset(request.query.offset ?? 0)
         .query(function (error, results) {
             if (error) {
-                response.status(500);
+                console.log(error);
+                response.sendStatus(500);
+            } else {
+                response.json(results);
             }
-            response.json(results);
         });
+});
+
+router.get('/:id', function(request: express.Request,
+                            response: express.Response) {
+    DB.table('ecwid_catalogoproducto')
+      .select("REF as sku",
+        "DESCRIPCION AS name",
+        "FORMAT(PRECIOVENTA, 2) AS price",
+        "CATEGORIA1 AS category",
+        "MARCA AS brand",
+        "IMAGEN AS image")
+      .where('REF', '=', request.params.id)
+      .limit(1)
+      .query(function (error, results) {
+            if (error) {
+                console.log(error);
+                response.sendStatus(500);
+            } else if (results.length == 0) {
+                response.sendStatus(404);
+            } else {
+                response.json(results);
+            }
+      });
 });

@@ -92,8 +92,7 @@ export class QueryBuilder {
 export class Database {
     private _connection: mysql.Connection;
 
-    constructor() {
-        const options = require('./config.json');
+    constructor(options) {
         this._connection = mysql.createConnection(options);
     }
 
@@ -102,3 +101,6 @@ export class Database {
         return new QueryBuilder(this._connection, tableName);
     }
 }
+
+const options = require('./config.json');
+export const DB = new Database(options);
