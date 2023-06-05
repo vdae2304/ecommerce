@@ -13,8 +13,8 @@ type ReqQuery = {
     offset?: Number;
 };
 
-router.get('/', function (req: express.Request<{}, {}, {}, ReqQuery>,
-                          res: express.Response) {
+router.get('/', function (request: express.Request<{}, {}, {}, ReqQuery>,
+                          response: express.Response) {
     const DB = new Database();
     const query: QueryBuilder = DB.table('ecwid_catalogoproducto')
         .select("REF as sku",
@@ -23,28 +23,27 @@ router.get('/', function (req: express.Request<{}, {}, {}, ReqQuery>,
             "CATEGORIA1 AS category",
             "MARCA AS brand",
             "IMAGEN AS image",);
-    if (req.query.q) {
-        query.where('DESCRIPCION', 'LIKE', `%${req.query.q}%`);
+    if (request.query.q) {
+        query.where('DESCRIPCION', 'LIKE', `%${request.query.q}%`);
     }
-    if (req.query.brand) {
-        query.where('MARCA', '=', req.query.brand);
+    if (request.query.brand) {
+        query.where('MARCA', '=', request.query.brand);
     }
-    if (req.query.category) {
-        query.where('CATEGORIA1', '=', req.query.category);
+    if (request.query.category) {
+        query.where('CATEGORIA1', '=', request.query.category);
     }
-    if (req.query.minPrice) {
-        query.where('PRECIOVENTA', '>=', req.query.minPrice);
+    if (request.query.minPrice) {
+        query.where('PRECIOVENTA', '>=', request.query.minPrice);
     }
-    if (req.query.maxPrice) {
-        query.where('PRECIOVENTA', '<=', req.query.maxPrice);
+    if (request.query.maxPrice) {
+        query.where('PRECIOVENTA', '<=', request.query.maxPrice);
     }
-    query.limit(req.query.limit ?? 100)
-        .offset(req.query.offset ?? 0)
+    query.limit(request.query.limit ?? 100)
+        .offset(request.query.offset ?? 0)
         .query(function (error, results) {
             if (error) {
-                console.log(error);
-                throw error;
+                response.status(500);
             }
-            res.json(results);
+            response.json(results);
         });
 });

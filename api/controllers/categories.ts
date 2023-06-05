@@ -3,16 +3,16 @@ import { Database, QueryBuilder } from '../models/database'
 
 export const router = express.Router();
 
-router.get('/', function (req: express.Request, res: express.Response) {
+router.get('/', function (request: express.Request,
+                          response: express.Response) {
     const DB = new Database();
     DB.table('ecwid_catalogoproducto')
       .select("DISTINCT CATEGORIA1 AS name")
       .orderBy('name')
       .query(function (error, results) {
             if (error) {
-                console.log(error);
-                throw error;
+                response.status(500);
             }
-            res.json(results);
+            response.json(results);
         });
 });
