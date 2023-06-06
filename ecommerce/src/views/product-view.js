@@ -19,8 +19,7 @@ class ProductView extends Component {
       brand: "",
       image: "",
       available: true,
-      stock: "",
-      filters: {}
+      stock: ""
     };
   }
 
@@ -31,21 +30,8 @@ class ProductView extends Component {
       .then((data) => this.setState(data))
       .catch((error) => {
         console.log(error);
-        window.location.replace("/")
+        window.location.replace("/");
       });
-  }
-
-  onChangeHandler = (event) => {
-    this.setState((prevState) => {
-      prevState.filters[event.target.name] = event.target.value;
-      return prevState;
-    });
-  }
-
-  onSubmitHandler = (event) => {
-    const queryParams = new URLSearchParams(this.state.filters).toString();
-    window.location.href = `/?${queryParams}`;
-    event.preventDefault();
   }
 
   render() {
@@ -53,9 +39,8 @@ class ProductView extends Component {
       <div>
         <div className="header-container">
           <Logo/>
-          <SearchBar onChangeHandler={this.onChangeHandler}
-                     onSubmitHandler={this.onSubmitHandler}/>
-          <ShoppingCart value="0"/>
+          <SearchBar/>
+          <ShoppingCart/>
         </div>
         <div className="product-contentainer">
           <div className="product-image-container">
@@ -105,4 +90,4 @@ class ProductView extends Component {
   }
 };
 
-export default (props) => <ProductView {...props} params={useParams()} />;
+export default () => <ProductView params={useParams()} />;

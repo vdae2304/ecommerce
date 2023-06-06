@@ -13,17 +13,20 @@ import NavigationControls from '../components/navigation-controls';
 class Home extends Component {
   constructor(props) {
     super(props);
+    const [ searchParams, setSearchParams ] = this.props.searchParams;
     this.state = {
       brands: [],
       categories: [],
       products: [],
       page: 1,
-      filters: {}
+      filters: {
+        q: searchParams.get("q") ?? ""
+      }
     };
   }
 
   componentDidMount() {
-    this.fetchData("products");
+    this.fetchData("products", new URLSearchParams(this.state.filters));
     this.fetchData("categories");
     this.fetchData("brands");
   }
@@ -65,9 +68,8 @@ class Home extends Component {
       <div>
         <div className="header-container">
           <Logo/>
-          <SearchBar onChangeHandler={this.onChangeHandler}
-                     onSubmitHandler={this.onSubmitHandler}/>
-          <ShoppingCart value="0"/>
+          <SearchBar/>
+          <ShoppingCart/>
         </div>
         <div className="layout">
           <Filters categories={this.state.categories}
@@ -97,4 +99,4 @@ class Home extends Component {
   }
 };
 
-export default (props) => <Home {...props} q={useSearchParams()[0]} />;
+export default () => <Home searchParams={useSearchParams()} />;
