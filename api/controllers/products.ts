@@ -9,14 +9,16 @@ type ReqQuery = {
     category?: string;
     minPrice?: Number;
     maxPrice?: Number;
+    sortBy?: "name-asc" | "name-desc" | "price-asc" | "price-desc";
     limit?: Number;
     offset?: Number;
 };
 
 router.get('/', function (request: express.Request<{}, {}, {}, ReqQuery>,
                           response: express.Response) {
-    const query: QueryBuilder = DB.table('ecwid_catalogoproducto')
-        .select("REF as sku",
+    const query: QueryBuilder =
+    DB.table('ecwid_catalogoproducto')
+      .select("REF as sku",
             "DESCRIPCION AS name",
             "FORMAT(PRECIOVENTA, 2) AS price",
             "CATEGORIA1 AS category",
@@ -37,9 +39,23 @@ router.get('/', function (request: express.Request<{}, {}, {}, ReqQuery>,
     if (request.query.maxPrice) {
         query.where('PRECIOVENTA', '<=', request.query.maxPrice);
     }
-    query.limit(request.query.limit ?? 100)
-        .offset(request.query.offset ?? 0)
-        .query(function (error, results) {
+    switch (request.query.sortBy) {
+    case "name-asc":
+        query.orderBy('DESCRIPCION ASC');
+        break;
+    case "name-desc":
+        query.orderBy('DESCRIPCION DESC');
+        break;
+    case "price-asc":
+        query.orderBy('PRECIOVENTA ASC');
+        break;
+    case "price-desc":
+        query.orderBy('PRECIOVENTA DESC');
+        break;
+    }
+    query.limit(request.query.limit ?? 50)
+         .offset(request.query.offset ?? 0)
+         .query(function (error, results) {
             if (error) {
                 console.log(error);
                 response.sendStatus(500);
@@ -57,7 +73,9 @@ router.get('/:id', function(request: express.Request,
         "FORMAT(PRECIOVENTA, 2) AS price",
         "CATEGORIA1 AS category",
         "MARCA AS brand",
-        "IMAGEN AS image")
+        "IMAGEN AS image",
+        "CAST(HABILITADO AS INTEGER) AS available",
+        "EXISTENCIA as stock")
       .where('REF', '=', request.params.id)
       .limit(1)
       .query(function (error, results) {

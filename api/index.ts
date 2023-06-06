@@ -4,6 +4,7 @@ import { router as categories } from './controllers/categories';
 import { router as brands } from './controllers/brands';
 
 const app = express();
+const hostname = "localhost";
 const port = 3000;
 
 app.use(function(request: express.Request,
@@ -26,4 +27,7 @@ app.use('/api/v1/products/', products);
 app.use('/api/v1/categories/', categories);
 app.use('/api/v1/brands/', brands);
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(port, hostname, () => {
+    console.log("ecommerce is ready");
+    console.log(`Local: http://${hostname}:${port}/api/v1/`);
+});

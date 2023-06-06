@@ -1,0 +1,12 @@
+.product-search-title {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0 16px;
+}
+
+.product-search-results {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}

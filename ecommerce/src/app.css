@@ -1,0 +1,22 @@
+.layout {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.header-container {
+    align-items: center;
+    background-color: lightblue;
+    border-bottom: 1px solid dimgray;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 12px 32px;
+    height: auto;
+    width: 100%;
+}
+
+.content {
+    width: 100%;
+}

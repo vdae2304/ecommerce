@@ -1,0 +1,18 @@
+.primary-button {
+    background-color: cornflowerblue;
+    border-radius: 8px;
+    display: inline-block;
+    font-size: 16px;
+    padding: 8px 24px;
+    height: auto;
+    width: auto;
+}
+
+.primary-button:hover {
+    background-color: slateblue;
+}
+
+.icon {
+    height: 36px;
+    width: 36px;
+}

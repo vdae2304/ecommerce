@@ -1,0 +1,17 @@
+.shopping-cart {
+    color: black;
+    display: inline;
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.shopping-cart-img {
+    height: 48px;
+    width: 48px;
+}
+
+.shopping-cart-counter {
+    position: relative;
+    right: -4px;
+    top: -12px;
+}

@@ -1,0 +1,17 @@
+.footer {
+    margin: 12px 0;
+    text-align: center;
+    width: 100%;
+}
+
+.control-buttons {
+    background-color: lightgray;
+    border: none;
+    border-radius: 4px;
+    margin: 8px;
+    padding: 8px;
+}
+
+.control-buttons:hover {
+    background-color: gray;
+}
