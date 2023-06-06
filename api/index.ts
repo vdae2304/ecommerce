@@ -4,7 +4,7 @@ import { router as categories } from './controllers/categories';
 import { router as brands } from './controllers/brands';
 
 const app = express();
-const hostname = "localhost";
+const hostname = "127.0.0.1";
 const port = 3000;
 
 app.use(function(request: express.Request,
