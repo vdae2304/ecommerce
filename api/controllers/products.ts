@@ -71,13 +71,13 @@ router.get('/:id', function(request: express.Request,
                             response: express.Response) {
     DB.table('ecwid_catalogoproducto')
       .select("REF as sku",
-        "DESCRIPCION AS name",
-        "FORMAT(PRECIOVENTA, 2) AS price",
-        "CATEGORIA1 AS category",
-        "MARCA AS brand",
-        "IMAGEN AS image",
-        "CAST(HABILITADO AS INTEGER) AS available",
-        "EXISTENCIA as stock")
+            "DESCRIPCION AS name",
+            "FORMAT(PRECIOVENTA, 2) AS price",
+            "CATEGORIA1 AS category",
+            "MARCA AS brand",
+            "IMAGEN AS image",
+            "CAST(HABILITADO AS INTEGER) AS available",
+            "EXISTENCIA as stock")
       .where('REF', '=', request.params.id)
       .limit(1)
       .query(function (error, results) {
