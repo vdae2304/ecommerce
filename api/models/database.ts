@@ -96,7 +96,6 @@ export class Database {
         this._connection = mysql.createConnection(options);
     }
 
-
     table(tableName: string): QueryBuilder {
         return new QueryBuilder(this._connection, tableName);
     }
