@@ -29,9 +29,9 @@ class SearchBar extends Component {
                placeholder="Buscar producto"
                onChange={this.onChangeHandler} />
         <input className="search-button"
-          type="image"
-          alt="Search"
-          src={searchIcon} />
+               type="image"
+               alt="Search"
+               src={searchIcon} />
       </form>
     );
   }
