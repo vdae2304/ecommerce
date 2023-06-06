@@ -23,7 +23,9 @@ router.get('/', function (request: express.Request<{}, {}, {}, ReqQuery>,
             "FORMAT(PRECIOVENTA, 2) AS price",
             "CATEGORIA1 AS category",
             "MARCA AS brand",
-            "IMAGEN AS image");
+            "IMAGEN AS image",
+            "CAST(HABILITADO AS INTEGER) AS available",
+            "EXISTENCIA as stock");
     if (request.query.q) {
         query.where('DESCRIPCION', 'LIKE', `%${request.query.q}%`);
     }
