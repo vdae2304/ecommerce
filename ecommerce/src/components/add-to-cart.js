@@ -7,7 +7,7 @@ class AddShoppingCart extends Component {
     return (
       <button className="primary-button">
         Agregar al carrito
-        <img className="icon" alt="Agregar al carrito" src={shoppingCartIcon}/>
+        <img className="icon" alt="" src={shoppingCartIcon}/>
       </button>
     );
   }

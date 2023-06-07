@@ -14,9 +14,7 @@ class ShoppingCart extends Component {
     return (
       <a className="shopping-cart" href="/cart/">
         Mi Carrito
-        <img className="shopping-cart-img"
-             alt="Carrito"
-             src={shoppingCartIcon}/>
+        <img className="shopping-cart-img" alt="" src={shoppingCartIcon}/>
         <span className="shopping-cart-counter">
           {`\u00d7${this.state.value}`}
         </span>
