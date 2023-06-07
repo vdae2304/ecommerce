@@ -30,7 +30,7 @@ class SearchBar extends Component {
                onChange={this.onChangeHandler} />
         <input className="search-button"
                type="image"
-               alt="Search"
+               alt="Buscar"
                src={searchIcon} />
       </form>
     );
