@@ -1,16 +1,24 @@
 import * as fs from 'fs';
+import * as path from 'path';
 
-export type LoggingLevel = 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR';
+export type LoggingLevel = 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR' | 'CRITICAL';
 
 /**
- * @brief A class for logging into a file.
+ * @brief A class for logging to a file.
  */
 export class FileLogger {
     private _stream: fs.WriteStream;
 
-    constructor(path: string) {
-        this._stream = fs.createWriteStream(path, {flags: 'a'});
+    constructor(filename: string) {
+        this._stream = fs.createWriteStream(
+            path.resolve(__dirname, filename),
+            {flags: 'a', encoding: 'utf-8'});
     }
+
+    /**
+     * @brief Closes the file.
+     */
+    close() { this._stream.close(); }
 
     /**
      * @brief Logs a message.
@@ -19,34 +27,31 @@ export class FileLogger {
      * @param level Level of the message.
      */
     log(message: string, level: LoggingLevel) {
-        this._stream.write(`[${new Date()}]:[${level}] ${message}\n`);
+        this._stream.write(`[${new Date()}]:[${level}]: ${message}\n`);
     }
 
     /**
-     * @brief Logs a debug message.
+     * @brief Logs a message with level `DEBUG`.
      */
-    debug(message: string) {
-        this.log(message, 'DEBUG');
-    }
+    debug(message: string) { this.log(message, 'DEBUG'); }
 
     /**
-     * @brief Logs an informative message.
+     * @brief Logs a message with level `INFO`.
      */
-    info(message: string) {
-        this.log(message, 'INFO');
-    }
+    info(message: string) { this.log(message, 'INFO'); }
 
     /**
-     * @brief Logs a warning message.
+     * @brief Logs a message with level `WARNING`.
      */
-    warning(message: string) {
-        this.log(message, 'WARNING');
-    }
+    warning(message: string) { this.log(message, 'WARNING'); }
 
     /**
-     * @brief Logs an error message.
+     * @brief Logs a message with level `ERROR`.
      */
-    error(message: string) {
-        this.log(message, 'ERROR');
-    }
+    error(message: string) { this.log(message, 'ERROR'); }
+
+    /**
+     * @brief Logs a message with level `CRITICAL`.
+     */
+    critical(message: string) { this.log(message, 'CRITICAL'); }
 };

@@ -3,7 +3,7 @@ import { FileLogger } from '../logs/logger';
 
 const options = require('./config.json');
 const connection = mysql.createConnection(options);
-const logger = new FileLogger('logs/schema.log');
+const logger = new FileLogger('schema.log');
 
 /**
  * @brief Create a new table.
@@ -30,7 +30,7 @@ export function drop(table: string): Promise<boolean> {
         connection.query(sql, (error) => {
             logger.debug(sql);
             if (error) {
-                logger.error(`${error}`);
+                logger.error(error.toString());
                 return resolve(false);
             }
             return resolve(true);
@@ -218,11 +218,13 @@ export interface ForeignKeyConstraint {
  */
 export class Blueprint {
     private _table: string;
-    private _columns: ColumnDefinition[];
+    private _columns: string[];
+    private _constraints: string[];
 
     constructor(table: string) {
         this._table = table;
         this._columns = [];
+        this._constraints = [];
     }
 
     /**
@@ -253,7 +255,54 @@ export class Blueprint {
      *  is updated.
      */
     column(attributes: ColumnDefinition): Blueprint {
-        this._columns.push(attributes);
+        let sql = `${attributes.name} ${attributes.dtype}`;
+        if (attributes.nullable) {
+            sql += ' NULL';
+        } else {
+            sql += ' NOT NULL';
+        }
+        if (attributes.default) {
+            if (typeof attributes.default == 'string') {
+                sql += ` DEFAULT '${attributes.default}'`;
+            } else {
+                sql += ` DEFAULT ${attributes.default}`;
+            }
+        }
+        if (attributes.auto_increment) {
+            sql += ' AUTO_INCREMENT';
+        }
+        if (attributes.comment) {
+            sql += ` COMMENT '${attributes.comment}'`;
+        }
+        if (attributes.collation) {
+            sql += ` COLLATE ${attributes.collation}`;
+        }
+        this._columns.push(sql);
+
+        if (attributes.primary_key) {
+            let constraint = `PRIMARY KEY(${attributes.name})`;
+            this._constraints.push(constraint);
+        }
+        if (attributes.unique_key) {
+            let constraint = `UNIQUE KEY(${attributes.name})`;
+            this._constraints.push(constraint);
+        }
+        if (attributes.check) {
+            let constraint = `CHECK(${attributes.check})`;
+            this._constraints.push(constraint);
+        }
+        if (attributes.foreign_key) {
+            let constraint = `FOREIGN KEY(${attributes.name})`;
+            const foreign_key = attributes.foreign_key;
+            constraint += ` REFERENCES ${foreign_key.table}(${foreign_key.column})`;
+            if (foreign_key.on_delete) {
+                constraint += ` ON DELETE ${foreign_key.on_delete}`;
+            }
+            if (foreign_key.on_update) {
+                constraint += ` ON UPDATE ${foreign_key.on_update}`;
+            }
+            this._constraints.push(constraint);
+        }
         return this;
     }
 
@@ -262,59 +311,9 @@ export class Blueprint {
      * creation.
      */
     sql(): string {
-        let table_definition: string[] = [];
-        this._columns.forEach((attributes: ColumnDefinition) => {
-            let sql = `${attributes.name} ${attributes.dtype}`;
-            if (attributes.nullable) {
-                sql += ' NULL';
-            } else {
-                sql += ' NOT NULL';
-            }
-            if (attributes.default) {
-                if (typeof attributes.default == 'string') {
-                    sql += ` DEFAULT '${attributes.default}'`;
-                } else {
-                    sql += ` DEFAULT ${attributes.default}`;
-                }
-            }
-            if (attributes.auto_increment) {
-                sql += ' AUTO_INCREMENT';
-            }
-            if (attributes.comment) {
-                sql += ` COMMENT '${attributes.comment}'`;
-            }
-            if (attributes.collation) {
-                sql += ` COLLATE ${attributes.collation}`;
-            }
-            table_definition.push(sql);
-
-            if (attributes.primary_key) {
-                let constraint = `PRIMARY KEY(${attributes.name})`;
-                table_definition.push(constraint);
-            }
-            if (attributes.unique_key) {
-                let constraint = `UNIQUE KEY(${attributes.name})`;
-                table_definition.push(constraint);
-            }
-            if (attributes.check) {
-                let constraint = `CHECK (${attributes.check})`;
-                table_definition.push(constraint);
-            }
-            if (attributes.foreign_key) {
-                let constraint = `FOREIGN KEY(${attributes.name})`;
-                const foreign_key = attributes.foreign_key;
-                constraint +=` REFERENCES ${foreign_key.table}(${foreign_key.column})`;
-                if (foreign_key.on_delete) {
-                    constraint += ` ON DELETE ${foreign_key.on_delete}`;
-                }
-                if (foreign_key.on_update) {
-                    constraint += ` ON UPDATE ${foreign_key.on_update}`;
-                }
-                table_definition.push(constraint);
-            }
-        });
-        return `CREATE TABLE ${this._table}\n` +
-            `(${table_definition.join(',\n')});`;
+        return `CREATE TABLE ${this._table} (\n` +
+            this._columns.concat(this._constraints).join(',\n') +
+            ");";
     }
 
     /**
@@ -329,7 +328,7 @@ export class Blueprint {
             connection.query(sql, (error) => {
                 logger.debug(sql);
                 if (error) {
-                    logger.error(`${error}`);
+                    logger.error(error.toString());
                     return resolve(false);
                 }
                 return resolve(true);
