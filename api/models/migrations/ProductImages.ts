@@ -1,7 +1,7 @@
 import * as Schema from '../Schema';
 
-export const ProductImages = Schema.create("ProductImages")
-.column({
+export const ProductImages = Schema.table("ProductImages")
+.add_column({
     name: "id",
     dtype: Schema.INT(),
     nullable: false,
@@ -9,7 +9,7 @@ export const ProductImages = Schema.create("ProductImages")
     comment: "An unique identifier for the image.",
     primary_key: true
 })
-.column({
+.add_column({
     name: "productId",
     dtype: Schema.INT(),
     nullable: false,
@@ -20,13 +20,13 @@ export const ProductImages = Schema.create("ProductImages")
         on_delete: "CASCADE"
     }
 })
-.column({
+.add_column({
     name: "url",
     dtype: Schema.VARCHAR(256),
     nullable: false,
     comment: "The URL of the image."
 })
-.column({
+.add_column({
     name: "uploaded",
     dtype: Schema.DATETIME(),
     nullable: false,

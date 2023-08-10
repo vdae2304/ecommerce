@@ -4,7 +4,8 @@
   "description": "An ecommerce website created in React",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "migrations": "node models/migrations.js"
   },
   "author": "vdae2304",
   "license": "ISC",

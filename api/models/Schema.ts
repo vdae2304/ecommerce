@@ -6,36 +6,14 @@ const connection = mysql.createConnection(options);
 const logger = new FileLogger('schema.log');
 
 /**
- * @brief Create a new table.
+ * @brief Begin a table manipulation.
  * 
- * @param table Name of the table to create.
+ * @param table Name of the table to create or alter.
  * 
- * @return A Blueprint that may be used to define the new table.
+ * @return A Blueprint that may be used to define the table properties.
  */
-export function create(table: string): Blueprint {
+export function table(table: string): Blueprint {
     return new Blueprint(table);
-}
-
-/**
- * @brief Drop a table.
- * 
- * @param table Name of the table to drop.
- * 
- * @return A promise returning true if operation was sucessfull and false
- * otherwise.
- */
-export function drop(table: string): Promise<boolean> {
-    const sql = `DROP TABLE ${table};`;
-    return new Promise((resolve) => {
-        connection.query(sql, (error) => {
-            logger.debug(sql);
-            if (error) {
-                logger.error(error.toString());
-                return resolve(false);
-            }
-            return resolve(true);
-        });
-    });
 }
 
 /**
@@ -254,7 +232,7 @@ export class Blueprint {
      *  - `on_update`: (Optional) Action to do when a value in the parent table
      *  is updated.
      */
-    column(attributes: ColumnDefinition): Blueprint {
+    add_column(attributes: ColumnDefinition): Blueprint {
         let sql = `${attributes.name} ${attributes.dtype}`;
         if (attributes.nullable) {
             sql += ' NULL';
@@ -307,26 +285,40 @@ export class Blueprint {
     }
 
     /**
-     * @brief Return a string with the SQL syntax corresponding to the table
-     * creation.
-     */
-    sql(): string {
-        return `CREATE TABLE ${this._table} (\n` +
-            this._columns.concat(this._constraints).join(',\n') +
-            ");";
-    }
-
-    /**
-     * @brief Executes the table creation.
+     * @brief Creates the table.
      * 
      * @return A promise returning true if operation was sucessfull and false
      * otherwise.
      */
-    execute(): Promise<Boolean> {
-        const sql = this.sql();
+    create(): Promise<Boolean> {
+        const sql = `CREATE TABLE ${this._table} (\n` +
+            this._columns.concat(this._constraints).join(',\n') +
+            ');';
+        logger.debug(sql);
+
         return new Promise((resolve) => {
             connection.query(sql, (error) => {
-                logger.debug(sql);
+                if (error) {
+                    logger.error(error.toString());
+                    return resolve(false);
+                }
+                return resolve(true);
+            });
+        });
+    }
+
+    /**
+     * @brief Drops the table.
+     * 
+     * @return A promise returning true if operation was sucessfull and false
+     * otherwise.
+     */
+    drop(): Promise<boolean> {
+        const sql = `DROP TABLE ${this._table};`;
+        logger.debug(sql);
+
+        return new Promise((resolve) => {
+            connection.query(sql, (error) => {
                 if (error) {
                     logger.error(error.toString());
                     return resolve(false);

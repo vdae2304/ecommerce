@@ -1,7 +1,7 @@
 import * as Schema from '../Schema';
 
-export const ProductTags = Schema.create("ProductTags")
-.column({
+export const ProductTags = Schema.table("ProductTags")
+.add_column({
     name: "id",
     dtype: Schema.INT(),
     nullable: false,
@@ -9,7 +9,7 @@ export const ProductTags = Schema.create("ProductTags")
     comment: "An unique identifier for the tag.",
     primary_key: true
 })
-.column({
+.add_column({
     name: "productId",
     dtype: Schema.INT(),
     nullable: false,
@@ -20,19 +20,19 @@ export const ProductTags = Schema.create("ProductTags")
         on_delete: "CASCADE"
     }
 })
-.column({
+.add_column({
     name: "name",
     dtype: Schema.VARCHAR(32),
     nullable: false,
     comment: "The name of the tag."
 })
-.column({
+.add_column({
     name: "value",
     dtype: Schema.VARCHAR(256),
     nullable: false,
     comment: "The value of the tag."
 })
-.column({
+.add_column({
     name: "created",
     dtype: Schema.DATETIME(),
     nullable: false,
