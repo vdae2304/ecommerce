@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231128233910_InitialMigration")]
+    [Migration("20231129225038_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -39,10 +39,8 @@ namespace Ecommerce.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("description");
 
-                    b.Property<bool?>("Enabled")
-                        .ValueGeneratedOnAdd()
+                    b.Property<bool>("Enabled")
                         .HasColumnType("tinyint(1)")
-                        .HasDefaultValue(true)
                         .HasColumnName("enabled");
 
                     b.Property<string>("Name")
@@ -75,47 +73,6 @@ namespace Ecommerce.Migrations
                         .HasDatabaseName("ix_categories_thumbnail_id");
 
                     b.ToTable("categories", (string)null);
-                });
-
-            modelBuilder.Entity("Ecommerce.Common.Models.Schema.MeasureUnit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasPrecision(0)
-                        .HasColumnType("datetime(0)")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext")
-                        .HasColumnName("name");
-
-                    b.Property<string>("Symbol")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("varchar(8)")
-                        .HasColumnName("symbol");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int")
-                        .HasColumnName("type");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasPrecision(0)
-                        .HasColumnType("datetime(0)")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Id")
-                        .HasName("pk_measure_units");
-
-                    b.HasIndex("Symbol")
-                        .IsUnique()
-                        .HasDatabaseName("ix_measure_units_symbol");
-
-                    b.ToTable("measure_units", (string)null);
                 });
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.MediaImage", b =>
@@ -185,14 +142,12 @@ namespace Ecommerce.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("description");
 
-                    b.Property<int?>("DimensionUnitsId")
+                    b.Property<int?>("DimensionUnits")
                         .HasColumnType("int")
-                        .HasColumnName("dimension_units_id");
+                        .HasColumnName("dimension_units");
 
-                    b.Property<bool?>("Enabled")
-                        .ValueGeneratedOnAdd()
+                    b.Property<bool>("Enabled")
                         .HasColumnType("tinyint(1)")
-                        .HasDefaultValue(true)
                         .HasColumnName("enabled");
 
                     b.Property<double?>("Height")
@@ -207,11 +162,11 @@ namespace Ecommerce.Migrations
                         .HasColumnType("double")
                         .HasColumnName("length");
 
-                    b.Property<int?>("MaxPurchaseQuantity")
+                    b.Property<int>("MaxPurchaseQuantity")
                         .HasColumnType("int")
                         .HasColumnName("max_purchase_quantity");
 
-                    b.Property<int?>("MinPurchaseQuantity")
+                    b.Property<int>("MinPurchaseQuantity")
                         .HasColumnType("int")
                         .HasColumnName("min_purchase_quantity");
 
@@ -241,21 +196,13 @@ namespace Ecommerce.Migrations
                         .HasColumnType("datetime(0)")
                         .HasColumnName("updated_at");
 
-                    b.Property<double?>("Volume")
-                        .HasColumnType("double")
-                        .HasColumnName("volume");
-
-                    b.Property<int?>("VolumeUnitsId")
-                        .HasColumnType("int")
-                        .HasColumnName("volume_units_id");
-
                     b.Property<double?>("Weight")
                         .HasColumnType("double")
                         .HasColumnName("weight");
 
-                    b.Property<int?>("WeightUnitsId")
+                    b.Property<int?>("WeightUnits")
                         .HasColumnType("int")
-                        .HasColumnName("weight_units_id");
+                        .HasColumnName("weight_units");
 
                     b.Property<double?>("Width")
                         .HasColumnType("double")
@@ -264,9 +211,6 @@ namespace Ecommerce.Migrations
                     b.HasKey("Id")
                         .HasName("pk_products");
 
-                    b.HasIndex("DimensionUnitsId")
-                        .HasDatabaseName("ix_products_dimension_units_id");
-
                     b.HasIndex("Sku")
                         .IsUnique()
                         .HasDatabaseName("ix_products_sku");
@@ -274,12 +218,6 @@ namespace Ecommerce.Migrations
                     b.HasIndex("ThumbnailId")
                         .IsUnique()
                         .HasDatabaseName("ix_products_thumbnail_id");
-
-                    b.HasIndex("VolumeUnitsId")
-                        .HasDatabaseName("ix_products_volume_units_id");
-
-                    b.HasIndex("WeightUnitsId")
-                        .HasDatabaseName("ix_products_weight_units_id");
 
                     b.ToTable("products", (string)null);
                 });
@@ -381,37 +319,13 @@ namespace Ecommerce.Migrations
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.Product", b =>
                 {
-                    b.HasOne("Ecommerce.Common.Models.Schema.MeasureUnit", "DimensionUnits")
-                        .WithMany()
-                        .HasForeignKey("DimensionUnitsId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_products_measure_unit_dimension_units_id");
-
                     b.HasOne("Ecommerce.Common.Models.Schema.MediaImage", "Thumbnail")
                         .WithOne()
                         .HasForeignKey("Ecommerce.Common.Models.Schema.Product", "ThumbnailId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_products_media_images_thumbnail_id");
 
-                    b.HasOne("Ecommerce.Common.Models.Schema.MeasureUnit", "VolumeUnits")
-                        .WithMany()
-                        .HasForeignKey("VolumeUnitsId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_products_measure_unit_volume_units_id");
-
-                    b.HasOne("Ecommerce.Common.Models.Schema.MeasureUnit", "WeightUnits")
-                        .WithMany()
-                        .HasForeignKey("WeightUnitsId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_products_measure_unit_weight_units_id");
-
-                    b.Navigation("DimensionUnits");
-
                     b.Navigation("Thumbnail");
-
-                    b.Navigation("VolumeUnits");
-
-                    b.Navigation("WeightUnits");
                 });
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.ProductAttribute", b =>

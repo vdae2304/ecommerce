@@ -100,7 +100,7 @@ namespace Ecommerce.Controllers.Categories
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
         [HttpPost("{categoryId}/image")]
-        public async Task<IActionResult> UploadImage(int categoryId, [FromBody] IFormFile imageFile)
+        public async Task<IActionResult> UploadImage(int categoryId, IFormFile imageFile)
         {
             _logger.LogInformation("Upload main image for category {categoryId}", categoryId);
             return await _mediator.Send(new UploadImageRequest { CategoryId = categoryId, ImageFile = imageFile });

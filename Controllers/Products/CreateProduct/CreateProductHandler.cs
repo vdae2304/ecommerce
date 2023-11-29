@@ -31,7 +31,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
-        /// Price.
+        /// Product price.
         /// </summary>
         [Required]
         public decimal Price { get; set; }
@@ -42,7 +42,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         public IEnumerable<int> CategoryIds { get; set; } = new List<int>();
 
         /// <summary>
-        /// Attributes.
+        /// Product attributes.
         /// </summary>
         public List<CreateAttributeForm> Attributes { get; set; } = new List<CreateAttributeForm>();
 
@@ -62,9 +62,9 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         public double? Length { get; set; }
 
         /// <summary>
-        /// Dimension units ID.
+        /// Dimension units.
         /// </summary>
-        public int? DimensionUnitsId { get; set; }
+        public DimensionUnits? DimensionUnits { get; set; }
 
         /// <summary>
         /// Product weight.
@@ -72,29 +72,19 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         public double? Weight { get; set; }
 
         /// <summary>
-        /// Weight units ID.
+        /// Weight units.
         /// </summary>
-        public int? WeightUnitsId { get; set; }
-
-        /// <summary>
-        /// Product volume.
-        /// </summary>
-        public double? Volume { get; set; }
-
-        /// <summary>
-        /// Volume units ID.
-        /// </summary>
-        public int? VolumeUnitsId { get; set; }
+        public WeightUnits? WeightUnits { get; set; }
 
         /// <summary>
         /// Minimum allowed purchase quantity.
         /// </summary>
-        public int? MinPurchaseQuantity { get; set; }
+        public int MinPurchaseQuantity { get; set; } = 1;
 
         /// <summary>
         /// Maximum allowed purchase quantity.
         /// </summary>
-        public int? MaxPurchaseQuantity { get; set; }
+        public int MaxPurchaseQuantity { get; set; } = 1;
 
         /// <summary>
         /// Number of products in stock. Set to null if does not apply or
@@ -105,7 +95,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         /// <summary>
         /// Whether the product is enabled or not.
         /// </summary>
-        public bool? Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
     }
     
     public record CreateAttributeForm : IRequest<ActionResult>

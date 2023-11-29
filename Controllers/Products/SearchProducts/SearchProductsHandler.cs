@@ -142,9 +142,6 @@ namespace Ecommerce.Controllers.Products.SearchProducts
                     .Include(x => x.GalleryImages)
                     .Include(x => x.Categories)
                     .Include(x => x.Attributes)
-                    .Include(x => x.DimensionUnits)
-                    .Include(x => x.WeightUnits)
-                    .Include(x => x.VolumeUnits)
                     .AsSplitQuery()
                     .AsNoTracking();
 

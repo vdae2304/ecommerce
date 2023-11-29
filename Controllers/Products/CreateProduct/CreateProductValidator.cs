@@ -1,5 +1,4 @@
-﻿using Ecommerce.Common.Models.Schema;
-using Ecommerce.Infrastructure.Data;
+﻿using Ecommerce.Infrastructure.Data;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,33 +44,25 @@ namespace Ecommerce.Controllers.Products.CreateProduct
             RuleFor(x => x.Length)
                 .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
 
-            RuleFor(x => x.DimensionUnitsId)
+            RuleFor(x => x.DimensionUnits)
                 .NotNull().WithMessage("Field {PropertyName} is required")
-                .MustAsync(DimensionUnitsExists).WithMessage("Field {PropertyName} is not valid")
+                .IsInEnum().WithMessage("Field {PropertyName} is not valid")
                 .When(x => x.Width != null || x.Height != null || x.Length != null);
 
             RuleFor(x => x.Weight)
                 .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
 
-            RuleFor(x => x.WeightUnitsId)
+            RuleFor(x => x.WeightUnits)
                 .NotNull().WithMessage("Field {PropertyName} is required")
-                .MustAsync(WeightUnitsExists).WithMessage("Field {PropertyName} is not valid")
+                .IsInEnum().WithMessage("Field {PropertyName} is not valid")
                 .When(x => x.Weight != null);
-
-            RuleFor(x => x.Volume)
-                .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
-
-            RuleFor(x => x.VolumeUnitsId)
-                .NotNull().WithMessage("Field {PropertyName} is required")
-                .MustAsync(VolumeUnitsExists).WithMessage("Field {PropertyName} is not valid")
-                .When(x => x.Volume != null);
 
             RuleFor(x => x.MinPurchaseQuantity)
                 .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
 
             RuleFor(x => x.MaxPurchaseQuantity)
-                .GreaterThanOrEqualTo(x => x.MinPurchaseQuantity ?? 0)
-                .WithMessage("Field {PropertyName} must be greater than or equal to {ComparisonValue}");
+                .GreaterThanOrEqualTo(x => x.MinPurchaseQuantity)
+                .WithMessage("Field {PropertyName} must be greater than or equal to {ComparisonProperty}");
 
             RuleFor(x => x.InStock)
                 .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
@@ -85,24 +76,6 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         private async Task<bool> CategoryExists(int id, CancellationToken cancellationToken = default)
         {
             return await _context.Categories.AnyAsync(x => x.Id == id, cancellationToken);
-        }
-
-        private async Task<bool> DimensionUnitsExists(int? id, CancellationToken cancellationToken = default)
-        {
-            if (id == null) return true;
-            return await _context.MeasureUnits.AnyAsync(x => x.Id == id && x.Type == MeasureUnitType.Dimension, cancellationToken);
-        }
-
-        private async Task<bool> WeightUnitsExists(int? id, CancellationToken cancellationToken = default)
-        {
-            if (id == null) return true;
-            return await _context.MeasureUnits.AnyAsync(x => x.Id == id && x.Type == MeasureUnitType.Weight, cancellationToken);
-        }
-
-        private async Task<bool> VolumeUnitsExists(int? id, CancellationToken cancellationToken = default)
-        {
-            if (id == null) return true;
-            return await _context.MeasureUnits.AnyAsync(x => x.Id == id && x.Type == MeasureUnitType.Volume, cancellationToken);
         }
     }
 

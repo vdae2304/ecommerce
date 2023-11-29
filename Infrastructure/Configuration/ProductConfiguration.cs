@@ -14,9 +14,12 @@ namespace Ecommerce.Infrastructure.Configuration
 
             builder.Property(x => x.Sku).HasMaxLength(12).IsRequired();
             builder.Property(x => x.Name).HasMaxLength(128).IsRequired();
+            builder.Property(x => x.Description).IsRequired();
             builder.Property(x => x.Price).HasPrecision(10, 4).IsRequired();
             builder.Property(x => x.CrossedOutPrice).HasPrecision(10, 4).IsRequired(false);
-            builder.Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Property(x => x.MinPurchaseQuantity).IsRequired();
+            builder.Property(x => x.MaxPurchaseQuantity).IsRequired();
+            builder.Property(x => x.Enabled).IsRequired();
 
             builder.HasOne(x => x.Thumbnail)
                 .WithOne()

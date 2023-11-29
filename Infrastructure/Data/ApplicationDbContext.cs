@@ -15,7 +15,6 @@ namespace Ecommerce.Infrastructure.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<MediaImage> MediaImages { get; set; }
-        public DbSet<MeasureUnit> MeasureUnits { get; set; }
 
         /// <inheritdoc/>
         public ApplicationDbContext(IConfiguration config, ILoggerFactory loggerFactory)
@@ -43,7 +42,6 @@ namespace Ecommerce.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new ProductAttributeConfiguration());
             modelBuilder.ApplyConfiguration(new ProductCategoriesConfiguration());
             modelBuilder.ApplyConfiguration(new ProductImagesConfiguration());
-            modelBuilder.ApplyConfiguration(new MeasureUnitConfiguration());
         }
 
         /// <inheritdoc/>

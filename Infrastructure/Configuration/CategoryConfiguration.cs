@@ -12,7 +12,8 @@ namespace Ecommerce.Infrastructure.Configuration
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Name).HasMaxLength(128).IsRequired();
-            builder.Property(x => x.Enabled).HasDefaultValue(true);
+            builder.Property(x => x.Description).IsRequired();
+            builder.Property(x => x.Enabled).IsRequired();
 
             builder.HasOne(x => x.Thumbnail)
                 .WithOne()

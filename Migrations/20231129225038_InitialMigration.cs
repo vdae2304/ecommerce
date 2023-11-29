@@ -16,24 +16,6 @@ namespace Ecommerce.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "measure_units",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    symbol = table.Column<string>(type: "varchar(8)", maxLength: 8, nullable: false),
-                    name = table.Column<string>(type: "longtext", nullable: true),
-                    type = table.Column<int>(type: "int", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false),
-                    updated_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_measure_units", x => x.id);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "media_images",
                 columns: table => new
                 {
@@ -62,7 +44,7 @@ namespace Ecommerce.Migrations
                     name = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
                     description = table.Column<string>(type: "longtext", nullable: false),
                     thumbnail_id = table.Column<int>(type: "int", nullable: true),
-                    enabled = table.Column<bool>(type: "tinyint(1)", nullable: true, defaultValue: true),
+                    enabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false)
                 },
@@ -99,39 +81,19 @@ namespace Ecommerce.Migrations
                     width = table.Column<double>(type: "double", nullable: true),
                     height = table.Column<double>(type: "double", nullable: true),
                     length = table.Column<double>(type: "double", nullable: true),
-                    dimension_units_id = table.Column<int>(type: "int", nullable: true),
+                    dimension_units = table.Column<int>(type: "int", nullable: true),
                     weight = table.Column<double>(type: "double", nullable: true),
-                    weight_units_id = table.Column<int>(type: "int", nullable: true),
-                    volume = table.Column<double>(type: "double", nullable: true),
-                    volume_units_id = table.Column<int>(type: "int", nullable: true),
-                    min_purchase_quantity = table.Column<int>(type: "int", nullable: true),
-                    max_purchase_quantity = table.Column<int>(type: "int", nullable: true),
+                    weight_units = table.Column<int>(type: "int", nullable: true),
+                    min_purchase_quantity = table.Column<int>(type: "int", nullable: false),
+                    max_purchase_quantity = table.Column<int>(type: "int", nullable: false),
                     in_stock = table.Column<int>(type: "int", nullable: true),
-                    enabled = table.Column<bool>(type: "tinyint(1)", nullable: true, defaultValue: true),
+                    enabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_products", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_products_measure_unit_dimension_units_id",
-                        column: x => x.dimension_units_id,
-                        principalTable: "measure_units",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "fk_products_measure_unit_volume_units_id",
-                        column: x => x.volume_units_id,
-                        principalTable: "measure_units",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
-                        name: "fk_products_measure_unit_weight_units_id",
-                        column: x => x.weight_units_id,
-                        principalTable: "measure_units",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "fk_products_media_images_thumbnail_id",
                         column: x => x.thumbnail_id,
@@ -227,12 +189,6 @@ namespace Ecommerce.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_measure_units_symbol",
-                table: "measure_units",
-                column: "symbol",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "ix_media_images_file_id",
                 table: "media_images",
                 column: "file_id",
@@ -254,11 +210,6 @@ namespace Ecommerce.Migrations
                 column: "image_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_products_dimension_units_id",
-                table: "products",
-                column: "dimension_units_id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_products_sku",
                 table: "products",
                 column: "sku",
@@ -269,16 +220,6 @@ namespace Ecommerce.Migrations
                 table: "products",
                 column: "thumbnail_id",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "ix_products_volume_units_id",
-                table: "products",
-                column: "volume_units_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_products_weight_units_id",
-                table: "products",
-                column: "weight_units_id");
         }
 
         /// <inheritdoc />
@@ -298,9 +239,6 @@ namespace Ecommerce.Migrations
 
             migrationBuilder.DropTable(
                 name: "products");
-
-            migrationBuilder.DropTable(
-                name: "measure_units");
 
             migrationBuilder.DropTable(
                 name: "media_images");

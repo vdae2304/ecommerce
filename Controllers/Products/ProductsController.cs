@@ -102,7 +102,7 @@ namespace Ecommerce.Controllers.Products
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
         [HttpPost("{productId}/image")]
-        public async Task<IActionResult> UploadImage(int productId, [FromBody] IFormFile imageFile)
+        public async Task<IActionResult> UploadImage(int productId, IFormFile imageFile)
         {
             _logger.LogInformation("Upload main image for product {productId}", productId);
             return await _mediator.Send(new UploadImageRequest { ProductId = productId, ImageFile = imageFile });
@@ -138,7 +138,7 @@ namespace Ecommerce.Controllers.Products
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
         [HttpPost("{productId}/gallery")]
-        public async Task<IActionResult> UploadGalleryImage(int productId, [FromBody] IFormFile imageFile)
+        public async Task<IActionResult> UploadGalleryImage(int productId, IFormFile imageFile)
         {
             _logger.LogInformation("Upload gallery image for product {productId}", productId);
             return await _mediator.Send(new UploadGalleryImageRequest { ProductId = productId, ImageFile = imageFile });
