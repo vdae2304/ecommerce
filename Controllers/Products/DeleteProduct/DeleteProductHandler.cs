@@ -2,8 +2,10 @@
 using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Products.DeleteProduct
@@ -19,12 +21,15 @@ namespace Ecommerce.Controllers.Products.DeleteProduct
 
     public class DeleteProductHandler : IRequestHandler<DeleteProductRequest, ActionResult>
     {
-        private readonly IGenericRepository<Product> _products;
+        private readonly ApplicationDbContext _context;
+        private readonly IFileRepository _fileRepository;
         private readonly ILogger<DeleteProductHandler> _logger;
 
-        public DeleteProductHandler(IGenericRepository<Product> products, ILogger<DeleteProductHandler> logger)
+        public DeleteProductHandler(ApplicationDbContext context, IFileRepository fileRepository,
+            ILogger<DeleteProductHandler> logger)
         {
-            _products = products;
+            _context = context;
+            _fileRepository = fileRepository;
             _logger = logger;
         }
 
@@ -32,12 +37,28 @@ namespace Ecommerce.Controllers.Products.DeleteProduct
         {
             try
             {
-                Product product = await _products.FindByIdAsync(request.ProductId, cancellationToken)
+                Product product = await _context.Products
+                    .Include(x => x.Thumbnail)
+                    .Include(x => x.GalleryImages)
+                    .FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken)
                     ?? throw new NotFoundException($"Product {request.ProductId} does not exist");
 
-                await _products.DeleteAsync(product, cancellationToken);
+                if (product.Thumbnail != null)
+                {
+                    await _fileRepository.DeleteFileAsync(product.Thumbnail.FileId);
+                    _context.MediaImages.Remove(product.Thumbnail);
+                }
 
-                return new OkObjectResult(new StatusResponse
+                foreach (MediaImage galleryImage in product.GalleryImages)
+                {
+                    await _fileRepository.DeleteFileAsync(galleryImage.FileId);
+                    _context.MediaImages.Remove(galleryImage);
+                }
+
+                _context.Products.Remove(product);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new OkObjectResult(new Response
                 {
                     Success = true,
                     Message = "Ok."

@@ -2,14 +2,20 @@
 using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Products.UploadImage
 {
-    public record UploadImageForm : IRequest<ActionResult>
+    public record UploadImageRequest : IRequest<ActionResult>
     {
+        /// <summary>
+        /// Product ID.
+        /// </summary>
+        public int ProductId { get; set; }
         /// <summary>
         /// Image file.
         /// </summary>
@@ -17,25 +23,17 @@ namespace Ecommerce.Controllers.Products.UploadImage
         public IFormFile ImageFile { get; set; }
     }
 
-    public record UploadImageRequest : UploadImageForm
-    {
-        /// <summary>
-        /// Product ID.
-        /// </summary>
-        public int ProductId { get; set; }
-    }
-
     public class UploadImageHandler : IRequestHandler<UploadImageRequest, ActionResult>
     {
-        private readonly IGenericRepository<Product> _products;
-        private readonly IFileHandler _fileHandler;
+        private readonly ApplicationDbContext _context;
+        private readonly IFileRepository _fileRepository;
         private readonly ILogger<UploadImageHandler> _logger;
 
-        public UploadImageHandler(IGenericRepository<Product> products, IFileHandler fileHandler,
+        public UploadImageHandler(ApplicationDbContext context, IFileRepository fileRepository,
             ILogger<UploadImageHandler> logger)
         {
-            _products = products;
-            _fileHandler = fileHandler;
+            _context = context;
+            _fileRepository = fileRepository;
             _logger = logger;
         }
 
@@ -50,26 +48,38 @@ namespace Ecommerce.Controllers.Products.UploadImage
                     throw new BadRequestException(validationResult.ToString());
                 }
 
-                Product product = await _products.FindByIdAsync(request.ProductId, cancellationToken)
+                Product product = await _context.Products
+                    .Include(x => x.Thumbnail)
+                    .FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken)
                     ?? throw new NotFoundException($"Product {request.ProductId} does not exist");
 
-                var image = System.Drawing.Image.FromStream(request.ImageFile.OpenReadStream());
-                string fileId = _fileHandler.UploadFile(request.ImageFile);
+                var image = await Image.LoadAsync(request.ImageFile.OpenReadStream(), cancellationToken);
 
-                product.Thumbnail = new Image
+                string fileId = Guid.NewGuid().ToString() + Path.GetExtension(request.ImageFile.FileName);
+                await _fileRepository.UploadFileAsync(request.ImageFile.OpenReadStream(), fileId);
+
+                MediaImage? oldThumbnail = product.Thumbnail;
+                product.Thumbnail = new MediaImage
                 {
                     FileId = fileId,
-                    Url = _fileHandler.GetFileUrl(fileId),
+                    Url = _fileRepository.GetFileUrl(fileId),
                     Width = image.Width,
                     Height = image.Height
                 };
 
-                await _products.UpdateAsync(product, cancellationToken);
+                if (oldThumbnail != null)
+                {
+                    await _fileRepository.DeleteFileAsync(fileId);
+                    _context.MediaImages.Remove(oldThumbnail);
+                }
 
-                return new OkObjectResult(new StatusResponse
+                _context.Products.Update(product);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new OkObjectResult(new Response
                 {
                     Success = true,
-                    Message = $"Image uploaded with id {product.ThumbnailId}"
+                    Message = $"Image uploaded with id {product.Thumbnail.Id}"
                 });
             }
             catch (Exception ex)

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Ecommerce.Common.Exceptions;
-using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -29,24 +29,24 @@ namespace Ecommerce.Controllers.Units.CreateUnit
         public MeasureUnitType Type { get; set; }
     }
 
-    public class CreateUnitHandler : IRequestHandler<CreateUnitForm, ActionResult>
+    public class CreateUnitHandler : IRequestHandler<CreateUnitForm, IActionResult>
     {
-        private readonly IGenericRepository<MeasureUnit> _units;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<CreateUnitHandler> _logger;
 
-        public CreateUnitHandler(IGenericRepository<MeasureUnit> units, IMapper mapper, ILogger<CreateUnitHandler> logger)
+        public CreateUnitHandler(ApplicationDbContext context, IMapper mapper, ILogger<CreateUnitHandler> logger)
         {
-            _units = units;
+            _context = context;
             _mapper = mapper;
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(CreateUnitForm request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(CreateUnitForm request, CancellationToken cancellationToken)
         {
             try
             {
-                var validator = new CreateUnitValidator(_units);
+                var validator = new CreateUnitValidator(_context);
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
@@ -54,9 +54,10 @@ namespace Ecommerce.Controllers.Units.CreateUnit
                 }
 
                 MeasureUnit unit = _mapper.Map<MeasureUnit>(request);
-                unit = await _units.AddAsync(unit, cancellationToken);
+                _context.MeasureUnits.Add(unit);
+                await _context.SaveChangesAsync(cancellationToken);
 
-                return new OkObjectResult(new StatusResponse
+                return new OkObjectResult(new Response
                 {
                     Success = true,
                     Message = $"Unit created with id {unit.Id}"

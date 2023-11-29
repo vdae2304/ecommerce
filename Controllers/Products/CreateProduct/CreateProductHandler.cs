@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Ecommerce.Common.Exceptions;
-using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -101,6 +101,11 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         /// unlimited.
         /// </summary>
         public int? InStock { get; set; }
+
+        /// <summary>
+        /// Whether the product is enabled or not.
+        /// </summary>
+        public bool? Enabled { get; set; }
     }
     
     public record CreateAttributeForm : IRequest<ActionResult>
@@ -119,18 +124,13 @@ namespace Ecommerce.Controllers.Products.CreateProduct
 
     public class CreateProductHandler : IRequestHandler<CreateProductForm, ActionResult>
     {
-        private readonly IGenericRepository<Category> _categories;
-        private readonly IGenericRepository<Product> _products;
-        private readonly IGenericRepository<MeasureUnit> _units;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<CreateProductHandler> _logger;
 
-        public CreateProductHandler(IGenericRepository<Category> categories, IGenericRepository<Product> products,
-            IGenericRepository<MeasureUnit> units, IMapper mapper, ILogger<CreateProductHandler> logger)
+        public CreateProductHandler(ApplicationDbContext context, IMapper mapper, ILogger<CreateProductHandler> logger)
         {
-            _categories = categories;
-            _products = products;
-            _units = units;
+            _context = context;
             _mapper = mapper;
             _logger = logger;
         }
@@ -139,7 +139,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         {
             try
             {
-                var validator = new CreateProductValidator(_categories, _products, _units);
+                var validator = new CreateProductValidator(_context);
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
@@ -147,13 +147,15 @@ namespace Ecommerce.Controllers.Products.CreateProduct
                 }
 
                 Product product = _mapper.Map<Product>(request);
-                product.Categories = await _categories.AsQueryable()
+                product.Categories = await _context.Categories
                     .Where(x => request.CategoryIds.Contains(x.Id))
                     .ToListAsync(cancellationToken);
                 product.Attributes = _mapper.Map<List<ProductAttribute>>(request.Attributes);
-                product = await _products.AddAsync(product, cancellationToken);
 
-                return new OkObjectResult(new StatusResponse
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new OkObjectResult(new Response
                 {
                     Success = true,
                     Message = $"Product created with ID {product.Id}"

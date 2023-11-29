@@ -1,13 +1,13 @@
-﻿using Ecommerce.Common.Interfaces;
-using Ecommerce.Common.Models.Responses;
+﻿using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Categories.SearchCategories
 {
-    public record CategoryFilters : IRequest<ActionResult>
+    public record CategoryFilters : IRequest<IActionResult>
     {
         /// <summary>
         /// Categories to search for.
@@ -36,22 +36,22 @@ namespace Ecommerce.Controllers.Categories.SearchCategories
         public int Limit { get; set; } = 100;
     }
 
-    public class SearchCategoriesHandler : IRequestHandler<CategoryFilters, ActionResult>
+    public class SearchCategoriesHandler : IRequestHandler<CategoryFilters, IActionResult>
     {
-        private readonly IGenericRepository<Category> _categories;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger<SearchCategoriesHandler> _logger;
 
-        public SearchCategoriesHandler(IGenericRepository<Category> categories, ILogger<SearchCategoriesHandler> logger)
+        public SearchCategoriesHandler(ApplicationDbContext context, ILogger<SearchCategoriesHandler> logger)
         {
-            _categories = categories;
+            _context = context;
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(CategoryFilters filters, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(CategoryFilters filters, CancellationToken cancellationToken)
         {
             try
             {
-                var query = _categories.AsQueryable()
+                var query = _context.Categories
                     .Include(x => x.Thumbnail)
                     .Include(x => x.Subcategories)
                     .AsSplitQuery()
@@ -78,7 +78,7 @@ namespace Ecommerce.Controllers.Categories.SearchCategories
                     .Take(filters.Limit)
                     .ToListAsync(cancellationToken);
                 
-                return new OkObjectResult(new DataResponse<SearchItems<Category>>
+                return new OkObjectResult(new Response<SearchItems<Category>>
                 {
                     Success = true,
                     Message = "Ok.",

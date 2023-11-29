@@ -1,16 +1,16 @@
-﻿using Ecommerce.Common.Interfaces;
-using Ecommerce.Common.Models.Schema;
+﻿using Ecommerce.Infrastructure.Data;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Units.CreateUnit
 {
     public class CreateUnitValidator : AbstractValidator<CreateUnitForm>
     {
-        private readonly IGenericRepository<MeasureUnit> _units;
+        private readonly ApplicationDbContext _context;
 
-        public CreateUnitValidator(IGenericRepository<MeasureUnit> units)
+        public CreateUnitValidator(ApplicationDbContext context)
         {
-            _units = units;
+            _context = context;
 
             RuleFor(x => x.Symbol)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
@@ -25,7 +25,7 @@ namespace Ecommerce.Controllers.Units.CreateUnit
 
         private async Task<bool> IsSymbolUniqueAsync(string symbol, CancellationToken cancellationToken = default)
         {
-            return !await _units.AnyAsync(x => x.Symbol == symbol, cancellationToken);
+            return !await _context.MeasureUnits.AnyAsync(x => x.Symbol == symbol, cancellationToken);
         }
     }
 }

@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Ecommerce.Infrastructure.Configuration
 {
-    public class ImageConfiguration :IEntityTypeConfiguration<Image>
+    public class MediaImageConfiguration :IEntityTypeConfiguration<MediaImage>
     {
-        public void Configure(EntityTypeBuilder<Image> builder)
+        public void Configure(EntityTypeBuilder<MediaImage> builder)
         {
-            builder.ToTable("images");
+            builder.ToTable("media_images");
             builder.HasKey(x => x.Id);
             builder.HasIndex(x => x.FileId).IsUnique();
 

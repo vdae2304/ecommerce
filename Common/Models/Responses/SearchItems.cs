@@ -1,5 +1,9 @@
 ﻿namespace Ecommerce.Common.Models.Responses
 {
+    /// <summary>
+    /// Searching results.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class SearchItems<T> where T : class
     {
         /// <summary>

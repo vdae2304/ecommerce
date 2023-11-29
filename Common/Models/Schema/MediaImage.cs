@@ -4,9 +4,9 @@ using System.Text.Json.Serialization;
 namespace Ecommerce.Common.Models.Schema
 {
     /// <summary>
-    /// Image.
+    /// Media image.
     /// </summary>
-    public class Image : IEntity
+    public class MediaImage : IEntity
     {
         /// <summary>
         /// Image ID.

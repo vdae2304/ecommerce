@@ -31,10 +31,10 @@ namespace Ecommerce.Controllers.Products
         /// </summary>
         /// <param name="filters">Search filters.</param>
         /// <response code="200">Ok. Return the list of products.</response>
-        [ProducesResponseType(typeof(DataResponse<SearchItems<Product>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response<SearchItems<Product>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpGet]
-        public async Task<ActionResult<DataResponse<SearchItems<Product>>>> Search([FromQuery] ProductFilters filters)
+        public async Task<IActionResult> Search([FromQuery] ProductFilters filters)
         {
             _logger.LogInformation("Search products");
             return await _mediator.Send(filters);
@@ -46,27 +46,27 @@ namespace Ecommerce.Controllers.Products
         /// <param name="productId">Product ID.</param>
         /// <response code="200">Ok. Return the product details.</response>
         /// <response code="404">Not Found. Product does not exist.</response>
-        [ProducesResponseType(typeof(DataResponse<Product>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response<Product>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpGet("{productId}")]
-        public async Task<ActionResult<DataResponse<Product>>> Get(int productId)
+        public async Task<IActionResult> Get(int productId)
         {
             _logger.LogInformation("Get details for product {productId}", productId);
             return await _mediator.Send(new GetProductRequest { ProductId = productId });
         }
 
         /// <summary>
-        /// Add a new product.
+        /// Create a new product.
         /// </summary>
         /// <param name="request">Product values.</param>
         /// <response code="200">Ok. Return the ID of the product created.</response>
         /// <response code="400">Bad request. Invalid field.</response>
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpPost]
-        public async Task<ActionResult<StatusResponse>> Create([FromBody] CreateProductForm request)
+        public async Task<IActionResult> Create([FromBody] CreateProductForm request)
         {
             _logger.LogInformation("Create product {sku}", request.Sku);
             return await _mediator.Send(request);
@@ -78,11 +78,11 @@ namespace Ecommerce.Controllers.Products
         /// <param name="productId">Product ID.</param>
         /// <response code="200">Ok. Delete the product.</response>
         /// <response code="404">Not Found. Product does not exist.</response>
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpDelete("{productId}")]
-        public async Task<ActionResult<StatusResponse>> Delete(int productId)
+        public async Task<IActionResult> Delete(int productId)
         {
             _logger.LogInformation("Delete product {productId}", productId);
             return await _mediator.Send(new DeleteProductRequest {  ProductId = productId });
@@ -92,20 +92,20 @@ namespace Ecommerce.Controllers.Products
         /// Upload main image for a product.
         /// </summary>
         /// <param name="productId">Product ID.</param>
-        /// <param name="imageForm">Image file.</param>
+        /// <param name="imageFile">Image file.</param>
         /// <response code="200">Ok. Upload the image.</response>
         /// <response code="400">Bad request. Invalid file.</response>
         /// <response code="404">Not Found. Product does not exist.</response>
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
         [HttpPost("{productId}/image")]
-        public async Task<ActionResult<StatusResponse>> UploadImage(int productId, [FromForm] UploadImageForm imageForm)
+        public async Task<IActionResult> UploadImage(int productId, [FromBody] IFormFile imageFile)
         {
             _logger.LogInformation("Upload main image for product {productId}", productId);
-            return await _mediator.Send(new UploadImageRequest { ProductId = productId, ImageFile = imageForm.ImageFile });
+            return await _mediator.Send(new UploadImageRequest { ProductId = productId, ImageFile = imageFile });
         }
 
         /// <summary>
@@ -114,11 +114,11 @@ namespace Ecommerce.Controllers.Products
         /// <param name="productId">Product ID.</param>
         /// <response code="200">Ok. Delete the image.</response>
         /// <response code="404">Not Found. Product does not exist.</response>
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpDelete("{productId}/image")]
-        public async Task<ActionResult<StatusResponse>> DeleteImage(int productId)
+        public async Task<IActionResult> DeleteImage(int productId)
         {
             _logger.LogInformation("Delete main image for product {productId}", productId);
             return await _mediator.Send(new DeleteImageRequest { ProductId = productId });
@@ -128,20 +128,20 @@ namespace Ecommerce.Controllers.Products
         /// Upload a gallery image for a product.
         /// </summary>
         /// <param name="productId">Product ID.</param>
-        /// <param name="imageForm">Image file.</param>
+        /// <param name="imageFile">Image file.</param>
         /// <response code="200">Ok. Upload the image.</response>
         /// <response code="400">Bad request. Invalid file.</response>
         /// <response code="404">Not Found. Product does not exist.</response>
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
         [HttpPost("{productId}/gallery")]
-        public async Task<ActionResult<StatusResponse>> UploadGalleryImage(int productId, [FromForm] UploadImageForm imageForm)
+        public async Task<IActionResult> UploadGalleryImage(int productId, [FromBody] IFormFile imageFile)
         {
             _logger.LogInformation("Upload gallery image for product {productId}", productId);
-            return await _mediator.Send(new UploadGalleryImageRequest { ProductId = productId, ImageFile = imageForm.ImageFile });
+            return await _mediator.Send(new UploadGalleryImageRequest { ProductId = productId, ImageFile = imageFile });
         }
 
         /// <summary>
@@ -149,16 +149,13 @@ namespace Ecommerce.Controllers.Products
         /// </summary>
         /// <param name="productId">Product ID.</param>
         /// <param name="imageId">Image ID.</param>
-        /// <response code="200">Ok. Upload the image.</response>
-        /// <response code="400">Bad request. Invalid file.</response>
-        /// <response code="404">Not Found. Product does not exist.</response>
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
-        [Consumes("multipart/form-data")]
+        /// <response code="200">Ok. Delete the image.</response>
+        /// <response code="404">Not Found. Product or image does not exist.</response>
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpDelete("{productId}/gallery/{imageId}")]
-        public async Task<ActionResult<StatusResponse>> DeleteGalleryImage(int productId, int imageId)
+        public async Task<IActionResult> DeleteGalleryImage(int productId, int imageId)
         {
             _logger.LogInformation("Delete gallery image {imageId} for product {productId}", imageId, productId);
             return await _mediator.Send(new DeleteGalleryImageRequest { ProductId = productId, ImageId = imageId });

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231123220246_InitialMigration")]
+    [Migration("20231128233910_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -77,51 +77,6 @@ namespace Ecommerce.Migrations
                     b.ToTable("categories", (string)null);
                 });
 
-            modelBuilder.Entity("Ecommerce.Common.Models.Schema.Image", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasPrecision(0)
-                        .HasColumnType("datetime(0)")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("FileId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("file_id");
-
-                    b.Property<int>("Height")
-                        .HasColumnType("int")
-                        .HasColumnName("height");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasPrecision(0)
-                        .HasColumnType("datetime(0)")
-                        .HasColumnName("updated_at");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("longtext")
-                        .HasColumnName("url");
-
-                    b.Property<int>("Width")
-                        .HasColumnType("int")
-                        .HasColumnName("width");
-
-                    b.HasKey("Id")
-                        .HasName("pk_images");
-
-                    b.HasIndex("FileId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_images_file_id");
-
-                    b.ToTable("images", (string)null);
-                });
-
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.MeasureUnit", b =>
                 {
                     b.Property<int>("Id")
@@ -161,6 +116,51 @@ namespace Ecommerce.Migrations
                         .HasDatabaseName("ix_measure_units_symbol");
 
                     b.ToTable("measure_units", (string)null);
+                });
+
+            modelBuilder.Entity("Ecommerce.Common.Models.Schema.MediaImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetime(0)")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("FileId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("file_id");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("int")
+                        .HasColumnName("height");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetime(0)")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("url");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("int")
+                        .HasColumnName("width");
+
+                    b.HasKey("Id")
+                        .HasName("pk_media_images");
+
+                    b.HasIndex("FileId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_media_images_file_id");
+
+                    b.ToTable("media_images", (string)null);
                 });
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.Product", b =>
@@ -370,11 +370,11 @@ namespace Ecommerce.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_categories_categories_category_id");
 
-                    b.HasOne("Ecommerce.Common.Models.Schema.Image", "Thumbnail")
+                    b.HasOne("Ecommerce.Common.Models.Schema.MediaImage", "Thumbnail")
                         .WithOne()
                         .HasForeignKey("Ecommerce.Common.Models.Schema.Category", "ThumbnailId")
                         .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_categories_image_thumbnail_id");
+                        .HasConstraintName("fk_categories_media_images_thumbnail_id");
 
                     b.Navigation("Thumbnail");
                 });
@@ -387,11 +387,11 @@ namespace Ecommerce.Migrations
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_products_measure_unit_dimension_units_id");
 
-                    b.HasOne("Ecommerce.Common.Models.Schema.Image", "Thumbnail")
+                    b.HasOne("Ecommerce.Common.Models.Schema.MediaImage", "Thumbnail")
                         .WithOne()
                         .HasForeignKey("Ecommerce.Common.Models.Schema.Product", "ThumbnailId")
                         .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_products_image_thumbnail_id");
+                        .HasConstraintName("fk_products_media_images_thumbnail_id");
 
                     b.HasOne("Ecommerce.Common.Models.Schema.MeasureUnit", "VolumeUnits")
                         .WithMany()
@@ -443,12 +443,12 @@ namespace Ecommerce.Migrations
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.ProductImages", b =>
                 {
-                    b.HasOne("Ecommerce.Common.Models.Schema.Image", null)
+                    b.HasOne("Ecommerce.Common.Models.Schema.MediaImage", null)
                         .WithMany()
                         .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_product_images_image_image_id");
+                        .HasConstraintName("fk_product_images_media_images_image_id");
 
                     b.HasOne("Ecommerce.Common.Models.Schema.Product", null)
                         .WithMany()

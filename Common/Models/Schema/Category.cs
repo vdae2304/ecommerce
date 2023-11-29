@@ -37,7 +37,7 @@ namespace Ecommerce.Common.Models.Schema
         /// <summary>
         /// Thumbnail.
         /// </summary>
-        public virtual Image? Thumbnail { get; set; }
+        public virtual MediaImage? Thumbnail { get; set; }
         
         /// <summary>
         /// Children categories.

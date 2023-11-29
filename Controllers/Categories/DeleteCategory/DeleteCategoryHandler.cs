@@ -2,13 +2,15 @@
 using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Categories.DeleteCategory
 {
-    public record DeleteCategoryRequest : IRequest<ActionResult>
+    public record DeleteCategoryRequest : IRequest<IActionResult>
     {
         /// <summary>
         /// Category ID.
@@ -17,27 +19,38 @@ namespace Ecommerce.Controllers.Categories.DeleteCategory
         public int CategoryId { get; set; }
     }
 
-    public class DeleteCategoryHandler : IRequestHandler<DeleteCategoryRequest, ActionResult>
+    public class DeleteCategoryHandler : IRequestHandler<DeleteCategoryRequest, IActionResult>
     {
-        private readonly IGenericRepository<Category> _categories;
+        private readonly ApplicationDbContext _context;
+        private readonly IFileRepository _fileRepository;
         private readonly ILogger<DeleteCategoryHandler> _logger;
 
-        public DeleteCategoryHandler(IGenericRepository<Category> categories, ILogger<DeleteCategoryHandler> logger)
+        public DeleteCategoryHandler(ApplicationDbContext context, IFileRepository fileRepository,
+            ILogger<DeleteCategoryHandler> logger)
         {
-            _categories = categories;
+            _context = context;
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(DeleteCategoryRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(DeleteCategoryRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                Category category = await _categories.FindByIdAsync(request.CategoryId, cancellationToken)
+                Category category = await _context.Categories
+                    .Include(x => x.ThumbnailId)
+                    .FirstOrDefaultAsync(x => x.Id == request.CategoryId, cancellationToken)
                     ?? throw new NotFoundException($"Category {request.CategoryId} does not exist");
 
-                await _categories.DeleteAsync(category, cancellationToken);
+                if (category.Thumbnail != null)
+                {
+                    await _fileRepository.DeleteFileAsync(category.Thumbnail.FileId);
+                    _context.MediaImages.Remove(category.Thumbnail);
+                }
 
-                return new OkObjectResult(new StatusResponse
+                _context.Categories.Remove(category);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new OkObjectResult(new Response
                 {
                     Success = true,
                     Message = "Ok."

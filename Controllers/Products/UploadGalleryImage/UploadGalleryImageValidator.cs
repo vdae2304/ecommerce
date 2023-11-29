@@ -2,7 +2,7 @@
 
 namespace Ecommerce.Controllers.Products.UploadGalleryImage
 {
-    public class UploadGalleryImageValidator : AbstractValidator<UploadGalleryImageForm>
+    public class UploadGalleryImageValidator : AbstractValidator<UploadGalleryImageRequest>
     {
         public UploadGalleryImageValidator()
         {
@@ -15,8 +15,8 @@ namespace Ecommerce.Controllers.Products.UploadGalleryImage
         public ImageValidator()
         {
             RuleFor(x => x.ContentType)
-                .Matches(@"image/.*$").WithMessage("Unsupported file format");
-            
+                .Matches(@"^image/(png|jpe?g)$").WithMessage("Unsupported file format");
+
             RuleFor(x => x.Length)
                 .LessThanOrEqualTo(10*1000*1000).WithMessage("Maximum supported size is {ComparisonValue} bytes");
         }

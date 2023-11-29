@@ -1,21 +1,17 @@
-﻿using Ecommerce.Common.Interfaces;
-using Ecommerce.Common.Models.Schema;
+﻿using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Products.CreateProduct
 {
     public class CreateProductValidator : AbstractValidator<CreateProductForm>
     {
-        private readonly IGenericRepository<Category> _categories;
-        private readonly IGenericRepository<Product> _products;
-        private readonly IGenericRepository<MeasureUnit> _units;
+        private readonly ApplicationDbContext _context;
 
-        public CreateProductValidator(IGenericRepository<Category> categories, IGenericRepository<Product> products,
-            IGenericRepository<MeasureUnit> units)
+        public CreateProductValidator(ApplicationDbContext context)
         {
-            _categories = categories;
-            _products = products;
-            _units = units;
+            _context = context;
             
             RuleFor(x => x.Sku)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
@@ -83,30 +79,30 @@ namespace Ecommerce.Controllers.Products.CreateProduct
 
         private async Task<bool> IsSkuUniqueAsync(string sku, CancellationToken cancellationToken = default)
         {
-            return !await _products.AnyAsync(x => x.Sku == sku, cancellationToken);
+            return !await _context.Products.AnyAsync(x => x.Sku == sku, cancellationToken);
         }
 
         private async Task<bool> CategoryExists(int id, CancellationToken cancellationToken = default)
         {
-            return await _categories.AnyAsync(x => x.Id == id, cancellationToken);
+            return await _context.Categories.AnyAsync(x => x.Id == id, cancellationToken);
         }
 
         private async Task<bool> DimensionUnitsExists(int? id, CancellationToken cancellationToken = default)
         {
             if (id == null) return true;
-            return await _units.AnyAsync(x => x.Id == id && x.Type == MeasureUnitType.Dimension, cancellationToken);
+            return await _context.MeasureUnits.AnyAsync(x => x.Id == id && x.Type == MeasureUnitType.Dimension, cancellationToken);
         }
 
         private async Task<bool> WeightUnitsExists(int? id, CancellationToken cancellationToken = default)
         {
             if (id == null) return true;
-            return await _units.AnyAsync(x => x.Id == id && x.Type == MeasureUnitType.Weight, cancellationToken);
+            return await _context.MeasureUnits.AnyAsync(x => x.Id == id && x.Type == MeasureUnitType.Weight, cancellationToken);
         }
 
         private async Task<bool> VolumeUnitsExists(int? id, CancellationToken cancellationToken = default)
         {
             if (id == null) return true;
-            return await _units.AnyAsync(x => x.Id == id && x.Type == MeasureUnitType.Volume, cancellationToken);
+            return await _context.MeasureUnits.AnyAsync(x => x.Id == id && x.Type == MeasureUnitType.Volume, cancellationToken);
         }
     }
 

@@ -22,7 +22,8 @@ namespace Ecommerce.Controllers.Products.CreateProduct
                 .ForMember(dest => dest.VolumeUnitsId, opt => opt.MapFrom(src => src.VolumeUnitsId))
                 .ForMember(dest => dest.MinPurchaseQuantity, opt => opt.MapFrom(src => src.MinPurchaseQuantity))
                 .ForMember(dest => dest.MaxPurchaseQuantity, opt => opt.MapFrom(src => src.MaxPurchaseQuantity))
-                .ForMember(dest => dest.InStock, opt => opt.MapFrom(src => src.InStock));
+                .ForMember(dest => dest.InStock, opt => opt.MapFrom(src => src.InStock))
+                .ForMember(dest => dest.Enabled, opt => opt.MapFrom(src => src.Enabled));
         }
     }
 

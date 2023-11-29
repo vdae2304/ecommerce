@@ -6,37 +6,47 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Ecommerce.Infrastructure.Data
 {
+    /// <inheritdoc/>
     public class ApplicationDbContext : DbContext
     {
-        private readonly IConfiguration _config;
+        private readonly string _connectionString;
         private readonly ILoggerFactory? _loggerFactory;
 
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<MediaImage> MediaImages { get; set; }
+        public DbSet<MeasureUnit> MeasureUnits { get; set; }
+
+        /// <inheritdoc/>
         public ApplicationDbContext(IConfiguration config, ILoggerFactory loggerFactory)
         {
-            _config = config;
+            _connectionString = config.GetConnectionString("DefaultConnection") ?? string.Empty;
             _loggerFactory = bool.Parse(config["ConnectionOptions:LogSql"] ?? string.Empty)
                 ? loggerFactory : null;
         }
 
+        /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseLoggerFactory(_loggerFactory)
-                .UseMySQL(_config.GetConnectionString("DefaultConnection") ?? string.Empty)
+                .UseMySQL(_connectionString)
                 .UseSnakeCaseNamingConvention();
         }
 
+        /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            new CategoryConfiguration().Configure(modelBuilder.Entity<Category>());
-            new ProductConfiguration().Configure(modelBuilder.Entity<Product>());
-            new ImageConfiguration().Configure(modelBuilder.Entity<Image>());
-            new ProductAttributeConfiguration().Configure(modelBuilder.Entity<ProductAttribute>());
-            new ProductCategoriesConfiguration().Configure(modelBuilder.Entity<ProductCategories>());
-            new ProductImagesConfiguration().Configure(modelBuilder.Entity<ProductImages>());
-            new MeasureUnitConfiguration().Configure(modelBuilder.Entity<MeasureUnit>());
+            modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductConfiguration());
+            modelBuilder.ApplyConfiguration(new MediaImageConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductAttributeConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductCategoriesConfiguration());
+            modelBuilder.ApplyConfiguration(new ProductImagesConfiguration());
+            modelBuilder.ApplyConfiguration(new MeasureUnitConfiguration());
         }
 
+        /// <inheritdoc/>
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             DateTime now = DateTime.UtcNow;

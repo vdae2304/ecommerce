@@ -26,7 +26,7 @@ namespace Ecommerce.Infrastructure.Configuration
             builder.HasMany(x => x.GalleryImages)
                 .WithMany()
                 .UsingEntity<ProductImages>(
-                    image => image.HasOne<Image>().WithMany().HasForeignKey(x => x.ImageId),
+                    image => image.HasOne<MediaImage>().WithMany().HasForeignKey(x => x.ImageId),
                     product => product.HasOne<Product>().WithMany().HasForeignKey(x => x.ProductId));
 
             builder.HasMany(x => x.Categories)

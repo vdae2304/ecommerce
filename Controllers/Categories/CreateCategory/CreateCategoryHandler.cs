@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Ecommerce.Common.Exceptions;
-using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Categories.CreateCategory
 {
-    public record CreateCategoryForm : IRequest<ActionResult>
+    public record CreateCategoryForm : IRequest<IActionResult>
     {
         /// <summary>
         /// ID of the parent category, if any.
@@ -33,29 +33,32 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
         /// ID of the products assigned to the category.
         /// </summary>
         public IEnumerable<int> ProductIds { get; set; } = new List<int>();
+
+        /// <summary>
+        /// Whether the category is enabled or not.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
     }
      
-    public class CreateCategoryHandler : IRequestHandler<CreateCategoryForm, ActionResult>
+    public class CreateCategoryHandler : IRequestHandler<CreateCategoryForm, IActionResult>
     {
-        private readonly IGenericRepository<Category> _categories;
-        private readonly IGenericRepository<Product> _products;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<CreateCategoryHandler> _logger;
 
-        public CreateCategoryHandler(IGenericRepository<Category> categories, IGenericRepository<Product> products, IMapper mapper,
+        public CreateCategoryHandler(ApplicationDbContext context, IMapper mapper,
             ILogger<CreateCategoryHandler> logger)
         {
-            _categories = categories;
-            _products = products;
+            _context = context;
             _mapper = mapper;
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(CreateCategoryForm request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(CreateCategoryForm request, CancellationToken cancellationToken)
         {
             try
             {
-                var validator = new CreateCategoryValidator(_categories, _products);
+                var validator = new CreateCategoryValidator(_context);
                 var validationResult = await validator.ValidateAsync(request, cancellationToken);
                 if (!validationResult.IsValid)
                 {
@@ -63,12 +66,14 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
                 }
 
                 Category category = _mapper.Map<Category>(request);
-                category.Products = await _products.AsQueryable()
+                category.Products = await _context.Products
                     .Where(x => request.ProductIds.Contains(x.Id))
                     .ToListAsync(cancellationToken);
-                category = await _categories.AddAsync(category, cancellationToken);
 
-                return new OkObjectResult(new StatusResponse
+                _context.Categories.Add(category);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new OkObjectResult(new Response
                 {
                     Success = true,
                     Message = $"Category created with id {category.Id}"

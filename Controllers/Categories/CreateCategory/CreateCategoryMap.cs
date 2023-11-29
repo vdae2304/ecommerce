@@ -10,7 +10,8 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
             CreateMap<CreateCategoryForm, Category>()
                 .ForMember(dest => dest.ParentId, opt => opt.MapFrom(src => src.ParentId))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.Enabled, opt => opt.MapFrom(src => src.Enabled));
         }
     }
 }

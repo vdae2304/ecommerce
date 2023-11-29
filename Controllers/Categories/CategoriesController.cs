@@ -29,10 +29,10 @@ namespace Ecommerce.Controllers.Categories
         /// </summary>
         /// <param name="filters">Search filters.</param>
         /// <response code="200">Ok. Return the list of categories.</response>
-        [ProducesResponseType(typeof(DataResponse<SearchItems<Category>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response<SearchItems<Category>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpGet]
-        public async Task<ActionResult<DataResponse<SearchItems<Category>>>> Search([FromQuery] CategoryFilters filters)
+        public async Task<IActionResult> Search([FromQuery] CategoryFilters filters)
         {
             _logger.LogInformation("Search categories");
             return await _mediator.Send(filters);
@@ -44,27 +44,27 @@ namespace Ecommerce.Controllers.Categories
         /// <param name="categoryId">Category ID.</param>
         /// <response code="200">Ok. Return the category details.</response>
         /// <response code="404">Not Found. Category does not exist.</response>
-        [ProducesResponseType(typeof(DataResponse<Category>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response<Category>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpGet("{categoryId}")]
-        public async Task<ActionResult<DataResponse<Category>>> Get(int categoryId)
+        public async Task<IActionResult> Get(int categoryId)
         {
             _logger.LogInformation("Get details for category {categoryId}", categoryId);
             return await _mediator.Send(new GetCategoryRequest { CategoryId = categoryId });
         }
 
         /// <summary>
-        /// Add a new category.
+        /// Create a new category.
         /// </summary>
         /// <param name="request">Category values.</param>
         /// <response code="200">Ok. Return the ID of the category created.</response>
         /// <response code="400">Bad request. Invalid field.</response>
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpPost]
-        public async Task<ActionResult<StatusResponse>> Create([FromBody] CreateCategoryForm request)
+        public async Task<IActionResult> Create([FromBody] CreateCategoryForm request)
         {
             _logger.LogInformation("Create category {name}", request.Name);
             return await _mediator.Send(request);
@@ -76,11 +76,11 @@ namespace Ecommerce.Controllers.Categories
         /// <param name="categoryId">Category ID.</param>
         /// <response code="200">Ok. Delete the category.</response>
         /// <response code="404">Not Found. Category does not exist.</response>
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpDelete("{categoryId}")]
-        public async Task<ActionResult<StatusResponse>> Delete(int categoryId)
+        public async Task<IActionResult> Delete(int categoryId)
         {
             _logger.LogInformation("Delete category {categoryId}", categoryId);
             return await _mediator.Send(new DeleteCategoryRequest { CategoryId = categoryId });
@@ -90,34 +90,33 @@ namespace Ecommerce.Controllers.Categories
         /// Upload main image for a category.
         /// </summary>
         /// <param name="categoryId">Category ID.</param>
-        /// <param name="imageForm">Image file.</param>
+        /// <param name="imageFile">Image file.</param>
         /// <response code="200">Ok. Upload the image.</response>
         /// <response code="400">Bad request. Invalid file.</response>
         /// <response code="404">Not Found. Category does not exist.</response>
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
         [HttpPost("{categoryId}/image")]
-        public async Task<ActionResult<StatusResponse>> UploadImage(int categoryId, [FromForm] UploadImageForm imageForm)
+        public async Task<IActionResult> UploadImage(int categoryId, [FromBody] IFormFile imageFile)
         {
             _logger.LogInformation("Upload main image for category {categoryId}", categoryId);
-            return await _mediator.Send(new UploadImageRequest { CategoryId = categoryId, ImageFile = imageForm.ImageFile });
+            return await _mediator.Send(new UploadImageRequest { CategoryId = categoryId, ImageFile = imageFile });
         }
 
         /// <summary>
         /// Delete main image for a category.
         /// </summary>
         /// <param name="categoryId">Category ID.</param>
-        /// <response code="200">Ok. Upload the image.</response>
+        /// <response code="200">Ok. Delete the image.</response>
         /// <response code="404">Not Found. Category does not exist.</response>
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(StatusResponse), StatusCodes.Status500InternalServerError)]
-        [Consumes("multipart/form-data")]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpDelete("{categoryId}/image")]
-        public async Task<ActionResult<StatusResponse>> DeleteImage(int categoryId)
+        public async Task<IActionResult> DeleteImage(int categoryId)
         {
             _logger.LogInformation("Delete main image for category {categoryId}", categoryId);
             return await _mediator.Send(new DeleteImageRequest { CategoryId = categoryId });

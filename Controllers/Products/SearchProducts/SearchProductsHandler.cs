@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -123,12 +124,12 @@ namespace Ecommerce.Controllers.Products.SearchProducts
 
     public class SearchProductsHandler : IRequestHandler<ProductFilters, ActionResult>
     {
-        private readonly IGenericRepository<Product> _products;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger<SearchProductsHandler> _logger;
 
-        public SearchProductsHandler(IGenericRepository<Product> products, ILogger<SearchProductsHandler> logger)
+        public SearchProductsHandler(ApplicationDbContext context, ILogger<SearchProductsHandler> logger)
         {
-            _products = products;
+            _context = context;
             _logger = logger;
         }
 
@@ -136,7 +137,7 @@ namespace Ecommerce.Controllers.Products.SearchProducts
         {
             try
             {
-                var query = _products.AsQueryable()
+                var query = _context.Products
                     .Include(x => x.Thumbnail)
                     .Include(x => x.GalleryImages)
                     .Include(x => x.Categories)
@@ -194,21 +195,28 @@ namespace Ecommerce.Controllers.Products.SearchProducts
                 switch (filters.SortBy)
                 {
                     case SortCriteria.NAME_ASC:
-                        query = query.OrderBy(x => x.Name); break;
+                        query = query.OrderBy(x => x.Name);
+                        break;
                     case SortCriteria.NAME_DESC:
-                        query = query.OrderByDescending(x => x.Name); break;
+                        query = query.OrderByDescending(x => x.Name);
+                        break;
                     case SortCriteria.PRICE_ASC:
                         query = query.OrderBy(x => x.Price); break;
                     case SortCriteria.PRICE_DESC:
-                        query = query.OrderByDescending(x => x.Price); break;
+                        query = query.OrderByDescending(x => x.Price);
+                        break;
                     case SortCriteria.CREATED_ASC:
-                        query = query.OrderBy(x => x.CreatedAt); break;
+                        query = query.OrderBy(x => x.CreatedAt);
+                        break;
                     case SortCriteria.CREATED_DESC:
-                        query = query.OrderByDescending(x => x.CreatedAt); break;
+                        query = query.OrderByDescending(x => x.CreatedAt);
+                        break;
                     case SortCriteria.UPDATED_ASC:
-                        query = query.OrderBy(x => x.UpdatedAt); break;
+                        query = query.OrderBy(x => x.UpdatedAt);
+                        break;
                     case SortCriteria.UPDATED_DESC:
-                        query = query.OrderByDescending(x => x.UpdatedAt); break;
+                        query = query.OrderByDescending(x => x.UpdatedAt);
+                        break;
                 }
 
                 int total = await query.CountAsync(cancellationToken);
@@ -217,7 +225,7 @@ namespace Ecommerce.Controllers.Products.SearchProducts
                     .Take(filters.Limit)
                     .ToListAsync(cancellationToken);
 
-                return new OkObjectResult(new DataResponse<SearchItems<Product>>
+                return new OkObjectResult(new Response<SearchItems<Product>>
                 {
                     Success = true,
                     Message = "Ok.",

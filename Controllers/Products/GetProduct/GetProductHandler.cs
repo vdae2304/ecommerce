@@ -2,6 +2,7 @@
 using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +21,12 @@ namespace Ecommerce.Controllers.Products.GetProduct
 
     public class GetProductHandler : IRequestHandler<GetProductRequest, ActionResult>
     {
-        private readonly IGenericRepository<Product> _products;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger<GetProductHandler> _logger;
 
-        public GetProductHandler(IGenericRepository<Product> products, ILogger<GetProductHandler> logger)
+        public GetProductHandler(ApplicationDbContext context, ILogger<GetProductHandler> logger)
         {
-            _products = products;
+            _context = context;
             _logger = logger;
         }
 
@@ -33,7 +34,7 @@ namespace Ecommerce.Controllers.Products.GetProduct
         {
             try
             {
-                Product product = await _products.AsQueryable()
+                Product product = await _context.Products
                     .Include(x => x.Thumbnail)
                     .Include(x => x.GalleryImages)
                     .Include(x => x.Categories)
@@ -46,7 +47,7 @@ namespace Ecommerce.Controllers.Products.GetProduct
                     .FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken)
                     ?? throw new NotFoundException($"Product {request.ProductId} does not exist");
 
-                return new OkObjectResult(new DataResponse<Product> 
+                return new OkObjectResult(new Response<Product> 
                 {
                     Success = true,
                     Message = "Ok.",

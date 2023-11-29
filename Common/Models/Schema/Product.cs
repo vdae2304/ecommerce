@@ -61,12 +61,12 @@ namespace Ecommerce.Common.Models.Schema
         /// <summary>
         /// Thumbnail.
         /// </summary>
-        public virtual Image? Thumbnail { get; set; }
+        public virtual MediaImage? Thumbnail { get; set; }
         
         /// <summary>
         /// Gallery images.
         /// </summary>
-        public virtual ICollection<Image> GalleryImages { get; set; } = new List<Image>();
+        public virtual ICollection<MediaImage> GalleryImages { get; set; } = new List<MediaImage>();
 
         /// <summary>
         /// ID of the categories the product is assigned to.

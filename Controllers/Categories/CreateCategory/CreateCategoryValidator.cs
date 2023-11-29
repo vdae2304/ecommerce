@@ -1,18 +1,16 @@
-﻿using Ecommerce.Common.Interfaces;
-using Ecommerce.Common.Models.Schema;
+﻿using Ecommerce.Infrastructure.Data;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Categories.CreateCategory
 {
     public class CreateCategoryValidator : AbstractValidator<CreateCategoryForm>
     {
-        private readonly IGenericRepository<Category> _categories;
-        private readonly IGenericRepository<Product> _products;
+        private readonly ApplicationDbContext _context;
 
-        public CreateCategoryValidator(IGenericRepository<Category> categories, IGenericRepository<Product> products)
+        public CreateCategoryValidator(ApplicationDbContext context)
         {
-            _categories = categories;
-            _products = products;
+            _context = context;
 
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
@@ -32,12 +30,12 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
         private async Task<bool> CategoryExists(int? id, CancellationToken cancellationToken)
         {
             if (id == null) return true;
-            return await _categories.AnyAsync(x => x.Id == id, cancellationToken);
+            return await _context.Categories.AnyAsync(x => x.Id == id, cancellationToken);
         }
 
         private async Task<bool> ProductExists(int id, CancellationToken cancellationToken)
         {
-            return await _products.AnyAsync(x => x.Id == id, cancellationToken);
+            return await _context.Products.AnyAsync(x => x.Id == id, cancellationToken);
         }
     }
 }

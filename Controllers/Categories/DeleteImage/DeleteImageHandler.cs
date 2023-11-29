@@ -2,52 +2,54 @@
 using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Categories.DeleteImage
 {
-    public record DeleteImageRequest : IRequest<ActionResult>
+    public record DeleteImageRequest : IRequest<IActionResult>
     {
         /// <summary>
         /// Category ID.
         /// </summary>
+        [Required]
         public int CategoryId { get; set; }
     }
 
-    public class DeleteImageHandler : IRequestHandler<DeleteImageRequest, ActionResult>
+    public class DeleteImageHandler : IRequestHandler<DeleteImageRequest, IActionResult>
     {
-        private readonly IGenericRepository<Category> _categories;
-        private readonly IGenericRepository<Image> _images;
-        private readonly IFileHandler _fileHandler;
+        private readonly ApplicationDbContext _context;
+        private readonly IFileRepository _fileRepository;
         private readonly ILogger<DeleteImageHandler> _logger;
 
-        public DeleteImageHandler(IGenericRepository<Category> categories, IGenericRepository<Image> images,
-            IFileHandler fileHandler, ILogger<DeleteImageHandler> logger)
+        public DeleteImageHandler(ApplicationDbContext context, IFileRepository fileRepository,
+            ILogger<DeleteImageHandler> logger)
         {
-            _categories = categories;
-            _images = images;
-            _fileHandler = fileHandler;
+            _context = context;
+            _fileRepository = fileRepository;
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(DeleteImageRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(DeleteImageRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                Category category = await _categories.AsQueryable()
+                Category category = await _context.Categories
                     .Include(x => x.Thumbnail)
                     .FirstOrDefaultAsync(x => x.Id == request.CategoryId, cancellationToken)
                     ?? throw new NotFoundException($"Category {request.CategoryId} does not exist");
 
                 if (category.Thumbnail != null)
                 {
-                    _fileHandler.DeleteFile(category.Thumbnail.FileId);
-                    await _images.DeleteAsync(category.Thumbnail, cancellationToken);
+                    await _fileRepository.DeleteFileAsync(category.Thumbnail.FileId);
+                    _context.MediaImages.Remove(category.Thumbnail);
+                    await _context.SaveChangesAsync(cancellationToken);
                 }
 
-                return new OkObjectResult(new StatusResponse
+                return new OkObjectResult(new Response
                 {
                     Success = true,
                     Message = "Ok."

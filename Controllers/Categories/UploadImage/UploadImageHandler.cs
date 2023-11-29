@@ -2,14 +2,21 @@
 using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Categories.UploadImage
 {
-    public record UploadImageForm : IRequest<ActionResult>
+    public record UploadImageRequest : IRequest<IActionResult>
     {
+        /// <summary>
+        /// Category ID.
+        /// </summary>
+        [Required]
+        public int CategoryId { get; set; }
         /// <summary>
         /// Image file.
         /// </summary>
@@ -17,29 +24,21 @@ namespace Ecommerce.Controllers.Categories.UploadImage
         public IFormFile ImageFile { get; set; }
     }
 
-    public record UploadImageRequest : UploadImageForm
+    public class UploadImageHandler : IRequestHandler<UploadImageRequest, IActionResult>
     {
-        /// <summary>
-        /// Product ID.
-        /// </summary>
-        public int CategoryId { get; set; }
-    }
-
-    public class UploadImageHandler : IRequestHandler<UploadImageRequest, ActionResult>
-    {
-        private readonly IGenericRepository<Category> _categories;
-        private readonly IFileHandler _fileHandler;
+        private readonly ApplicationDbContext _context;
+        private readonly IFileRepository _fileRepository;
         private readonly ILogger<UploadImageHandler> _logger;
 
-        public UploadImageHandler(IGenericRepository<Category> categories, IFileHandler fileHandler,
+        public UploadImageHandler(ApplicationDbContext context, IFileRepository fileRepository,
             ILogger<UploadImageHandler> logger)
         {
-            _categories = categories;
-            _fileHandler = fileHandler;
+            _context = context;
+            _fileRepository = fileRepository;
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(UploadImageRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(UploadImageRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -50,26 +49,38 @@ namespace Ecommerce.Controllers.Categories.UploadImage
                     throw new BadRequestException(validationResult.ToString());
                 }
 
-                Category category = await _categories.FindByIdAsync(request.CategoryId, cancellationToken)
+                Category category = await _context.Categories
+                    .Include(x => x.Thumbnail)
+                    .FirstOrDefaultAsync(x => x.Id == request.CategoryId, cancellationToken)
                     ?? throw new NotFoundException($"Category {request.CategoryId} does not exist");
 
-                var image = System.Drawing.Image.FromStream(request.ImageFile.OpenReadStream());
-                string fileId = _fileHandler.UploadFile(request.ImageFile);
+                var image = await Image.LoadAsync(request.ImageFile.OpenReadStream(), cancellationToken);
 
-                category.Thumbnail = new Image
+                string fileId = Guid.NewGuid().ToString() + Path.GetExtension(request.ImageFile.FileName);
+                await _fileRepository.UploadFileAsync(request.ImageFile.OpenReadStream(), fileId);
+
+                MediaImage? oldThumbnail = category.Thumbnail;
+                category.Thumbnail = new MediaImage
                 {
                     FileId = fileId,
-                    Url = _fileHandler.GetFileUrl(fileId),
+                    Url = _fileRepository.GetFileUrl(fileId),
                     Width = image.Width,
                     Height = image.Height
                 };
 
-                await _categories.UpdateAsync(category, cancellationToken);
+                if (oldThumbnail != null)
+                {
+                    await _fileRepository.DeleteFileAsync(oldThumbnail.FileId);
+                    _context.MediaImages.Remove(oldThumbnail);
+                }
 
-                return new OkObjectResult(new StatusResponse
+                _context.Categories.Update(category);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new OkObjectResult(new Response
                 {
                     Success = true,
-                    Message = $"Image uploaded with id {category.ThumbnailId}"
+                    Message = $"Image uploaded with id {category.Thumbnail.Id}"
                 });
             }
             catch (Exception ex)

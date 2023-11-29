@@ -2,14 +2,20 @@
 using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Products.UploadGalleryImage
 {
-    public record UploadGalleryImageForm : IRequest<ActionResult>
+    public record UploadGalleryImageRequest : IRequest<ActionResult>
     {
+        /// <summary>
+        /// Product ID.
+        /// </summary>
+        public int ProductId { get; set; }
         /// <summary>
         /// Image file.
         /// </summary>
@@ -17,27 +23,17 @@ namespace Ecommerce.Controllers.Products.UploadGalleryImage
         public IFormFile ImageFile { get; set; }
     }
 
-    public record UploadGalleryImageRequest : UploadGalleryImageForm
-    {
-        /// <summary>
-        /// Product ID.
-        /// </summary>
-        public int ProductId { get; set; }
-    }
-
     public class UploadGalleryImageHandler : IRequestHandler<UploadGalleryImageRequest, ActionResult>
     {
-        private readonly IGenericRepository<Product> _products;
-        private readonly IGenericRepository<Image> _images;
-        private readonly IFileHandler _fileHandler;
+        private readonly ApplicationDbContext _context;
+        private readonly IFileRepository _fileRepository;
         private readonly ILogger<UploadGalleryImageHandler> _logger;
 
-        public UploadGalleryImageHandler(IGenericRepository<Product> products, IGenericRepository<Image> images,
-            IFileHandler fileHandler, ILogger<UploadGalleryImageHandler> logger)
+        public UploadGalleryImageHandler(ApplicationDbContext context, IFileRepository fileRepository,
+            ILogger<UploadGalleryImageHandler> logger)
         {
-            _products = products;
-            _images = images;
-            _fileHandler = fileHandler;
+            _context = context;
+            _fileRepository = fileRepository;
             _logger = logger;
         }
 
@@ -52,26 +48,30 @@ namespace Ecommerce.Controllers.Products.UploadGalleryImage
                     throw new BadRequestException(validationResult.ToString());
                 }
 
-                Product product = await _products.FindByIdAsync(request.ProductId, cancellationToken)
+                Product product = await _context.Products
+                    .FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken)
                     ?? throw new NotFoundException($"Product {request.ProductId} does not exist");
 
-                var image = System.Drawing.Image.FromStream(request.ImageFile.OpenReadStream());
-                string fileId = _fileHandler.UploadFile(request.ImageFile);
+                var image = await Image.LoadAsync(request.ImageFile.OpenReadStream(), cancellationToken);
 
-                product.GalleryImages.Add(new Image
+                string fileId = Guid.NewGuid().ToString() + Path.GetExtension(request.ImageFile.FileName);
+                await _fileRepository.UploadFileAsync(request.ImageFile.OpenReadStream(), fileId);
+
+                product.GalleryImages.Add(new MediaImage
                 {
                     FileId = fileId,
-                    Url = _fileHandler.GetFileUrl(fileId),
+                    Url = _fileRepository.GetFileUrl(fileId),
                     Width = image.Width,
                     Height = image.Height
                 });
 
-                await _products.UpdateAsync(product, cancellationToken);
+                _context.Products.Update(product);
+                await _context.SaveChangesAsync(cancellationToken);
 
-                return new OkObjectResult(new StatusResponse
+                return new OkObjectResult(new Response
                 {
                     Success = true,
-                    Message = "Ok."
+                    Message = $"Image uploaded with id {product.GalleryImages.Last().Id}"
                 });
             }
             catch (Exception ex)

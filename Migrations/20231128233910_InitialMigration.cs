@@ -16,25 +16,6 @@ namespace Ecommerce.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "images",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    file_id = table.Column<string>(type: "varchar(255)", nullable: false),
-                    url = table.Column<string>(type: "longtext", nullable: false),
-                    width = table.Column<int>(type: "int", nullable: false),
-                    height = table.Column<int>(type: "int", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false),
-                    updated_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_images", x => x.id);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "measure_units",
                 columns: table => new
                 {
@@ -49,6 +30,25 @@ namespace Ecommerce.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_measure_units", x => x.id);
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "media_images",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    file_id = table.Column<string>(type: "varchar(255)", nullable: false),
+                    url = table.Column<string>(type: "longtext", nullable: false),
+                    width = table.Column<int>(type: "int", nullable: false),
+                    height = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_media_images", x => x.id);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -76,9 +76,9 @@ namespace Ecommerce.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_categories_image_thumbnail_id",
+                        name: "fk_categories_media_images_thumbnail_id",
                         column: x => x.thumbnail_id,
-                        principalTable: "images",
+                        principalTable: "media_images",
                         principalColumn: "id",
                         onDelete: ReferentialAction.SetNull);
                 })
@@ -115,12 +115,6 @@ namespace Ecommerce.Migrations
                 {
                     table.PrimaryKey("pk_products", x => x.id);
                     table.ForeignKey(
-                        name: "fk_products_image_thumbnail_id",
-                        column: x => x.thumbnail_id,
-                        principalTable: "images",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.SetNull);
-                    table.ForeignKey(
                         name: "fk_products_measure_unit_dimension_units_id",
                         column: x => x.dimension_units_id,
                         principalTable: "measure_units",
@@ -136,6 +130,12 @@ namespace Ecommerce.Migrations
                         name: "fk_products_measure_unit_weight_units_id",
                         column: x => x.weight_units_id,
                         principalTable: "measure_units",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "fk_products_media_images_thumbnail_id",
+                        column: x => x.thumbnail_id,
+                        principalTable: "media_images",
                         principalColumn: "id",
                         onDelete: ReferentialAction.SetNull);
                 })
@@ -201,9 +201,9 @@ namespace Ecommerce.Migrations
                 {
                     table.PrimaryKey("pk_product_images", x => new { x.product_id, x.image_id });
                     table.ForeignKey(
-                        name: "fk_product_images_image_image_id",
+                        name: "fk_product_images_media_images_image_id",
                         column: x => x.image_id,
-                        principalTable: "images",
+                        principalTable: "media_images",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -227,15 +227,15 @@ namespace Ecommerce.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_images_file_id",
-                table: "images",
-                column: "file_id",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "ix_measure_units_symbol",
                 table: "measure_units",
                 column: "symbol",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_media_images_file_id",
+                table: "media_images",
+                column: "file_id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -300,10 +300,10 @@ namespace Ecommerce.Migrations
                 name: "products");
 
             migrationBuilder.DropTable(
-                name: "images");
+                name: "measure_units");
 
             migrationBuilder.DropTable(
-                name: "measure_units");
+                name: "media_images");
         }
     }
 }

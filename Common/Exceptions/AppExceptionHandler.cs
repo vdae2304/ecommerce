@@ -8,7 +8,7 @@ namespace Ecommerce.Common.Exceptions
     {
         public void OnException(ExceptionContext context)
         {
-            var response = new StatusResponse
+            var response = new Response
             {
                 Success = false,
                 Message = context.Exception.Message

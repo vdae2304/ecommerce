@@ -1,7 +1,7 @@
 ﻿using Ecommerce.Common.Exceptions;
-using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Categories.GetCategory
 {
-    public record GetCategoryRequest : IRequest<ActionResult>
+    public record GetCategoryRequest : IRequest<IActionResult>
     {
         /// <summary>
         /// Category ID.
@@ -18,22 +18,22 @@ namespace Ecommerce.Controllers.Categories.GetCategory
         public int CategoryId { get; set; } 
     }
 
-    public class GetCategoryHandler : IRequestHandler<GetCategoryRequest, ActionResult>
+    public class GetCategoryHandler : IRequestHandler<GetCategoryRequest, IActionResult>
     {
-        private readonly IGenericRepository<Category> _categories;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger<GetCategoryHandler> _logger;
 
-        public GetCategoryHandler(IGenericRepository<Category> categories, ILogger<GetCategoryHandler> logger)
+        public GetCategoryHandler(ApplicationDbContext context, ILogger<GetCategoryHandler> logger)
         {
-            _categories = categories;
+            _context = context;
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(GetCategoryRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(GetCategoryRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                Category category = await _categories.AsQueryable()
+                Category category = await _context.Categories
                     .Include(x => x.Thumbnail)
                     .Include(x => x.Subcategories)
                     .AsSplitQuery()
@@ -41,7 +41,7 @@ namespace Ecommerce.Controllers.Categories.GetCategory
                     .FirstOrDefaultAsync(x => x.Id == request.CategoryId, cancellationToken)
                     ?? throw new NotFoundException($"Category {request.CategoryId} does not exist");
 
-                return new OkObjectResult(new DataResponse<Category>
+                return new OkObjectResult(new Response<Category>
                 {
                     Success = true,
                     Message = "Ok.",

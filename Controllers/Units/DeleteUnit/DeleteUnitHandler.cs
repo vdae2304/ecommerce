@@ -2,12 +2,14 @@
 using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Units.DeleteUnit
 {
-    public record DeleteUnitRequest : IRequest<ActionResult>
+    public record DeleteUnitRequest : IRequest<IActionResult>
     {
         /// <summary>
         /// Unit ID.
@@ -15,27 +17,29 @@ namespace Ecommerce.Controllers.Units.DeleteUnit
         public int UnitId;
     }
 
-    public class DeleteUnitHandler : IRequestHandler<DeleteUnitRequest, ActionResult>
+    public class DeleteUnitHandler : IRequestHandler<DeleteUnitRequest, IActionResult>
     {
-        private readonly IGenericRepository<MeasureUnit> _units;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger<DeleteUnitHandler> _logger;
 
-        public DeleteUnitHandler(IGenericRepository<MeasureUnit> units, ILogger<DeleteUnitHandler> logger)
+        public DeleteUnitHandler(ApplicationDbContext context, ILogger<DeleteUnitHandler> logger)
         {
-            _units = units;
+            _context = context;
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(DeleteUnitRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(DeleteUnitRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                MeasureUnit unit = await _units.FindByIdAsync(request.UnitId, cancellationToken)
+                MeasureUnit unit = await _context.MeasureUnits
+                    .FirstOrDefaultAsync(x => x.Id == request.UnitId, cancellationToken)
                     ?? throw new NotFoundException($"Unit {request.UnitId} does not exist");
                 
-                await _units.DeleteAsync(unit, cancellationToken);
+                _context.MeasureUnits.Remove(unit);
+                await _context.SaveChangesAsync(cancellationToken);
 
-                return new OkObjectResult(new StatusResponse
+                return new OkObjectResult(new Response
                 {
                     Success = true,
                     Message = "OK."
