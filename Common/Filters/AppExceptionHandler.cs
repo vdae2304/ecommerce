@@ -1,8 +1,9 @@
-﻿using Ecommerce.Common.Models.Responses;
+﻿using Ecommerce.Common.Exceptions;
+using Ecommerce.Common.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Ecommerce.Common.Exceptions
+namespace Ecommerce.Common.Filters
 {
     public class AppExceptionHandler : IExceptionFilter
     {

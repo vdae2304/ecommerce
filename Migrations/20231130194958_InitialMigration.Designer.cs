@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231129225038_InitialMigration")]
+    [Migration("20231130194958_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -305,7 +305,7 @@ namespace Ecommerce.Migrations
                     b.HasOne("Ecommerce.Common.Models.Schema.Category", null)
                         .WithMany("Subcategories")
                         .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_categories_categories_category_id");
 
                     b.HasOne("Ecommerce.Common.Models.Schema.MediaImage", "Thumbnail")

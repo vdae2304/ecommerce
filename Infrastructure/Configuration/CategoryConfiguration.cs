@@ -23,7 +23,7 @@ namespace Ecommerce.Infrastructure.Configuration
             builder.HasMany(x => x.Subcategories)
                 .WithOne()
                 .HasForeignKey(x => x.ParentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(x => x.CreatedAt).HasPrecision(0).IsRequired();
             builder.Property(x => x.UpdatedAt).HasPrecision(0).IsRequired();

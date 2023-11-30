@@ -1,4 +1,4 @@
-﻿using Ecommerce.Common.Exceptions;
+﻿using Ecommerce.Common.Filters;
 using Ecommerce.Common.Interfaces;
 using Ecommerce.Infrastructure.Data;
 using Ecommerce.Infrastructure.Implementation;
@@ -6,7 +6,6 @@ using FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Ecommerce.Infrastructure
@@ -17,6 +16,9 @@ namespace Ecommerce.Infrastructure
         {
             services.AddControllers(options => {
                 options.Filters.Add(typeof(AppExceptionHandler));
+            })
+            .ConfigureApiBehaviorOptions(options => {
+                options.InvalidModelStateResponseFactory = ApiBehaviorHandler.InvalidModelState;
             })
             .AddJsonOptions(options => {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());

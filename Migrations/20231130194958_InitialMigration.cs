@@ -56,7 +56,7 @@ namespace Ecommerce.Migrations
                         column: x => x.parent_id,
                         principalTable: "categories",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "fk_categories_media_images_thumbnail_id",
                         column: x => x.thumbnail_id,

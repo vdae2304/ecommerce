@@ -302,7 +302,7 @@ namespace Ecommerce.Migrations
                     b.HasOne("Ecommerce.Common.Models.Schema.Category", null)
                         .WithMany("Subcategories")
                         .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_categories_categories_category_id");
 
                     b.HasOne("Ecommerce.Common.Models.Schema.MediaImage", "Thumbnail")
