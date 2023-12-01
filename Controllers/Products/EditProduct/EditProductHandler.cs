@@ -187,7 +187,7 @@ namespace Ecommerce.Controllers.Products.EditProduct
                 return new OkObjectResult(new Response
                 {
                     Success = true,
-                    Message = $"Ok."
+                    Message = "Ok."
                 });
             }
             catch (Exception ex)

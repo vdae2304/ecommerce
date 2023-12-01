@@ -71,7 +71,7 @@ namespace Ecommerce.Controllers.Products.UploadGalleryImage
                 return new OkObjectResult(new Response<CreatedId>
                 {
                     Success = true,
-                    Message = $"Ok.",
+                    Message = "Ok.",
                     Data = new CreatedId { Id = product.GalleryImages.Last().Id }
                 });
             }

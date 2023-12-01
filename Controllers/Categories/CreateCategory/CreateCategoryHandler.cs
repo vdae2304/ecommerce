@@ -76,7 +76,7 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
                 return new OkObjectResult(new Response<CreatedId>
                 {
                     Success = true,
-                    Message = $"Ok.",
+                    Message = "Ok.",
                     Data = new CreatedId { Id = category.Id }
                 });
             }

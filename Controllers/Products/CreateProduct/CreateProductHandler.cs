@@ -148,7 +148,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
                 return new OkObjectResult(new Response<CreatedId>
                 {
                     Success = true,
-                    Message = $"Ok.",
+                    Message = "Ok.",
                     Data = new CreatedId { Id = product.Id }
                 });
             }
