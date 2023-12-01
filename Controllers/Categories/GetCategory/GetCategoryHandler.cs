@@ -36,6 +36,7 @@ namespace Ecommerce.Controllers.Categories.GetCategory
                 Category category = await _context.Categories
                     .Include(x => x.Thumbnail)
                     .Include(x => x.Subcategories)
+                    .ThenInclude(x => x.Thumbnail)
                     .AsSplitQuery()
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == request.CategoryId, cancellationToken)

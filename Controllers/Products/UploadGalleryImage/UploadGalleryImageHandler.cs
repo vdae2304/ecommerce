@@ -68,10 +68,11 @@ namespace Ecommerce.Controllers.Products.UploadGalleryImage
                 _context.Products.Update(product);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return new OkObjectResult(new Response
+                return new OkObjectResult(new Response<CreatedId>
                 {
                     Success = true,
-                    Message = $"Image uploaded with id {product.GalleryImages.Last().Id}"
+                    Message = $"Ok.",
+                    Data = new CreatedId { Id = product.GalleryImages.Last().Id }
                 });
             }
             catch (Exception ex)

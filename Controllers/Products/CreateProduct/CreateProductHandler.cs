@@ -145,10 +145,11 @@ namespace Ecommerce.Controllers.Products.CreateProduct
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return new OkObjectResult(new Response
+                return new OkObjectResult(new Response<CreatedId>
                 {
                     Success = true,
-                    Message = $"Product created with ID {product.Id}"
+                    Message = $"Ok.",
+                    Data = new CreatedId { Id = product.Id }
                 });
             }
             catch (Exception ex)

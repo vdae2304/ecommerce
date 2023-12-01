@@ -3,6 +3,7 @@ using Ecommerce.Common.Models.Schema;
 using Ecommerce.Controllers.Categories.CreateCategory;
 using Ecommerce.Controllers.Categories.DeleteCategory;
 using Ecommerce.Controllers.Categories.DeleteImage;
+using Ecommerce.Controllers.Categories.EditCategory;
 using Ecommerce.Controllers.Categories.GetCategory;
 using Ecommerce.Controllers.Categories.SearchCategories;
 using Ecommerce.Controllers.Categories.UploadImage;
@@ -60,13 +61,31 @@ namespace Ecommerce.Controllers.Categories
         /// <param name="request">Category values.</param>
         /// <response code="200">Ok. Return the ID of the category created.</response>
         /// <response code="400">Bad request. Invalid field.</response>
-        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response<CreatedId>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCategoryForm request)
         {
             _logger.LogInformation("Create category {name}", request.Name);
+            return await _mediator.Send(request);
+        }
+
+        /// <summary>
+        /// Edit a category.
+        /// </summary>
+        /// <param name="categoryId">Category ID.</param>
+        /// <param name="request">Category values.</param>
+        /// <response code="200">Ok. Update the category values.</response>
+        /// <response code="400">Bad request. Invalid field.</response>
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [HttpPut("{categoryId}")]
+        public async Task<IActionResult> Edit(int categoryId, [FromBody] EditCategoryForm request)
+        {
+            request.CategoryId = categoryId;
+            _logger.LogInformation("Edit category {categoryId}", categoryId);
             return await _mediator.Send(request);
         }
 

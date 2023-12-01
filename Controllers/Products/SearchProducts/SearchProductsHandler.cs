@@ -139,7 +139,6 @@ namespace Ecommerce.Controllers.Products.SearchProducts
             {
                 var query = _context.Products
                     .Include(x => x.Thumbnail)
-                    .Include(x => x.GalleryImages)
                     .Include(x => x.Categories)
                     .Include(x => x.Attributes)
                     .AsSplitQuery()

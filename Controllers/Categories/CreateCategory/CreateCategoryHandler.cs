@@ -30,7 +30,7 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
-        /// ID of the products assigned to the category.
+        /// ID of the products to assign to the category.
         /// </summary>
         public IEnumerable<int> ProductIds { get; set; } = new List<int>();
 
@@ -73,10 +73,11 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
                 _context.Categories.Add(category);
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return new OkObjectResult(new Response
+                return new OkObjectResult(new Response<CreatedId>
                 {
                     Success = true,
-                    Message = $"Category created with id {category.Id}"
+                    Message = $"Ok.",
+                    Data = new CreatedId { Id = category.Id }
                 });
             }
             catch (Exception ex)

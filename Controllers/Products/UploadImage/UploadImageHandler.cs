@@ -79,7 +79,7 @@ namespace Ecommerce.Controllers.Products.UploadImage
                 return new OkObjectResult(new Response
                 {
                     Success = true,
-                    Message = $"Image uploaded with id {product.Thumbnail.Id}"
+                    Message = $"Ok."
                 });
             }
             catch (Exception ex)

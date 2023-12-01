@@ -53,7 +53,6 @@ namespace Ecommerce.Controllers.Categories.SearchCategories
             {
                 var query = _context.Categories
                     .Include(x => x.Thumbnail)
-                    .Include(x => x.Subcategories)
                     .AsSplitQuery()
                     .AsNoTracking();
 
@@ -82,7 +81,8 @@ namespace Ecommerce.Controllers.Categories.SearchCategories
                 {
                     Success = true,
                     Message = "Ok.",
-                    Data = new SearchItems<Category> {
+                    Data = new SearchItems<Category>
+                    {
                         Total = total,
                         Offset = filters.Offset,
                         Limit = filters.Limit,

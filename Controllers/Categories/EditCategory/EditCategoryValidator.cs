@@ -2,23 +2,19 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ecommerce.Controllers.Categories.CreateCategory
+namespace Ecommerce.Controllers.Categories.EditCategory
 {
-    public class CreateCategoryValidator : AbstractValidator<CreateCategoryForm>
+    public class EditCategoryValidator : AbstractValidator<EditCategoryForm>
     {
         private readonly ApplicationDbContext _context;
 
-        public CreateCategoryValidator(ApplicationDbContext context)
+        public EditCategoryValidator(ApplicationDbContext context)
         {
             _context = context;
 
             RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("Field {PropertyName} is required")
                 .MaximumLength(128).WithMessage("Field {PropertyName} cannot have more than {MaxLength} characters")
                 .Matches(@"^[A-Za-zÀ-ÖØ-öø-ÿ0-9 ]+$").WithMessage("Field {PropertyName} is not in a valid format");
-
-            RuleFor(x => x.Description)
-                .NotNull().WithMessage("Field {PropertyName} is required");
 
             RuleFor(x => x.ParentId)
                 .MustAsync(CategoryExists).WithMessage("Category {PropertyValue} does not exist");
@@ -29,7 +25,8 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
 
         private async Task<bool> CategoryExists(int? id, CancellationToken cancellationToken)
         {
-            return (id == null) || await _context.Categories.AnyAsync(x => x.Id == id, cancellationToken);
+            return (id == null) || (id == 0)
+                || await _context.Categories.AnyAsync(x => x.Id == id, cancellationToken);
         }
 
         private async Task<bool> ProductExists(int id, CancellationToken cancellationToken)

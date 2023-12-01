@@ -4,6 +4,7 @@ using Ecommerce.Controllers.Products.CreateProduct;
 using Ecommerce.Controllers.Products.DeleteGalleryImage;
 using Ecommerce.Controllers.Products.DeleteImage;
 using Ecommerce.Controllers.Products.DeleteProduct;
+using Ecommerce.Controllers.Products.EditProduct;
 using Ecommerce.Controllers.Products.GetProduct;
 using Ecommerce.Controllers.Products.SearchProducts;
 using Ecommerce.Controllers.Products.UploadGalleryImage;
@@ -62,13 +63,31 @@ namespace Ecommerce.Controllers.Products
         /// <param name="request">Product values.</param>
         /// <response code="200">Ok. Return the ID of the product created.</response>
         /// <response code="400">Bad request. Invalid field.</response>
-        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response<CreatedId>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateProductForm request)
         {
             _logger.LogInformation("Create product {sku}", request.Sku);
+            return await _mediator.Send(request);
+        }
+
+        /// <summary>
+        /// Edit a product.
+        /// </summary>
+        /// <param name="productId">Product ID.</param>
+        /// <param name="request">Product values.</param>
+        /// <response code="200">Ok. Update the product values.</response>
+        /// <response code="400">Bad request. Invalid field.</response>
+        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [HttpPut("{productId}")]
+        public async Task<IActionResult> Edit(int productId, [FromBody] EditProductForm request)
+        {
+            request.ProductId = productId;
+            _logger.LogInformation("Edit product {productId}", productId);
             return await _mediator.Send(request);
         }
 
@@ -132,7 +151,7 @@ namespace Ecommerce.Controllers.Products
         /// <response code="200">Ok. Upload the image.</response>
         /// <response code="400">Bad request. Invalid file.</response>
         /// <response code="404">Not Found. Product does not exist.</response>
-        [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response<CreatedId>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
