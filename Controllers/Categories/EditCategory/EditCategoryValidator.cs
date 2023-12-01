@@ -21,18 +21,18 @@ namespace Ecommerce.Controllers.Categories.EditCategory
                 .NotEmpty().WithMessage("Field {PropertyName} is required");
 
             RuleFor(x => x.ParentId)
-                .MustAsync(CategoryExists).WithMessage("Category {PropertyValue} does not exist");
+                .MustAsync(CategoryExistsAsync).WithMessage("Category {PropertyValue} does not exist");
 
             RuleForEach(x => x.ProductIds)
-                .MustAsync(ProductExists).WithMessage("Product {PropertyValue} does not exist");
+                .MustAsync(ProductExistsAsync).WithMessage("Product {PropertyValue} does not exist");
         }
 
-        private async Task<bool> CategoryExists(int? id, CancellationToken cancellationToken)
+        private async Task<bool> CategoryExistsAsync(int? id, CancellationToken cancellationToken)
         {
             return (id == null) || await _context.Categories.AnyAsync(x => x.Id == id, cancellationToken);
         }
 
-        private async Task<bool> ProductExists(int id, CancellationToken cancellationToken)
+        private async Task<bool> ProductExistsAsync(int id, CancellationToken cancellationToken)
         {
             return await _context.Products.AnyAsync(x => x.Id == id, cancellationToken);
         }

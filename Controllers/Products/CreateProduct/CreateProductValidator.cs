@@ -31,7 +31,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
                 .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
 
             RuleForEach(x => x.CategoryIds)
-                .MustAsync(CategoryExists).WithMessage("Category {PropertyValue} does not exist");
+                .MustAsync(CategoryExistsAsync).WithMessage("Category {PropertyValue} does not exist");
 
             RuleForEach(x => x.Attributes).SetValidator(new CreateAttributeValidator());
 
@@ -73,7 +73,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
             return !await _context.Products.AnyAsync(x => x.Sku == sku, cancellationToken);
         }
 
-        private async Task<bool> CategoryExists(int id, CancellationToken cancellationToken = default)
+        private async Task<bool> CategoryExistsAsync(int id, CancellationToken cancellationToken = default)
         {
             return await _context.Categories.AnyAsync(x => x.Id == id, cancellationToken);
         }
