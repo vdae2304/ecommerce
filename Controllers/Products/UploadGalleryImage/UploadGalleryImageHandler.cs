@@ -6,6 +6,7 @@ using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SixLabors.ImageSharp;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Products.UploadGalleryImage

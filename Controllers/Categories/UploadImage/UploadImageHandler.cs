@@ -6,7 +6,7 @@ using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+using SixLabors.ImageSharp;
 
 namespace Ecommerce.Controllers.Categories.UploadImage
 {
