@@ -21,7 +21,8 @@ namespace Ecommerce.Controllers.Categories.SearchCategories
         public int? Parent { get; set; }
 
         /// <summary>
-        /// If true, show only enabled categories. If false, show only disabled categories.
+        /// If true, show only enabled categories.
+        /// If false, show only disabled categories.
         /// </summary>
         public bool? Enabled { get; set; }
 

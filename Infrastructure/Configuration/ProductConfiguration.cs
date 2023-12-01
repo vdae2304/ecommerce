@@ -19,6 +19,8 @@ namespace Ecommerce.Infrastructure.Configuration
             builder.Property(x => x.CrossedOutPrice).HasPrecision(10, 4).IsRequired(false);
             builder.Property(x => x.MinPurchaseQuantity).IsRequired();
             builder.Property(x => x.MaxPurchaseQuantity).IsRequired();
+            builder.Property(x => x.InStock).IsRequired();
+            builder.Property(x => x.Unlimited).IsRequired();
             builder.Property(x => x.Enabled).IsRequired();
 
             builder.HasOne(x => x.Thumbnail)

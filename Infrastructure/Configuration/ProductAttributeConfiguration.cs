@@ -12,6 +12,7 @@ namespace Ecommerce.Infrastructure.Configuration
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Name).HasMaxLength(128).IsRequired();
+            builder.Property(x => x.Value).HasMaxLength(256).IsRequired(false);
 
             builder.Property(x => x.CreatedAt).HasPrecision(0).IsRequired();
             builder.Property(x => x.UpdatedAt).HasPrecision(0).IsRequired();

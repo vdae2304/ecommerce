@@ -14,6 +14,7 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
     {
         /// <summary>
         /// ID of the parent category, if any.
+        /// Default is to set as root category.
         /// </summary>
         public int? ParentId { get; set; }
 
@@ -36,6 +37,7 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
 
         /// <summary>
         /// Whether the category is enabled or not.
+        /// Default is true.
         /// </summary>
         public bool Enabled { get; set; } = true;
     }

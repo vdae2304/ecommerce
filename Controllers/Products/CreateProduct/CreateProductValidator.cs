@@ -24,10 +24,10 @@ namespace Ecommerce.Controllers.Products.CreateProduct
                 .Matches(@"^[A-Za-zÀ-ÖØ-öø-ÿ0-9 ]+$").WithMessage("Field {PropertyName} is not in a valid format");
 
             RuleFor(x => x.Description)
-                .NotNull().WithMessage("Field {PropertyName} is required");
+                .NotEmpty().WithMessage("Field {PropertyName} is required");
 
             RuleFor(x => x.Price)
-                .NotNull().WithMessage("Field {PropertyName} is required")
+                .NotEmpty().WithMessage("Field {PropertyName} is required")
                 .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
 
             RuleForEach(x => x.CategoryIds)
@@ -35,13 +35,13 @@ namespace Ecommerce.Controllers.Products.CreateProduct
 
             RuleForEach(x => x.Attributes).SetValidator(new CreateAttributeValidator());
 
+            RuleFor(x => x.Length)
+                .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
+
             RuleFor(x => x.Width)
                 .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
 
             RuleFor(x => x.Height)
-                .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
-
-            RuleFor(x => x.Length)
                 .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
 
             RuleFor(x => x.DimensionUnits)
@@ -87,6 +87,9 @@ namespace Ecommerce.Controllers.Products.CreateProduct
                 .NotEmpty().WithMessage("Field Attribute.{PropertyName} is required")
                 .MaximumLength(128).WithMessage("Field Attribute.{PropertyName} cannot have more than {MaxLength} characters")
                 .Matches(@"^[A-Za-zÀ-ÖØ-öø-ÿ ]+$").WithMessage("Field Attribute.{PropertyName} is not in a valid format");
+
+            RuleFor(x => x.Value)
+                .MaximumLength(256).WithMessage("Field Attribute.{PropertyName} cannot have more than {MaxLength} characters");
         }
     }
 }

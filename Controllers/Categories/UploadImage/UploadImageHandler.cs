@@ -15,12 +15,10 @@ namespace Ecommerce.Controllers.Categories.UploadImage
         /// <summary>
         /// Category ID.
         /// </summary>
-        [Required]
         public int CategoryId { get; set; }
         /// <summary>
         /// Image file.
         /// </summary>
-        [Required]
         public IFormFile ImageFile { get; set; }
     }
 

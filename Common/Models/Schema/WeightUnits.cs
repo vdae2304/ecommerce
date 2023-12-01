@@ -8,18 +8,33 @@
         /// <summary>
         /// Kilogram.
         /// </summary>
-        KG = 0,
+        Kilogram = 0,
         /// <summary>
         /// Gram.
         /// </summary>
-        G = 1,
+        Gram = 1,
         /// <summary>
         /// Ounce.
         /// </summary>
-        OZ = 3,
+        Ounce = 3,
         /// <summary>
         /// Pound.
         /// </summary>
-        LB = 4
+        Pound = 4
+    }
+
+    public static partial class WeightUnitsSymbols
+    {
+        public static string Symbol(this WeightUnits weightUnits)
+        {
+            return weightUnits switch
+            {
+                WeightUnits.Kilogram => "kg",
+                WeightUnits.Gram => "g",
+                WeightUnits.Ounce => "oz",
+                WeightUnits.Pound => "lb",
+                _ => string.Empty,
+            };
+        }
     }
 }

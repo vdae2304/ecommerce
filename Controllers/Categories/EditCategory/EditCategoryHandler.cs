@@ -5,6 +5,7 @@ using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Ecommerce.Controllers.Categories.EditCategory
@@ -18,29 +19,33 @@ namespace Ecommerce.Controllers.Categories.EditCategory
         public int CategoryId { get; set; }
 
         /// <summary>
-        /// (Optional) ID of the parent category.
+        /// ID of the parent category, if any.
+        /// Default is to set as root category.
         /// </summary>
-        public int? ParentId { get; set; } = 0;
+        public int? ParentId { get; set; }
 
         /// <summary>
-        /// (Optional) Category name.
+        /// Category name.
         /// </summary>
-        public string? Name { get; set; }
+        [Required]
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
-        /// (Optional) Category description.
+        /// Category description.
         /// </summary>
-        public string? Description { get; set; }
+        [Required]
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
-        /// (Optional) ID of the products to assign to the category.
+        /// ID of the products to assign to the category.
         /// </summary>
         public IEnumerable<int> ProductIds { get; set; } = new List<int>();
 
         /// <summary>
-        /// (Optional) Whether the category is enabled or not.
+        /// Whether the category is enabled or not.
+        /// Default is true.
         /// </summary>
-        public bool? Enabled { get; set; }
+        public bool Enabled { get; set; } = true;
     }
 
     public class EditCategoryHandler : IRequestHandler<EditCategoryForm, IActionResult>
@@ -69,26 +74,19 @@ namespace Ecommerce.Controllers.Categories.EditCategory
                     .FirstOrDefaultAsync(x => x.Id == request.CategoryId, cancellationToken)
                     ?? throw new NotFoundException($"Category {request.CategoryId} does not exist");
 
-                if (request.ParentId != 0)
-                {
-                    category.ParentId = request.ParentId;
-                }
-                if (request.Name != null)
-                {
-                    category.Name = request.Name;
-                }
-                if (request.Description != null)
-                {
-                    category.Description = request.Description;
-                }
-                if (request.Enabled != null)
-                {
-                    category.Enabled = request.Enabled.Value;
-                }
+                category.ParentId = request.ParentId;
+                category.Name = request.Name;
+                category.Description = request.Description;
+                category.Enabled = request.Enabled;
 
-                category.Products = await _context.Products
-                    .Where(x => request.ProductIds.Contains(x.Id))
-                    .ToListAsync(cancellationToken);
+                List<ProductCategories> newProducts = request.ProductIds
+                    .Select(productId => new ProductCategories
+                    {
+                        CategoryId = request.CategoryId,
+                        ProductId = productId
+                    })
+                    .ToList();
+                _context.ProductCategories.AddRange(newProducts);
 
                 _context.Categories.Update(category);
                 await _context.SaveChangesAsync(cancellationToken);

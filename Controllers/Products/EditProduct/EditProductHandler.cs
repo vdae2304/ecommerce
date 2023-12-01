@@ -1,10 +1,13 @@
-﻿using Ecommerce.Common.Exceptions;
+﻿using AutoMapper;
+using Ecommerce.Common.Exceptions;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
+using Ecommerce.Controllers.Products.CreateProduct;
 using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Ecommerce.Controllers.Products.EditProduct
@@ -18,29 +21,42 @@ namespace Ecommerce.Controllers.Products.EditProduct
         public int ProductId { get; set; }
 
         /// <summary>
-        /// (Optional) An unique identifier for the product.
+        /// Product name.
         /// </summary>
-        public string? Sku { get; set; }
+        [Required]
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
-        /// (Optional) Product name.
+        /// Product description.
         /// </summary>
-        public string? Name { get; set; }
+        [Required]
+        public string Description { get; set; } = string.Empty;
 
         /// <summary>
-        /// (Optional) Product description.
+        /// Product price.
         /// </summary>
-        public string? Description { get; set; }
+        [Required]
+        public decimal Price { get; set; }
 
         /// <summary>
-        /// (Optional) Product price.
-        /// </summary>
-        public decimal? Price { get; set; }
-
-        /// <summary>
-        /// (Optional) If not null, display a price to compare to.
+        /// If not null, display a price to compare to.
         /// </summary>
         public decimal? CrossedOutPrice { get; set; }
+
+        /// <summary>
+        /// ID of the categories the product is assigned to.
+        /// </summary>
+        public IEnumerable<int> CategoryIds { get; set; } = new List<int>();
+
+        /// <summary>
+        /// Product attributes.
+        /// </summary>
+        public List<CreateAttributeForm> Attributes { get; set; } = new List<CreateAttributeForm>();
+
+        /// <summary>
+        /// (Optional) Product length.
+        /// </summary>
+        public double? Length { get; set; }
 
         /// <summary>
         /// (Optional) Product width.
@@ -51,11 +67,6 @@ namespace Ecommerce.Controllers.Products.EditProduct
         /// (Optional) Product height.
         /// </summary>
         public double? Height { get; set; }
-
-        /// <summary>
-        /// (Optional) Product length.
-        /// </summary>
-        public double? Length { get; set; }
 
         /// <summary>
         /// (Optional) Dimension units.
@@ -73,35 +84,38 @@ namespace Ecommerce.Controllers.Products.EditProduct
         public WeightUnits? WeightUnits { get; set; }
 
         /// <summary>
-        /// (Optional) Minimum allowed purchase quantity.
+        /// Minimum allowed purchase quantity. Default is 1.
         /// </summary>
-        public int? MinPurchaseQuantity { get; set; }
+        public int MinPurchaseQuantity { get; set; } = 1;
 
         /// <summary>
-        /// (Optional) Maximum allowed purchase quantity.
+        /// Maximum allowed purchase quantity. Default is 1.
         /// </summary>
-        public int? MaxPurchaseQuantity { get; set; }
+        public int MaxPurchaseQuantity { get; set; } = 1;
 
         /// <summary>
-        /// (Optional) Number of products in stock. Set to null if does not apply
-        /// or unlimited.
+        /// Available number of products in stock.
+        /// Default is 0.
         /// </summary>
-        public int? InStock { get; set; }
+        public int InStock { get; set; } = 0;
 
         /// <summary>
-        /// (Optional) Whether the product is enabled or not.
+        /// Whether the product has unlimited stock.
+        /// Default is false.
         /// </summary>
-        public bool? Enabled { get; set; }
+        public bool Unlimited { get; set; } = false;
     }
 
     public class EditProductHandler : IRequestHandler<EditProductForm, ActionResult>
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
         private readonly ILogger<EditProductHandler> _logger;
 
-        public EditProductHandler(ApplicationDbContext context, ILogger<EditProductHandler> logger)
+        public EditProductHandler(ApplicationDbContext context, IMapper mapper, ILogger<EditProductHandler> logger)
         {
             _context = context;
+            _mapper = mapper;
             _logger = logger;
         }
 
@@ -117,69 +131,41 @@ namespace Ecommerce.Controllers.Products.EditProduct
                 }
 
                 Product product = await _context.Products
+                    .Include(x => x.Attributes)
                     .FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken)
                     ?? throw new NotFoundException($"Product {request.ProductId} does not exist");
 
-                if (request.Sku != null)
-                {
-                    product.Sku = request.Sku;
-                }
-                if (request.Name != null)
-                {
-                    product.Name = request.Name;
-                }
-                if (request.Description != null)
-                {
-                    product.Description = request.Description;
-                }
-                if (request.Price != null)
-                {
-                    product.Price = request.Price.Value;
-                }
-                if (request.CrossedOutPrice != null)
-                {
-                    product.CrossedOutPrice = request.CrossedOutPrice;
-                }
-                if (request.Width != null)
-                {
-                    product.Width = request.Width;
-                }
-                if (request.Height != null)
-                {
-                    product.Height = request.Height;
-                }
-                if (request.Length != null)
-                {
-                    product.Length = request.Length;
-                }
-                if (request.DimensionUnits != null)
-                {
-                    product.DimensionUnits = request.DimensionUnits;
-                }
-                if (request.Weight != null)
-                {
-                    product.Weight = request.Weight;
-                }
-                if (request.WeightUnits != null)
-                {
-                    product.WeightUnits = request.WeightUnits;
-                }
-                if (request.MinPurchaseQuantity != null)
-                {
-                    product.MinPurchaseQuantity = request.MinPurchaseQuantity.Value;
-                }
-                if (request.MaxPurchaseQuantity != null)
-                {
-                    product.MaxPurchaseQuantity = request.MaxPurchaseQuantity.Value;
-                }
-                if (request.InStock != null)
-                {
-                    product.InStock = request.InStock;
-                }
-                if (request.Enabled != null)
-                {
-                    product.Enabled = request.Enabled.Value;
-                }
+                product.Name = request.Name;
+                product.Description = request.Description;
+                product.Price = request.Price;
+                product.CrossedOutPrice = request.CrossedOutPrice;
+                product.Length = request.Length;
+                product.Width = request.Width;
+                product.Height = request.Height;
+                product.DimensionUnits = request.DimensionUnits;
+                product.Weight = request.Weight;
+                product.WeightUnits = request.WeightUnits;
+                product.MinPurchaseQuantity = request.MinPurchaseQuantity;
+                product.MaxPurchaseQuantity = request.MaxPurchaseQuantity;
+                product.InStock = request.InStock;
+                product.Unlimited = request.Unlimited;
+
+                List<ProductCategories> oldCategories = await _context.ProductCategories
+                    .Where(x => x.ProductId == request.ProductId)
+                    .ToListAsync(cancellationToken);
+                List<ProductCategories> newCategories = request.CategoryIds
+                    .Select(categoryId => new ProductCategories
+                    {
+                        CategoryId = categoryId,
+                        ProductId = request.ProductId,
+                    })
+                    .ToList();
+
+                _context.ProductCategories.RemoveRange(oldCategories);
+                _context.ProductCategories.AddRange(newCategories);
+
+                _context.ProductAttributes.RemoveRange(product.Attributes);
+                product.Attributes = _mapper.Map<List<ProductAttribute>>(request.Attributes);
 
                 _context.Products.Update(product);
                 await _context.SaveChangesAsync(cancellationToken);
@@ -192,7 +178,7 @@ namespace Ecommerce.Controllers.Products.EditProduct
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in creating product {sku}", request.Sku);
+                _logger.LogError(ex, "Error in updating product product {id}", request.ProductId);
                 throw;
             }
         }

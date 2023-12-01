@@ -6,7 +6,6 @@ using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Categories.DeleteCategory
 {
@@ -15,7 +14,6 @@ namespace Ecommerce.Controllers.Categories.DeleteCategory
         /// <summary>
         /// Category ID.
         /// </summary>
-        [Required]
         public int CategoryId { get; set; }
     }
 
@@ -29,6 +27,7 @@ namespace Ecommerce.Controllers.Categories.DeleteCategory
             ILogger<DeleteCategoryHandler> logger)
         {
             _context = context;
+            _fileRepository = fileRepository;
             _logger = logger;
         }
 
@@ -37,7 +36,7 @@ namespace Ecommerce.Controllers.Categories.DeleteCategory
             try
             {
                 Category category = await _context.Categories
-                    .Include(x => x.ThumbnailId)
+                    .Include(x => x.Thumbnail)
                     .FirstOrDefaultAsync(x => x.Id == request.CategoryId, cancellationToken)
                     ?? throw new NotFoundException($"Category {request.CategoryId} does not exist");
 

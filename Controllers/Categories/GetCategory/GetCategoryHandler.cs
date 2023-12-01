@@ -5,7 +5,6 @@ using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Categories.GetCategory
 {
@@ -14,7 +13,6 @@ namespace Ecommerce.Controllers.Categories.GetCategory
         /// <summary>
         /// Category ID.
         /// </summary>
-        [Required]
         public int CategoryId { get; set; } 
     }
 

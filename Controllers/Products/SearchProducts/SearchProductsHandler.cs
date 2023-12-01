@@ -16,6 +16,11 @@ namespace Ecommerce.Controllers.Products.SearchProducts
         public string? Keyword { get; set; }
 
         /// <summary>
+        /// Sku to search for.
+        /// </summary>
+        public string? Sku { get; set; }
+
+        /// <summary>
         /// Search for products assigned to this category.
         /// </summary>
         public int? Category { get; set; }
@@ -36,7 +41,8 @@ namespace Ecommerce.Controllers.Products.SearchProducts
         public IDictionary<string, string?> Attributes { get; set; } = new Dictionary<string, string?>();
 
         /// <summary>
-        /// If true, show only enabled products. If false, show only disabled products.
+        /// If true, show only enabled products.
+        /// If false, show only disabled products.
         /// </summary>
         public bool? Enabled { get; set; }
 
@@ -147,6 +153,10 @@ namespace Ecommerce.Controllers.Products.SearchProducts
                 if (filters.Keyword != null)
                 {
                     query = query.Where(x => x.Name != null && x.Name.Contains(filters.Keyword));
+                }
+                if (filters.Sku != null)
+                {
+                    query = query.Where(x => x.Sku.Contains(filters.Sku));
                 }
                 if (filters.Category != null)
                 {

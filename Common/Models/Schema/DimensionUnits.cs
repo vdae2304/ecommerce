@@ -6,28 +6,45 @@
     public enum DimensionUnits
     {
         /// <summary>
-        /// Centimeter.
+        /// Centimeters.
         /// </summary>
-        CM = 0,
+        Centimeters = 0,
         /// <summary>
-        /// Millimeter.
+        /// Millimeters.
         /// </summary>
-        MM = 1,
+        Millimeters = 1,
         /// <summary>
-        /// Meter.
+        /// Meters.
         /// </summary>
-        M = 2,
+        Meters = 2,
         /// <summary>
         /// Inches.
         /// </summary>
-        IN = 3,
+        Inches = 3,
         /// <summary>
         /// Feet.
         /// </summary>
-        FT = 4,
+        Feet = 4,
         /// <summary>
-        /// Yard.
+        /// Yards.
         /// </summary>
-        YD = 5
+        Yards = 5
+    }
+
+    public static partial class DimensionUnitsSymbols
+    {
+        public static string Symbol(this DimensionUnits dimensionUnits)
+        {
+            return dimensionUnits switch
+            {
+                DimensionUnits.Centimeters => "cm",
+                DimensionUnits.Millimeters => "mm",
+                DimensionUnits.Meters => "m",
+                DimensionUnits.Inches => "in",
+                DimensionUnits.Feet => "ft",
+                DimensionUnits.Yards => "yd",
+                _ => string.Empty,
+            };
+        }
     }
 }

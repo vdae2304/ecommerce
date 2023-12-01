@@ -47,53 +47,60 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         public List<CreateAttributeForm> Attributes { get; set; } = new List<CreateAttributeForm>();
 
         /// <summary>
-        /// Product width.
-        /// </summary>
-        public double? Width { get; set; }
-
-        /// <summary>
-        /// Product height.
-        /// </summary>
-        public double? Height { get; set; }
-
-        /// <summary>
-        /// Product length.
+        /// (Optional) Product length.
         /// </summary>
         public double? Length { get; set; }
 
         /// <summary>
-        /// Dimension units.
+        /// (Optional) Product width.
+        /// </summary>
+        public double? Width { get; set; }
+
+        /// <summary>
+        /// (Optional) Product height.
+        /// </summary>
+        public double? Height { get; set; }
+
+        /// <summary>
+        /// (Optional) Dimension units.
         /// </summary>
         public DimensionUnits? DimensionUnits { get; set; }
 
         /// <summary>
-        /// Product weight.
+        /// (Optional) Product weight.
         /// </summary>
         public double? Weight { get; set; }
 
         /// <summary>
-        /// Weight units.
+        /// (Optional) Weight units.
         /// </summary>
         public WeightUnits? WeightUnits { get; set; }
 
         /// <summary>
-        /// Minimum allowed purchase quantity.
+        /// Minimum allowed purchase quantity. Default is 1.
         /// </summary>
         public int MinPurchaseQuantity { get; set; } = 1;
 
         /// <summary>
-        /// Maximum allowed purchase quantity.
+        /// Maximum allowed purchase quantity. Default is 1.
         /// </summary>
         public int MaxPurchaseQuantity { get; set; } = 1;
 
         /// <summary>
-        /// Number of products in stock. Set to null if does not apply or
-        /// unlimited.
+        /// Available number of products in stock.
+        /// Default is 0.
         /// </summary>
-        public int? InStock { get; set; }
+        public int InStock { get; set; } = 0;
+
+        /// <summary>
+        /// Whether the product has unlimited stock.
+        /// Default is false.
+        /// </summary>
+        public bool Unlimited { get; set; } = false;
 
         /// <summary>
         /// Whether the product is enabled or not.
+        /// Default is true.
         /// </summary>
         public bool Enabled { get; set; } = true;
     }
@@ -103,7 +110,6 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         /// <summary>
         /// Attribute name.
         /// </summary>
-        [Required]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>

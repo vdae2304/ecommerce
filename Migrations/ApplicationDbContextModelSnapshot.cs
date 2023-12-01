@@ -151,7 +151,7 @@ namespace Ecommerce.Migrations
                         .HasColumnType("double")
                         .HasColumnName("height");
 
-                    b.Property<int?>("InStock")
+                    b.Property<int>("InStock")
                         .HasColumnType("int")
                         .HasColumnName("in_stock");
 
@@ -187,6 +187,10 @@ namespace Ecommerce.Migrations
                     b.Property<int?>("ThumbnailId")
                         .HasColumnType("int")
                         .HasColumnName("thumbnail_id");
+
+                    b.Property<bool>("Unlimited")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("unlimited");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasPrecision(0)
@@ -247,7 +251,8 @@ namespace Ecommerce.Migrations
                         .HasColumnName("updated_at");
 
                     b.Property<string>("Value")
-                        .HasColumnType("longtext")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)")
                         .HasColumnName("value");
 
                     b.HasKey("Id")

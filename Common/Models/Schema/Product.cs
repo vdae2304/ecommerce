@@ -60,7 +60,8 @@ namespace Ecommerce.Common.Models.Schema
         /// Formatted crossed out price.
         /// </summary>
         /// <example>$9.99</example>
-        public string? FormattedCrossedOutPrice => (CrossedOutPrice != null) ? $"{CrossedOutPrice:C}" : null;
+        public string? FormattedCrossedOutPrice => (CrossedOutPrice != null)
+            ? $"{CrossedOutPrice:C}" : null;
 
         /// <summary>
         /// Thumbnail ID.
@@ -95,6 +96,17 @@ namespace Ecommerce.Common.Models.Schema
         public virtual ICollection<ProductAttribute> Attributes { get; set; } = new List<ProductAttribute>();
 
         /// <summary>
+        /// Product length.
+        /// </summary>
+        public double? Length { get; set; }
+
+        /// <summary>
+        /// Formatted length.
+        /// </summary>
+        public string? FormattedLength => (Length != null)
+            ? $"{Length} {DimensionUnits?.Symbol()}" : null;
+
+        /// <summary>
         /// Product width.
         /// </summary>
         public double? Width { get; set; }
@@ -102,7 +114,8 @@ namespace Ecommerce.Common.Models.Schema
         /// <summary>
         /// Formated width.
         /// </summary>
-        public string? FormattedWidth => (Width != null && DimensionUnits != null) ? $"{Width} {DimensionUnits}".ToLower() : null;
+        public string? FormattedWidth => (Width != null)
+            ? $"{Width} {DimensionUnits?.Symbol()}" : null;
 
         /// <summary>
         /// Product height.
@@ -112,17 +125,8 @@ namespace Ecommerce.Common.Models.Schema
         /// <summary>
         /// Formatted height.
         /// </summary>
-        public string? FormattedHeight => (Height != null && DimensionUnits != null) ? $"{Height} {DimensionUnits}".ToLower() : null;
-
-        /// <summary>
-        /// Product length.
-        /// </summary>
-        public double? Length { get; set; }
-
-        /// <summary>
-        /// Formatted length.
-        /// </summary>
-        public string? FormattedLength => (Length != null && DimensionUnits != null) ? $"{Length} {DimensionUnits}".ToLower() : null;
+        public string? FormattedHeight => (Height != null)
+            ? $"{Height} {DimensionUnits?.Symbol()}" : null;
 
         /// <summary>
         /// Dimension units.
@@ -137,7 +141,8 @@ namespace Ecommerce.Common.Models.Schema
         /// <summary>
         /// Formatted weight.
         /// </summary>
-        public string? FormattedWeight => (Weight != null && WeightUnits != null) ? $"{Weight} {WeightUnits}".ToLower() : null;
+        public string? FormattedWeight => (Weight != null)
+            ? $"{Weight} {WeightUnits?.Symbol()}" : null;
 
         /// <summary>
         /// Weight units.
@@ -157,14 +162,21 @@ namespace Ecommerce.Common.Models.Schema
         public int MaxPurchaseQuantity { get; set; }
         
         /// <summary>
-        /// Available number of products in stock, or null if unlimited.
+        /// Available number of products in stock.
         /// </summary>
         /// <example>300</example>
-        public int? InStock { get; set; }
+        public int InStock { get; set; }
+
+        /// <summary>
+        /// Whether the product has unlimited stock.
+        /// </summary>
+        /// <example>false</example>
+        public bool Unlimited { get; set; }
 
         /// <summary>
         /// Whether the product is enabled or not.
         /// </summary>
+        /// <example>true</example>
         public bool Enabled { get; set; }
 
         /// <summary>

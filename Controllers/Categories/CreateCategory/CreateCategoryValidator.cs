@@ -15,10 +15,10 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
                 .MaximumLength(128).WithMessage("Field {PropertyName} cannot have more than {MaxLength} characters")
-                .Matches(@"^[A-Za-zÀ-ÖØ-öø-ÿ0-9 ]+$").WithMessage("Field {PropertyName} is not in a valid format");
+                .Matches(@"^[A-Za-zÀ-ÖØ-öø-ÿ0-9 ]*$").WithMessage("Field {PropertyName} is not in a valid format");
 
             RuleFor(x => x.Description)
-                .NotNull().WithMessage("Field {PropertyName} is required");
+                .NotEmpty().WithMessage("Field {PropertyName} is required");
 
             RuleFor(x => x.ParentId)
                 .MustAsync(CategoryExists).WithMessage("Category {PropertyValue} does not exist");

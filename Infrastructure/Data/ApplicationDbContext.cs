@@ -12,9 +12,12 @@ namespace Ecommerce.Infrastructure.Data
         private readonly string _connectionString;
         private readonly ILoggerFactory? _loggerFactory;
 
-        public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<MediaImage> MediaImages { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductAttribute> ProductAttributes { get; set; }
+        public DbSet<ProductCategories> ProductCategories { get; set; }
+        public DbSet<ProductImages> ProductImages { get; set; }
 
         /// <inheritdoc/>
         public ApplicationDbContext(IConfiguration config, ILoggerFactory loggerFactory)
