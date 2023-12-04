@@ -31,7 +31,7 @@
         Yards = 5
     }
 
-    public static partial class DimensionUnitsSymbols
+    public static class DimensionUnitsSymbols
     {
         public static string Symbol(this DimensionUnits dimensionUnits)
         {

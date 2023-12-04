@@ -6,7 +6,7 @@ using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Ecommerce.Controllers.Categories.CreateCategory
 {
@@ -21,13 +21,13 @@ namespace Ecommerce.Controllers.Categories.CreateCategory
         /// <summary>
         /// Category name.
         /// </summary>
-        [Required]
+        [JsonRequired]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Category description.
         /// </summary>
-        [Required]
+        [JsonRequired]
         public string Description { get; set; } = string.Empty;
 
         /// <summary>

@@ -5,7 +5,6 @@ using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Ecommerce.Controllers.Categories.EditCategory
@@ -27,13 +26,13 @@ namespace Ecommerce.Controllers.Categories.EditCategory
         /// <summary>
         /// Category name.
         /// </summary>
-        [Required]
+        [JsonRequired]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Category description.
         /// </summary>
-        [Required]
+        [JsonRequired]
         public string Description { get; set; } = string.Empty;
 
         /// <summary>

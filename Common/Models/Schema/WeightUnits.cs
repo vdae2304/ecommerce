@@ -23,7 +23,7 @@
         Pound = 4
     }
 
-    public static partial class WeightUnitsSymbols
+    public static class WeightUnitsSymbols
     {
         public static string Symbol(this WeightUnits weightUnits)
         {

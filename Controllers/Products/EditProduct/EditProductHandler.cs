@@ -7,7 +7,6 @@ using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Ecommerce.Controllers.Products.EditProduct
@@ -23,19 +22,19 @@ namespace Ecommerce.Controllers.Products.EditProduct
         /// <summary>
         /// Product name.
         /// </summary>
-        [Required]
+        [JsonRequired]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Product description.
         /// </summary>
-        [Required]
+        [JsonRequired]
         public string Description { get; set; } = string.Empty;
 
         /// <summary>
         /// Product price.
         /// </summary>
-        [Required]
+        [JsonRequired]
         public decimal Price { get; set; }
 
         /// <summary>

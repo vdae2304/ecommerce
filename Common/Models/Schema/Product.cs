@@ -112,7 +112,7 @@ namespace Ecommerce.Common.Models.Schema
         public double? Width { get; set; }
 
         /// <summary>
-        /// Formated width.
+        /// Formatted width.
         /// </summary>
         public string? FormattedWidth => (Width != null)
             ? $"{Width} {DimensionUnits?.Symbol()}" : null;
