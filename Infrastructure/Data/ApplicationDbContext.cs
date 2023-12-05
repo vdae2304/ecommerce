@@ -1,17 +1,17 @@
 ﻿using Ecommerce.Common.Interfaces;
+using Ecommerce.Common.Models.IAM;
 using Ecommerce.Common.Models.Schema;
-using Ecommerce.Infrastructure.Configuration;
+using Ecommerce.Infrastructure.Configuration.IAM;
+using Ecommerce.Infrastructure.Configuration.Schema;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Ecommerce.Infrastructure.Data
 {
     /// <inheritdoc/>
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {
-        private readonly string _connectionString;
-        private readonly ILoggerFactory? _loggerFactory;
-
         public DbSet<Category> Categories { get; set; }
         public DbSet<MediaImage> MediaImages { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -20,31 +20,35 @@ namespace Ecommerce.Infrastructure.Data
         public DbSet<ProductImages> ProductImages { get; set; }
 
         /// <inheritdoc/>
-        public ApplicationDbContext(IConfiguration config, ILoggerFactory loggerFactory)
-        {
-            _connectionString = config.GetConnectionString("DefaultConnection") ?? string.Empty;
-            _loggerFactory = bool.Parse(config["ConnectionOptions:LogSql"] ?? string.Empty)
-                ? loggerFactory : null;
-        }
+        public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
         /// <inheritdoc/>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseLoggerFactory(_loggerFactory)
-                .UseMySQL(_connectionString)
-                .UseSnakeCaseNamingConvention();
+            base.OnConfiguring(optionsBuilder);
         }
 
         /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Schema
             modelBuilder.ApplyConfiguration(new CategoryConfiguration());
             modelBuilder.ApplyConfiguration(new ProductConfiguration());
             modelBuilder.ApplyConfiguration(new MediaImageConfiguration());
             modelBuilder.ApplyConfiguration(new ProductAttributeConfiguration());
             modelBuilder.ApplyConfiguration(new ProductCategoriesConfiguration());
             modelBuilder.ApplyConfiguration(new ProductImagesConfiguration());
+
+            // IAM
+            modelBuilder.ApplyConfiguration(new RoleClaimsConfiguration());
+            modelBuilder.ApplyConfiguration(new RolesConfiguration());
+            modelBuilder.ApplyConfiguration(new UserClaimsConfiguration());
+            modelBuilder.ApplyConfiguration(new UserLoginsConfiguration());
+            modelBuilder.ApplyConfiguration(new UserRolesConfiguration());
+            modelBuilder.ApplyConfiguration(new UsersConfiguration());
+            modelBuilder.ApplyConfiguration(new UserTokensConfiguration());
         }
 
         /// <inheritdoc/>

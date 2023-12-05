@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231201161258_InitialMigration")]
+    [Migration("20231205173507_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -19,7 +19,7 @@ namespace Ecommerce.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.13")
+                .HasAnnotation("ProductVersion", "7.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.Category", b =>
@@ -72,7 +72,7 @@ namespace Ecommerce.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_categories_thumbnail_id");
 
-                    b.ToTable("categories", (string)null);
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.MediaImage", b =>
@@ -117,7 +117,7 @@ namespace Ecommerce.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_media_images_file_id");
 
-                    b.ToTable("media_images", (string)null);
+                    b.ToTable("MediaImages", (string)null);
                 });
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.Product", b =>
@@ -223,7 +223,7 @@ namespace Ecommerce.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_products_thumbnail_id");
 
-                    b.ToTable("products", (string)null);
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.ProductAttribute", b =>
@@ -264,7 +264,7 @@ namespace Ecommerce.Migrations
                     b.HasIndex("ProductId")
                         .HasDatabaseName("ix_product_attributes_product_id");
 
-                    b.ToTable("product_attributes", (string)null);
+                    b.ToTable("ProductAttributes", (string)null);
                 });
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.ProductCategories", b =>
@@ -283,7 +283,7 @@ namespace Ecommerce.Migrations
                     b.HasIndex("ProductId")
                         .HasDatabaseName("ix_product_categories_product_id");
 
-                    b.ToTable("product_categories", (string)null);
+                    b.ToTable("ProductCategories", (string)null);
                 });
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.ProductImages", b =>
@@ -302,7 +302,7 @@ namespace Ecommerce.Migrations
                     b.HasIndex("ImageId")
                         .HasDatabaseName("ix_product_images_image_id");
 
-                    b.ToTable("product_images", (string)null);
+                    b.ToTable("ProductImages", (string)null);
                 });
 
             modelBuilder.Entity("Ecommerce.Common.Models.Schema.Category", b =>

@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ecommerce.Infrastructure.Configuration
+namespace Ecommerce.Infrastructure.Configuration.Schema
 {
     public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-            builder.ToTable("categories");
+            builder.ToTable("Categories");
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Name).HasMaxLength(128).IsRequired();

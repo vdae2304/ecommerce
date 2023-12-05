@@ -16,7 +16,7 @@ namespace Ecommerce.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "media_images",
+                name: "MediaImages",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -35,7 +35,7 @@ namespace Ecommerce.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "categories",
+                name: "Categories",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -54,20 +54,20 @@ namespace Ecommerce.Migrations
                     table.ForeignKey(
                         name: "fk_categories_categories_category_id",
                         column: x => x.parent_id,
-                        principalTable: "categories",
+                        principalTable: "Categories",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "fk_categories_media_images_thumbnail_id",
                         column: x => x.thumbnail_id,
-                        principalTable: "media_images",
+                        principalTable: "MediaImages",
                         principalColumn: "id",
                         onDelete: ReferentialAction.SetNull);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "products",
+                name: "Products",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -98,14 +98,14 @@ namespace Ecommerce.Migrations
                     table.ForeignKey(
                         name: "fk_products_media_images_thumbnail_id",
                         column: x => x.thumbnail_id,
-                        principalTable: "media_images",
+                        principalTable: "MediaImages",
                         principalColumn: "id",
                         onDelete: ReferentialAction.SetNull);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "product_attributes",
+                name: "ProductAttributes",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
@@ -122,14 +122,14 @@ namespace Ecommerce.Migrations
                     table.ForeignKey(
                         name: "fk_product_attributes_products_product_id",
                         column: x => x.product_id,
-                        principalTable: "products",
+                        principalTable: "Products",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "product_categories",
+                name: "ProductCategories",
                 columns: table => new
                 {
                     category_id = table.Column<int>(type: "int", nullable: false),
@@ -141,20 +141,20 @@ namespace Ecommerce.Migrations
                     table.ForeignKey(
                         name: "fk_product_categories_categories_category_id",
                         column: x => x.category_id,
-                        principalTable: "categories",
+                        principalTable: "Categories",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fk_product_categories_products_product_id",
                         column: x => x.product_id,
-                        principalTable: "products",
+                        principalTable: "Products",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "product_images",
+                name: "ProductImages",
                 columns: table => new
                 {
                     product_id = table.Column<int>(type: "int", nullable: false),
@@ -166,13 +166,13 @@ namespace Ecommerce.Migrations
                     table.ForeignKey(
                         name: "fk_product_images_media_images_image_id",
                         column: x => x.image_id,
-                        principalTable: "media_images",
+                        principalTable: "MediaImages",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fk_product_images_products_product_id",
                         column: x => x.product_id,
-                        principalTable: "products",
+                        principalTable: "Products",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -180,45 +180,45 @@ namespace Ecommerce.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "ix_categories_parent_id",
-                table: "categories",
+                table: "Categories",
                 column: "parent_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_categories_thumbnail_id",
-                table: "categories",
+                table: "Categories",
                 column: "thumbnail_id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_media_images_file_id",
-                table: "media_images",
+                table: "MediaImages",
                 column: "file_id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_product_attributes_product_id",
-                table: "product_attributes",
+                table: "ProductAttributes",
                 column: "product_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_product_categories_product_id",
-                table: "product_categories",
+                table: "ProductCategories",
                 column: "product_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_product_images_image_id",
-                table: "product_images",
+                table: "ProductImages",
                 column: "image_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_products_sku",
-                table: "products",
+                table: "Products",
                 column: "sku",
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "ix_products_thumbnail_id",
-                table: "products",
+                table: "Products",
                 column: "thumbnail_id",
                 unique: true);
         }
@@ -227,22 +227,22 @@ namespace Ecommerce.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "product_attributes");
+                name: "ProductAttributes");
 
             migrationBuilder.DropTable(
-                name: "product_categories");
+                name: "ProductCategories");
 
             migrationBuilder.DropTable(
-                name: "product_images");
+                name: "ProductImages");
 
             migrationBuilder.DropTable(
-                name: "categories");
+                name: "Categories");
 
             migrationBuilder.DropTable(
-                name: "products");
+                name: "Products");
 
             migrationBuilder.DropTable(
-                name: "media_images");
+                name: "MediaImages");
         }
     }
 }

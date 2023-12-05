@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ecommerce.Infrastructure.Configuration
+namespace Ecommerce.Infrastructure.Configuration.Schema
 {
-    public class MediaImageConfiguration :IEntityTypeConfiguration<MediaImage>
+    public class MediaImageConfiguration : IEntityTypeConfiguration<MediaImage>
     {
         public void Configure(EntityTypeBuilder<MediaImage> builder)
         {
-            builder.ToTable("media_images");
+            builder.ToTable("MediaImages");
             builder.HasKey(x => x.Id);
             builder.HasIndex(x => x.FileId).IsUnique();
 

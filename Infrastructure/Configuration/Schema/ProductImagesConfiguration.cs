@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ecommerce.Infrastructure.Configuration
+namespace Ecommerce.Infrastructure.Configuration.Schema
 {
     public class ProductImagesConfiguration : IEntityTypeConfiguration<ProductImages>
     {
         public void Configure(EntityTypeBuilder<ProductImages> builder)
         {
-            builder.ToTable("product_images");
+            builder.ToTable("ProductImages");
             builder.HasKey(x => new { x.ProductId, x.ImageId });
         }
     }

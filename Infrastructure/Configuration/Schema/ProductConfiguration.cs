@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ecommerce.Infrastructure.Configuration
+namespace Ecommerce.Infrastructure.Configuration.Schema
 {
     public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
-            builder.ToTable("products");
+            builder.ToTable("Products");
             builder.HasKey(x => x.Id);
             builder.HasIndex(x => x.Sku).IsUnique();
 

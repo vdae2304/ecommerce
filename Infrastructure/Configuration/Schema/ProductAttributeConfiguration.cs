@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Ecommerce.Infrastructure.Configuration
+namespace Ecommerce.Infrastructure.Configuration.Schema
 {
     public class ProductAttributeConfiguration : IEntityTypeConfiguration<ProductAttribute>
     {
         public void Configure(EntityTypeBuilder<ProductAttribute> builder)
         {
-            builder.ToTable("product_attributes");
+            builder.ToTable("ProductAttributes");
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.Name).HasMaxLength(128).IsRequired();
