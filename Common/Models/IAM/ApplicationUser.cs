@@ -2,7 +2,6 @@
 
 namespace Ecommerce.Common.Models.IAM
 {
-    public class ApplicationUser : IdentityUser<int>
-    {
-    }
+    /// <inheritdoc/>
+    public class ApplicationUser : IdentityUser<int> { }
 }

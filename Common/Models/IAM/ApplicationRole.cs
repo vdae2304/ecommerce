@@ -2,7 +2,6 @@
 
 namespace Ecommerce.Common.Models.IAM
 {
-    public class ApplicationRole : IdentityRole<int>
-    {
-    }
+    /// <inheritdoc/>
+    public class ApplicationRole : IdentityRole<int> { }
 }

@@ -5,10 +5,13 @@ using Ecommerce.Infrastructure.Data;
 using Ecommerce.Infrastructure.Implementation;
 using FluentValidation;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Ecommerce.Infrastructure
@@ -37,7 +40,23 @@ namespace Ecommerce.Infrastructure
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => options.TokenValidationParameters =
+                new TokenValidationParameters
+                {
+                    ValidIssuer = configuration["Authentication:Jwt:Issuer"],
+                    ValidAudience = configuration["Authentication:Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(configuration["Authentication:Jwt:Key"] ?? string.Empty)),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true
+                });
+            services.AddAuthorization();
+
             services.AddSingleton(typeof(IFileRepository), typeof(FileRepository));
+            services.AddScoped(typeof(ISecurityManager), typeof(SecurityManager));
             services.AddTransient(typeof(IValidatorFactory), typeof(ServiceProviderValidatorFactory));
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -56,11 +75,36 @@ namespace Ecommerce.Infrastructure
             {
                 string xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                
                 options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "1.0",
                     Title = "Ecommerce",
                     Description = "An ecommerce website created in ASP .NET Core"
+                });
+                
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Description = "JWT Authorization header. (Example: \"Bearer eyJhbGciOi...\")",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = JwtBearerDefaults.AuthenticationScheme
+                });
+                
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Id = JwtBearerDefaults.AuthenticationScheme,
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new List<string>()
+                    }
                 });
             });
             return services;

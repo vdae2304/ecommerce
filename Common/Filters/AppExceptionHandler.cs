@@ -14,7 +14,11 @@ namespace Ecommerce.Common.Filters
                 Success = false,
                 Message = context.Exception.Message
             };
-            if (context.Exception is BadRequestException)
+            if (context.Exception is UnauthorizedException)
+            {
+                context.Result = new UnauthorizedObjectResult(response);
+            }
+            else if (context.Exception is BadRequestException)
             {
                 context.Result = new BadRequestObjectResult(response);
             }
