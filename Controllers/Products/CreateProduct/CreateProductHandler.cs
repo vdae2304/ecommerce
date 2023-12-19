@@ -10,7 +10,7 @@ using System.Text.Json.Serialization;
 
 namespace Ecommerce.Controllers.Products.CreateProduct
 {
-    public record CreateProductForm : IRequest<ActionResult>
+    public record CreateProductForm : IRequest<IActionResult>
     {
         /// <summary>
         /// An unique identifier for the product.
@@ -105,7 +105,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         public bool Enabled { get; set; } = true;
     }
     
-    public record CreateAttributeForm : IRequest<ActionResult>
+    public record CreateAttributeForm : IRequest<IActionResult>
     {
         /// <summary>
         /// Attribute name.
@@ -120,7 +120,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         public string? Value { get; set; }
     }
 
-    public class CreateProductHandler : IRequestHandler<CreateProductForm, ActionResult>
+    public class CreateProductHandler : IRequestHandler<CreateProductForm, IActionResult>
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -133,7 +133,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(CreateProductForm request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(CreateProductForm request, CancellationToken cancellationToken)
         {
             try
             {

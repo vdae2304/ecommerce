@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Products.DeleteGalleryImage
 {
-    public record DeleteGalleryImageRequest : IRequest<ActionResult>
+    public record DeleteGalleryImageRequest : IRequest<IActionResult>
     {
         /// <summary>
         /// Product ID.
@@ -24,7 +24,7 @@ namespace Ecommerce.Controllers.Products.DeleteGalleryImage
         public int ImageId { get; set; }
     }
 
-    public class DeleteGalleryImageHandler : IRequestHandler<DeleteGalleryImageRequest, ActionResult>
+    public class DeleteGalleryImageHandler : IRequestHandler<DeleteGalleryImageRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
         private readonly IFileRepository _fileRepository;
@@ -38,7 +38,7 @@ namespace Ecommerce.Controllers.Products.DeleteGalleryImage
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(DeleteGalleryImageRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(DeleteGalleryImageRequest request, CancellationToken cancellationToken)
         {
             try
             {

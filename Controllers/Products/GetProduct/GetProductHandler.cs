@@ -1,5 +1,4 @@
 ﻿using Ecommerce.Common.Exceptions;
-using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
 using Ecommerce.Infrastructure.Data;
@@ -10,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Products.GetProduct
 {
-    public record GetProductRequest : IRequest<ActionResult>
+    public record GetProductRequest : IRequest<IActionResult>
     {
         /// <summary>
         /// Product ID.
@@ -19,7 +18,7 @@ namespace Ecommerce.Controllers.Products.GetProduct
         public int ProductId { get; set; }
     }
 
-    public class GetProductHandler : IRequestHandler<GetProductRequest, ActionResult>
+    public class GetProductHandler : IRequestHandler<GetProductRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<GetProductHandler> _logger;
@@ -30,7 +29,7 @@ namespace Ecommerce.Controllers.Products.GetProduct
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(GetProductRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(GetProductRequest request, CancellationToken cancellationToken)
         {
             try
             {

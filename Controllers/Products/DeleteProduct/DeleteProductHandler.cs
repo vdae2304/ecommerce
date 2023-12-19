@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Products.DeleteProduct
 {
-    public record DeleteProductRequest : IRequest<ActionResult>
+    public record DeleteProductRequest : IRequest<IActionResult>
     {
         /// <summary>
         /// Product ID.
@@ -19,7 +19,7 @@ namespace Ecommerce.Controllers.Products.DeleteProduct
         public int ProductId { get; set; }
     }
 
-    public class DeleteProductHandler : IRequestHandler<DeleteProductRequest, ActionResult>
+    public class DeleteProductHandler : IRequestHandler<DeleteProductRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
         private readonly IFileRepository _fileRepository;
@@ -33,7 +33,7 @@ namespace Ecommerce.Controllers.Products.DeleteProduct
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(DeleteProductRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(DeleteProductRequest request, CancellationToken cancellationToken)
         {
             try
             {

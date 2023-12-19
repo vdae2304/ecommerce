@@ -1,5 +1,4 @@
-﻿using Ecommerce.Common.Interfaces;
-using Ecommerce.Common.Models.Responses;
+﻿using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
 using Ecommerce.Infrastructure.Data;
 using MediatR;
@@ -8,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Products.SearchProducts
 {
-    public record ProductFilters : IRequest<ActionResult>
+    public record ProductFilters : IRequest<IActionResult>
     {
         /// <summary>
         /// Products to search for.
@@ -18,7 +17,7 @@ namespace Ecommerce.Controllers.Products.SearchProducts
         /// <summary>
         /// Sku to search for.
         /// </summary>
-        public string? Sku { get; set; }
+        public IEnumerable<string> Sku { get; set; } = new List<string>();
 
         /// <summary>
         /// Search for products assigned to this category.
@@ -128,7 +127,7 @@ namespace Ecommerce.Controllers.Products.SearchProducts
         UPDATED_DESC
     }
 
-    public class SearchProductsHandler : IRequestHandler<ProductFilters, ActionResult>
+    public class SearchProductsHandler : IRequestHandler<ProductFilters, IActionResult>
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<SearchProductsHandler> _logger;
@@ -139,7 +138,7 @@ namespace Ecommerce.Controllers.Products.SearchProducts
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(ProductFilters filters, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(ProductFilters filters, CancellationToken cancellationToken)
         {
             try
             {
@@ -154,9 +153,9 @@ namespace Ecommerce.Controllers.Products.SearchProducts
                 {
                     query = query.Where(x => x.Name != null && x.Name.Contains(filters.Keyword));
                 }
-                if (filters.Sku != null)
+                if (filters.Sku.Any())
                 {
-                    query = query.Where(x => x.Sku.Contains(filters.Sku));
+                    query = query.Where(x => filters.Sku.Contains(x.Sku));
                 }
                 if (filters.Category != null)
                 {

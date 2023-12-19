@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 
 namespace Ecommerce.Controllers.Products.EditProduct
 {
-    public record EditProductForm : IRequest<ActionResult>
+    public record EditProductForm : IRequest<IActionResult>
     {
         /// <summary>
         /// Product ID.
@@ -105,7 +105,7 @@ namespace Ecommerce.Controllers.Products.EditProduct
         public bool Unlimited { get; set; } = false;
     }
 
-    public class EditProductHandler : IRequestHandler<EditProductForm, ActionResult>
+    public class EditProductHandler : IRequestHandler<EditProductForm, IActionResult>
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -118,7 +118,7 @@ namespace Ecommerce.Controllers.Products.EditProduct
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(EditProductForm request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(EditProductForm request, CancellationToken cancellationToken)
         {
             try
             {

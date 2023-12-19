@@ -11,7 +11,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Products.UploadImage
 {
-    public record UploadImageRequest : IRequest<ActionResult>
+    public record UploadImageRequest : IRequest<IActionResult>
     {
         /// <summary>
         /// Product ID.
@@ -24,7 +24,7 @@ namespace Ecommerce.Controllers.Products.UploadImage
         public IFormFile ImageFile { get; set; }
     }
 
-    public class UploadImageHandler : IRequestHandler<UploadImageRequest, ActionResult>
+    public class UploadImageHandler : IRequestHandler<UploadImageRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
         private readonly IFileRepository _fileRepository;
@@ -38,7 +38,7 @@ namespace Ecommerce.Controllers.Products.UploadImage
             _logger = logger;
         }
 
-        public async Task<ActionResult> Handle(UploadImageRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(UploadImageRequest request, CancellationToken cancellationToken)
         {
             try
             {
