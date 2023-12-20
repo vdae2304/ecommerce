@@ -6,7 +6,6 @@ using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Products.DeleteProduct
 {
@@ -15,7 +14,6 @@ namespace Ecommerce.Controllers.Products.DeleteProduct
         /// <summary>
         /// Product ID.
         /// </summary>
-        [Required]
         public int ProductId { get; set; }
     }
 

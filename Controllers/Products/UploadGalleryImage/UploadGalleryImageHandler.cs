@@ -7,7 +7,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SixLabors.ImageSharp;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Products.UploadGalleryImage
 {
@@ -20,7 +19,6 @@ namespace Ecommerce.Controllers.Products.UploadGalleryImage
         /// <summary>
         /// Image file.
         /// </summary>
-        [Required]
         public IFormFile ImageFile { get; set; }
     }
 

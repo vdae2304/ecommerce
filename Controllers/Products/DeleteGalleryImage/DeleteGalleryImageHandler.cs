@@ -6,7 +6,6 @@ using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.Products.DeleteGalleryImage
 {
@@ -15,12 +14,10 @@ namespace Ecommerce.Controllers.Products.DeleteGalleryImage
         /// <summary>
         /// Product ID.
         /// </summary>
-        [Required]
         public int ProductId { get; set; }
         /// <summary>
         /// Image ID.
         /// </summary>
-        [Required]
         public int ImageId { get; set; }
     }
 
