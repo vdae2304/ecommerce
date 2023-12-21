@@ -1,7 +1,9 @@
 ﻿using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.IAM;
+using Ecommerce.Common.Models.Orders;
 using Ecommerce.Common.Models.Schema;
 using Ecommerce.Infrastructure.Configuration.IAM;
+using Ecommerce.Infrastructure.Configuration.Orders;
 using Ecommerce.Infrastructure.Configuration.Schema;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +20,8 @@ namespace Ecommerce.Infrastructure.Data
         public DbSet<ProductAttribute> ProductAttributes { get; set; }
         public DbSet<ProductCategories> ProductCategories { get; set; }
         public DbSet<ProductImages> ProductImages { get; set; }
+
+        public DbSet<ShippingAddress> ShippingAddresses { get; set; }
 
         /// <inheritdoc/>
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
@@ -49,6 +53,9 @@ namespace Ecommerce.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new UserRolesConfiguration());
             modelBuilder.ApplyConfiguration(new UsersConfiguration());
             modelBuilder.ApplyConfiguration(new UserTokensConfiguration());
+
+            // Orders
+            modelBuilder.ApplyConfiguration(new ShippingAddressConfiguration());
         }
 
         /// <inheritdoc/>
