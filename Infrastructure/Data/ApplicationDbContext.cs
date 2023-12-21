@@ -21,6 +21,7 @@ namespace Ecommerce.Infrastructure.Data
         public DbSet<ProductCategories> ProductCategories { get; set; }
         public DbSet<ProductImages> ProductImages { get; set; }
 
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<ShippingAddress> ShippingAddresses { get; set; }
 
         /// <inheritdoc/>
@@ -56,6 +57,7 @@ namespace Ecommerce.Infrastructure.Data
 
             // Orders
             modelBuilder.ApplyConfiguration(new ShippingAddressConfiguration());
+            modelBuilder.ApplyConfiguration(new PaymentMethodConfiguration());
         }
 
         /// <inheritdoc/>
