@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Ecommerce.Infrastructure.Implementation
 {
+    /// <inheritdoc/>
     public class SecurityManager : ISecurityManager
     {
         private readonly IConfiguration _config;
@@ -21,6 +23,7 @@ namespace Ecommerce.Infrastructure.Implementation
             _mapper = mapper;
         }
 
+        /// <inheritdoc/>
         public Authentication GenerateAccessToken(ApplicationUser user)
         {
             var claims = new List<Claim>
@@ -51,6 +54,42 @@ namespace Ecommerce.Infrastructure.Implementation
                 Expires = expires,
                 User = _mapper.Map<UserProfile>(user)
             };
+        }
+
+        /// <inheritdoc/>
+        public string Encrypt(string value)
+        {
+            var aes = Aes.Create();
+            var securityKey = Encoding.UTF8.GetBytes(_config["SecurityManager:SecurityKey"] ?? string.Empty);
+            var IV = aes.IV;
+
+            var stream = new MemoryStream();
+            stream.Write(IV, 0, IV.Length);
+
+            var encryptor = aes.CreateEncryptor(securityKey, IV);
+            var cryptoStream = new CryptoStream(stream, encryptor, CryptoStreamMode.Write);
+            var streamWriter = new StreamWriter(cryptoStream);
+            streamWriter.Write(value);
+            streamWriter.Close();
+
+            return Convert.ToBase64String(stream.ToArray());
+        }
+
+        /// <inheritdoc/>
+        public string Decrypt(string encryptedValue)
+        {
+            var aes = Aes.Create();
+            var securityKey = Encoding.UTF8.GetBytes(_config["SecurityManager:SecurityKey"] ?? string.Empty);
+            var IV = new byte[aes.IV.Length];
+
+            var stream = new MemoryStream(Convert.FromBase64String(encryptedValue));
+            stream.Read(IV, 0, IV.Length);
+
+            var decryptor = aes.CreateDecryptor(securityKey, IV);
+            var cryptoStream = new CryptoStream(stream, decryptor, CryptoStreamMode.Read);
+            var streamReader = new StreamReader(cryptoStream);
+
+            return streamReader.ReadToEnd();
         }
     }
 }

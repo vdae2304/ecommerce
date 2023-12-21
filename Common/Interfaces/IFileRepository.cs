@@ -1,7 +1,7 @@
 ﻿namespace Ecommerce.Common.Interfaces
 {
     /// <summary>
-    /// File handler.
+    /// File repository.
     /// </summary>
     public interface IFileRepository
     {

@@ -10,7 +10,7 @@ namespace Ecommerce.Infrastructure.Implementation
 
         public FileRepository(IConfiguration config)
         {
-            _rootPath = config["FileOptions:RootPath"] ?? string.Empty;
+            _rootPath = config["FileStorage:RootPath"] ?? string.Empty;
         }
 
         /// <inheritdoc/>
