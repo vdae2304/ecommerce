@@ -21,6 +21,9 @@ namespace Ecommerce.Infrastructure.Data
         public DbSet<ProductCategories> ProductCategories { get; set; }
         public DbSet<ProductImages> ProductImages { get; set; }
 
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderProducts> OrderProducts { get; set; }
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<Address> Addresses { get; set; }
 
@@ -56,6 +59,9 @@ namespace Ecommerce.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new UserTokensConfiguration());
 
             // Orders
+            modelBuilder.ApplyConfiguration(new CartConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderProductsConfiguration());
             modelBuilder.ApplyConfiguration(new AddressConfiguration());
             modelBuilder.ApplyConfiguration(new PaymentMethodConfiguration());
         }
