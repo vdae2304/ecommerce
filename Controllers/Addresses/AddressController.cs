@@ -37,6 +37,7 @@ namespace Ecommerce.Controllers.Addresses
         [ProducesResponseType(typeof(Response<SearchItems<Address>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpGet()]
         public async Task<IActionResult> Search([FromQuery] AddressFilters filters)
         {
@@ -56,6 +57,7 @@ namespace Ecommerce.Controllers.Addresses
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpGet("{addressId}")]
         public async Task<IActionResult> Get(int addressId)
         {
@@ -75,6 +77,8 @@ namespace Ecommerce.Controllers.Addresses
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Consumes("application/json")]
+        [Produces("application/json")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateAddressForm request)
         {
@@ -97,6 +101,8 @@ namespace Ecommerce.Controllers.Addresses
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Consumes("application/json")]
+        [Produces("application/json")]
         [HttpPut("{addressId}")]
         public async Task<IActionResult> Edit(int addressId, EditAddressRequest request)
         {
@@ -117,6 +123,7 @@ namespace Ecommerce.Controllers.Addresses
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpDelete("{addressId}")]
         public async Task<IActionResult> Delete(int addressId)
         {

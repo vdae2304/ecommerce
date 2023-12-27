@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.Controllers.IAM.SignUp
 {
-    [Route("api/signup")]
+    [Route("api/iam/signup")]
     [ApiController]
     public class SignUpController : ControllerBase
     {
@@ -26,6 +26,8 @@ namespace Ecommerce.Controllers.IAM.SignUp
         [ProducesResponseType(typeof(Response<UserProfile>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Consumes("application/x-www-form-urlencoded")]
+        [Produces("application/json")]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] SignUpRequest request)
         {

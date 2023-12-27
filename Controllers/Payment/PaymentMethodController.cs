@@ -38,6 +38,7 @@ namespace Ecommerce.Controllers.Payment
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpGet]
         public async Task<IActionResult> Search([FromQuery] PaymentMethodFilters filters)
         {
@@ -57,6 +58,7 @@ namespace Ecommerce.Controllers.Payment
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpGet("{paymentMethodId}")]
         public async Task<IActionResult> Get(int paymentMethodId)
         {
@@ -76,6 +78,8 @@ namespace Ecommerce.Controllers.Payment
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Consumes("application/json")]
+        [Produces("application/json")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreatePaymentMethodForm request)
         {
@@ -98,6 +102,8 @@ namespace Ecommerce.Controllers.Payment
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Consumes("application/json")]
+        [Produces("application/json")]
         [HttpPatch("{paymentMethodId}")]
         public async Task<IActionResult> Edit(int paymentMethodId, [FromBody] EditPaymentMethodRequest request)
         {
@@ -118,6 +124,7 @@ namespace Ecommerce.Controllers.Payment
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpDelete("{paymentMethodId}")]
         public async Task<IActionResult> Delete(int paymentMethodId)
         {

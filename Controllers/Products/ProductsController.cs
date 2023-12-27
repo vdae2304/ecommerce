@@ -34,6 +34,7 @@ namespace Ecommerce.Controllers.Products
         /// <response code="200">Ok. Return the list of products.</response>
         [ProducesResponseType(typeof(Response<SearchItems<Product>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpGet]
         public async Task<IActionResult> Search([FromQuery] ProductFilters filters)
         {
@@ -50,6 +51,7 @@ namespace Ecommerce.Controllers.Products
         [ProducesResponseType(typeof(Response<Product>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpGet("{productId}")]
         public async Task<IActionResult> Get(int productId)
         {
@@ -66,6 +68,8 @@ namespace Ecommerce.Controllers.Products
         [ProducesResponseType(typeof(Response<CreatedId>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Consumes("application/json")]
+        [Produces("application/json")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateProductForm request)
         {
@@ -83,6 +87,8 @@ namespace Ecommerce.Controllers.Products
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Consumes("application/json")]
+        [Produces("application/json")]
         [HttpPut("{productId}")]
         public async Task<IActionResult> Edit(int productId, [FromBody] EditProductForm request)
         {
@@ -100,6 +106,7 @@ namespace Ecommerce.Controllers.Products
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpDelete("{productId}")]
         public async Task<IActionResult> Delete(int productId)
         {
@@ -120,6 +127,7 @@ namespace Ecommerce.Controllers.Products
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
+        [Produces("application/json")]
         [HttpPost("{productId}/image")]
         public async Task<IActionResult> UploadImage(int productId, IFormFile imageFile)
         {
@@ -136,6 +144,7 @@ namespace Ecommerce.Controllers.Products
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpDelete("{productId}/image")]
         public async Task<IActionResult> DeleteImage(int productId)
         {
@@ -156,6 +165,7 @@ namespace Ecommerce.Controllers.Products
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
+        [Produces("application/json")]
         [HttpPost("{productId}/gallery")]
         public async Task<IActionResult> UploadGalleryImage(int productId, IFormFile imageFile)
         {
@@ -173,6 +183,7 @@ namespace Ecommerce.Controllers.Products
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpDelete("{productId}/gallery/{imageId}")]
         public async Task<IActionResult> DeleteGalleryImage(int productId, int imageId)
         {

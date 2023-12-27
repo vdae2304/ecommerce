@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.Controllers.IAM.Login
 {
-    [Route("api/login")]
+    [Route("api/iam/login")]
     [ApiController]
     public class LoginController : ControllerBase
     {
@@ -26,6 +26,8 @@ namespace Ecommerce.Controllers.IAM.Login
         [ProducesResponseType(typeof(Response<Authentication>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Consumes("application/x-www-form-urlencoded")]
+        [Produces("application/json")]
         [HttpPost]
         public async Task<IActionResult> Login([FromForm] LoginRequest request)
         {

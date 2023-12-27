@@ -32,6 +32,7 @@ namespace Ecommerce.Controllers.Categories
         /// <response code="200">Ok. Return the list of categories.</response>
         [ProducesResponseType(typeof(Response<SearchItems<Category>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpGet]
         public async Task<IActionResult> Search([FromQuery] CategoryFilters filters)
         {
@@ -48,6 +49,7 @@ namespace Ecommerce.Controllers.Categories
         [ProducesResponseType(typeof(Response<Category>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpGet("{categoryId}")]
         public async Task<IActionResult> Get(int categoryId)
         {
@@ -64,6 +66,8 @@ namespace Ecommerce.Controllers.Categories
         [ProducesResponseType(typeof(Response<CreatedId>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Consumes("application/json")]
+        [Produces("application/json")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateCategoryForm request)
         {
@@ -81,6 +85,8 @@ namespace Ecommerce.Controllers.Categories
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Consumes("application/json")]
+        [Produces("application/json")]
         [HttpPut("{categoryId}")]
         public async Task<IActionResult> Edit(int categoryId, [FromBody] EditCategoryForm request)
         {
@@ -98,6 +104,7 @@ namespace Ecommerce.Controllers.Categories
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpDelete("{categoryId}")]
         public async Task<IActionResult> Delete(int categoryId)
         {
@@ -118,6 +125,7 @@ namespace Ecommerce.Controllers.Categories
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
+        [Produces("application/json")]
         [HttpPost("{categoryId}/image")]
         public async Task<IActionResult> UploadImage(int categoryId, IFormFile imageFile)
         {
@@ -134,6 +142,7 @@ namespace Ecommerce.Controllers.Categories
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [Produces("application/json")]
         [HttpDelete("{categoryId}/image")]
         public async Task<IActionResult> DeleteImage(int categoryId)
         {
