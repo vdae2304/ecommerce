@@ -20,7 +20,7 @@ namespace Ecommerce.Controllers.Addresses.EditAddress
 
             RuleFor(x => x.StreetNumber)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
-                .Matches(@"^[0-9]*$").WithMessage("Field {PropertyName} is not in a valid format");
+                .Matches(@"^[A-za-z0-9]*$").WithMessage("Field {PropertyName} is not in a valid format");
 
             RuleFor(x => x.AptNumber)
                 .Matches(@"^[0-9]*$").WithMessage("Field {PropertyName} is not in a valid format");

@@ -15,8 +15,7 @@ namespace Ecommerce.Controllers.Products.EditProduct
 
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
-                .MaximumLength(128).WithMessage("Field {PropertyName} cannot have more than {MaxLength} characters")
-                .Matches(@"^[A-Za-zÀ-ÖØ-öø-ÿ0-9 ]+$").WithMessage("Field {PropertyName} is not in a valid format");
+                .MaximumLength(128).WithMessage("Field {PropertyName} cannot have more than {MaxLength} characters");
 
             RuleFor(x => x.Description)
                 .NotEmpty().WithMessage("Field {PropertyName} is required");
