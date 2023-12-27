@@ -22,7 +22,7 @@ namespace Ecommerce.Infrastructure.Data
         public DbSet<ProductImages> ProductImages { get; set; }
 
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
-        public DbSet<ShippingAddress> ShippingAddresses { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
         /// <inheritdoc/>
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
@@ -56,7 +56,7 @@ namespace Ecommerce.Infrastructure.Data
             modelBuilder.ApplyConfiguration(new UserTokensConfiguration());
 
             // Orders
-            modelBuilder.ApplyConfiguration(new ShippingAddressConfiguration());
+            modelBuilder.ApplyConfiguration(new AddressConfiguration());
             modelBuilder.ApplyConfiguration(new PaymentMethodConfiguration());
         }
 

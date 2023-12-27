@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
-namespace Ecommerce.Controllers.Shipping.CreateAddress
+namespace Ecommerce.Controllers.Addresses.CreateAddress
 {
     public record CreateAddressForm : IRequest<IActionResult>
     {
@@ -18,10 +18,10 @@ namespace Ecommerce.Controllers.Shipping.CreateAddress
         public int UserId { get; set; }
 
         /// <summary>
-        /// Contact name.
+        /// Recipient name.
         /// </summary>
         [JsonRequired]
-        public string Name { get; set; } = string.Empty;
+        public string Recipient { get; set; } = string.Empty;
 
         /// <summary>
         /// Contact phone number.
@@ -30,10 +30,27 @@ namespace Ecommerce.Controllers.Shipping.CreateAddress
         public string Phone { get; set; } = string.Empty;
 
         /// <summary>
-        /// Street
+        /// Street name.
         /// </summary>
         [JsonRequired]
         public string Street { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Street number.
+        /// </summary>
+        [JsonRequired]
+        public string StreetNumber { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Apartment number, if any.
+        /// </summary>
+        public string? AptNumber { get; set; }
+
+        /// <summary>
+        /// Neighbourhood.
+        /// </summary>
+        [JsonRequired]
+        public string Neighbourhood { get; set; } = string.Empty;
 
         /// <summary>
         /// City.
@@ -84,26 +101,29 @@ namespace Ecommerce.Controllers.Shipping.CreateAddress
                     throw new BadRequestException(validationResult.ToString());
                 }
 
-                var shippingAddress = new ShippingAddress
+                var address = new Address
                 {
                     UserId = request.UserId,
-                    Name = _securityManager.Encrypt(request.Name),
+                    Recipient = _securityManager.Encrypt(request.Recipient),
                     Phone = _securityManager.Encrypt(request.Phone),
                     Street = request.Street,
+                    StreetNumber = request.StreetNumber,
+                    AptNumber = request.AptNumber,
+                    Neighbourhood = request.Neighbourhood,
                     City = request.City,
                     State = request.State,
                     PostalCode = request.PostalCode,
                     Comments = request.Comments
                 };
 
-                _context.ShippingAddresses.Add(shippingAddress);
+                _context.Addresses.Add(address);
                 await _context.SaveChangesAsync(cancellationToken);
 
                 return new OkObjectResult(new Response<CreatedId>
                 {
                     Success = true,
                     Message = "Ok.",
-                    Data = new CreatedId { Id = shippingAddress.Id }
+                    Data = new CreatedId { Id = address.Id }
                 });
             }
             catch (Exception ex)

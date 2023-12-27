@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 
-namespace Ecommerce.Controllers.Shipping.CreateAddress
+namespace Ecommerce.Controllers.Addresses.CreateAddress
 {
     public class CreateAddressValidator : AbstractValidator<CreateAddressForm>
     {
         public CreateAddressValidator()
         {
-            RuleFor(x => x.Name)
+            RuleFor(x => x.Recipient)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
                 .Matches(@"^[A-Za-zÀ-ÖØ-öø-ÿ ]*$").WithMessage("Field {PropertyName} is not in a valid format");
 
@@ -16,6 +16,16 @@ namespace Ecommerce.Controllers.Shipping.CreateAddress
                 .Matches(@"^[0-9]*$").WithMessage("Field {PropertyName} is not in a valid format");
 
             RuleFor(x => x.Street)
+                .NotEmpty().WithMessage("Field {PropertyName} is required");
+
+            RuleFor(x => x.StreetNumber)
+                .NotEmpty().WithMessage("Field {PropertyName} is required")
+                .Matches(@"^[0-9]*$").WithMessage("Field {PropertyName} is not in a valid format");
+
+            RuleFor(x => x.AptNumber)
+                .Matches(@"^[0-9]*$").WithMessage("Field {PropertyName} is not in a valid format");
+
+            RuleFor(x => x.Neighbourhood)
                 .NotEmpty().WithMessage("Field {PropertyName} is required");
 
             RuleFor(x => x.City)

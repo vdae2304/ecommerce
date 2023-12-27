@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ecommerce.Controllers.Shipping.GetAddress
+namespace Ecommerce.Controllers.Addresses.GetAddress
 {
     public record GetAddressRequest : IRequest<IActionResult>
     {
@@ -16,9 +16,9 @@ namespace Ecommerce.Controllers.Shipping.GetAddress
         /// </summary>
         public int UserId { get; set; }
         /// <summary>
-        /// Shipping address ID.
+        /// Address ID.
         /// </summary>
-        public int ShippingAddressId { get; set; }
+        public int AddressId { get; set; }
     }
 
     public class GetAddressHandler : IRequestHandler<GetAddressRequest, IActionResult>
@@ -39,24 +39,24 @@ namespace Ecommerce.Controllers.Shipping.GetAddress
         {
             try
             {
-                ShippingAddress shippingAddress = await _context.ShippingAddresses
-                    .FirstOrDefaultAsync(x => x.Id == request.ShippingAddressId &&
+                Address address = await _context.Addresses
+                    .FirstOrDefaultAsync(x => x.Id == request.AddressId &&
                         x.UserId == request.UserId, cancellationToken)
-                    ?? throw new NotFoundException($"Shipping address {request.ShippingAddressId} does not exist");
+                    ?? throw new NotFoundException($"Address {request.AddressId} does not exist");
 
-                shippingAddress.Name = _securityManager.Decrypt(shippingAddress.Name);
-                shippingAddress.Phone = _securityManager.Decrypt(shippingAddress.Phone);
+                address.Recipient = _securityManager.Decrypt(address.Recipient);
+                address.Phone = _securityManager.Decrypt(address.Phone);
 
-                return new OkObjectResult(new Response<ShippingAddress>
+                return new OkObjectResult(new Response<Address>
                 {
                     Success = true,
                     Message = "Ok.",
-                    Data = shippingAddress
+                    Data = address
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in getting details for shipping address {shippingAddressId}", request.ShippingAddressId);
+                _logger.LogError(ex, "Error in getting details for address {addressId}", request.AddressId);
                 throw;
             }
         }

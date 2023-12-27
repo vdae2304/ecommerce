@@ -2,73 +2,73 @@
 using Ecommerce.Common.Models.Orders;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Controllers.IAM;
-using Ecommerce.Controllers.Shipping.CreateAddress;
-using Ecommerce.Controllers.Shipping.DeleteAddress;
-using Ecommerce.Controllers.Shipping.EditAddress;
-using Ecommerce.Controllers.Shipping.GetAddress;
-using Ecommerce.Controllers.Shipping.SearchAddresses;
+using Ecommerce.Controllers.Addresses.CreateAddress;
+using Ecommerce.Controllers.Addresses.DeleteAddress;
+using Ecommerce.Controllers.Addresses.EditAddress;
+using Ecommerce.Controllers.Addresses.GetAddress;
+using Ecommerce.Controllers.Addresses.SearchAddresses;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ecommerce.Controllers.Shipping
+namespace Ecommerce.Controllers.Addresses
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/shipping")]
+    [Route("api/address")]
     [ApiController]
-    public class ShippingAddressController : ControllerBase
+    public class AddressController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly ILogger<ShippingAddressController> _logger;
+        private readonly ILogger<AddressController> _logger;
 
-        public ShippingAddressController(IMediator mediator, ILogger<ShippingAddressController> logger)
+        public AddressController(IMediator mediator, ILogger<AddressController> logger)
         {
             _mediator = mediator;
             _logger = logger;
         }
 
         /// <summary>
-        /// Get all shipping addresses for an user.
+        /// Get all addresses for an user.
         /// </summary>
         /// <param name="filters">Search filters.</param>
-        /// <response code="200">Ok. Return the shipping address.</response>
+        /// <response code="200">Ok. Return the list of addresses.</response>
         /// <response code="401">Unauthorized. User is not logged in.</response>
-        [ProducesResponseType(typeof(Response<SearchItems<ShippingAddress>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response<SearchItems<Address>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [HttpGet()]
         public async Task<IActionResult> Search([FromQuery] AddressFilters filters)
         {
             filters.UserId = User.GetUserId() ?? throw new UnauthorizedException("");
-            _logger.LogInformation("Get shipping addresses for user {userId}", filters.UserId);
+            _logger.LogInformation("Get addresses for user {userId}", filters.UserId);
             return await _mediator.Send(filters);
         }
 
         /// <summary>
-        /// Get details for a shipping address.
+        /// Get details for an address.
         /// </summary>
-        /// <param name="shippingAddressId">Shipping address ID.</param>
-        /// <response code="200">Ok. Return the shipping address.</response>
+        /// <param name="addressId">Address ID.</param>
+        /// <response code="200">Ok. Return the address.</response>
         /// <response code="401">Unauthorized. User is not logged in.</response>
-        /// <response code="404">Not Found. Shipping address does not exist.</response>
-        [ProducesResponseType(typeof(Response<ShippingAddress>), StatusCodes.Status200OK)]
+        /// <response code="404">Not Found. Address does not exist.</response>
+        [ProducesResponseType(typeof(Response<Address>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
-        [HttpGet("{shippingAddressId}")]
-        public async Task<IActionResult> Get(int shippingAddressId)
+        [HttpGet("{addressId}")]
+        public async Task<IActionResult> Get(int addressId)
         {
             int userId = User.GetUserId() ?? throw new UnauthorizedException("");
-            _logger.LogInformation("Get details for shipping address {shippingAddressId}", shippingAddressId);
-            return await _mediator.Send(new GetAddressRequest { UserId = userId, ShippingAddressId = shippingAddressId });
+            _logger.LogInformation("Get details for address {addressId}", addressId);
+            return await _mediator.Send(new GetAddressRequest { UserId = userId, AddressId = addressId });
         }
 
         /// <summary>
-        /// Create a shipping address.
+        /// Create an address.
         /// </summary>
-        /// <param name="request">Shipping address values.</param>
-        /// <response code="200">Ok. Return the ID of the shipping address created.</response>
+        /// <param name="request">Address values.</param>
+        /// <response code="200">Ok. Return the ID of the address created.</response>
         /// <response code="400">Bad request. Invalid field.</response>
         /// <response code="401">Unauthorized. User is not logged in.</response>
         [ProducesResponseType(typeof(Response<CreatedId>), StatusCodes.Status200OK)]
@@ -79,50 +79,50 @@ namespace Ecommerce.Controllers.Shipping
         public async Task<IActionResult> Create([FromBody] CreateAddressForm request)
         {
             request.UserId = User.GetUserId() ?? throw new UnauthorizedException("");
-            _logger.LogInformation("Create shipping address");
+            _logger.LogInformation("Create address");
             return await _mediator.Send(request);
         }
 
         /// <summary>
-        /// Edit a shipping address.
+        /// Edit an address.
         /// </summary>
-        /// <param name="shippingAddressId">Shipping address ID.</param>
-        /// <param name="request">Shipping address values.</param>
-        /// <response code="200">Ok. Update the shipping address.</response>
+        /// <param name="addressId">Address ID.</param>
+        /// <param name="request">Address values.</param>
+        /// <response code="200">Ok. Update the address.</response>
         /// <response code="400">Bad request. Invalid field.</response>
         /// <response code="401">Unauthorized. User is not logged in.</response>
-        /// <response code="404">Not Found. Shipping address does not exist.</response>
+        /// <response code="404">Not Found. Address does not exist.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
-        [HttpPut("{shippingAddressId}")]
-        public async Task<IActionResult> Edit(int shippingAddressId, EditAddressRequest request)
+        [HttpPut("{addressId}")]
+        public async Task<IActionResult> Edit(int addressId, EditAddressRequest request)
         {
             request.UserId = User.GetUserId() ?? throw new UnauthorizedException("");
-            request.ShippingAddressId = shippingAddressId;
-            _logger.LogInformation("Edit shipping address {shippingAddressId}", shippingAddressId);
+            request.AddressId = addressId;
+            _logger.LogInformation("Edit address {addressId}", addressId);
             return await _mediator.Send(request);
         }
 
         /// <summary>
-        /// Delete a shipping address.
+        /// Delete an address.
         /// </summary>
-        /// <param name="shippingAddressId">Shipping address ID.</param>
-        /// <response code="200">Ok. Delete the shipping address.</response>
+        /// <param name="addressId">Address ID.</param>
+        /// <response code="200">Ok. Delete the address.</response>
         /// <response code="401">Unauthorized. User is not logged in.</response>
-        /// <response code="404">Not Found. Shipping address does not exist.</response>
+        /// <response code="404">Not Found. Address does not exist.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
-        [HttpDelete("{shippingAddressId}")]
-        public async Task<IActionResult> Delete(int shippingAddressId)
+        [HttpDelete("{addressId}")]
+        public async Task<IActionResult> Delete(int addressId)
         {
             int userId = User.GetUserId() ?? throw new UnauthorizedException("");
-            _logger.LogInformation("Delete shipping address {shippingAddressId}", shippingAddressId);
-            return await _mediator.Send(new DeleteAddressRequest { UserId = userId, ShippingAddressId = shippingAddressId });
+            _logger.LogInformation("Delete address {addressId}", addressId);
+            return await _mediator.Send(new DeleteAddressRequest { UserId = userId, AddressId = addressId });
         }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
-namespace Ecommerce.Controllers.Shipping.EditAddress
+namespace Ecommerce.Controllers.Addresses.EditAddress
 {
     public record EditAddressRequest : IRequest<IActionResult>
     {
@@ -19,16 +19,16 @@ namespace Ecommerce.Controllers.Shipping.EditAddress
         public int UserId { get; set; }
 
         /// <summary>
-        /// Shipping address ID.
+        /// Address ID.
         /// </summary>
         [JsonIgnore]
-        public int ShippingAddressId { get; set; }
+        public int AddressId { get; set; }
 
         /// <summary>
-        /// Contact name.
+        /// Recipient name.
         /// </summary>
         [JsonRequired]
-        public string Name { get; set; } = string.Empty;
+        public string Recipient { get; set; } = string.Empty;
 
         /// <summary>
         /// Contact phone number.
@@ -37,10 +37,27 @@ namespace Ecommerce.Controllers.Shipping.EditAddress
         public string Phone { get; set; } = string.Empty;
 
         /// <summary>
-        /// Street
+        /// Street name.
         /// </summary>
         [JsonRequired]
         public string Street { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Street number.
+        /// </summary>
+        [JsonRequired]
+        public string StreetNumber { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Apartment number, if any.
+        /// </summary>
+        public string? AptNumber { get; set; }
+
+        /// <summary>
+        /// Neighbourhood.
+        /// </summary>
+        [JsonRequired]
+        public string Neighbourhood { get; set; } = string.Empty;
 
         /// <summary>
         /// City.
@@ -91,20 +108,22 @@ namespace Ecommerce.Controllers.Shipping.EditAddress
                     throw new BadRequestException(validationResult.ToString());
                 }
 
-                ShippingAddress shippingAddress = await _context.ShippingAddresses
-                    .FirstOrDefaultAsync(x => x.Id == request.ShippingAddressId &&
+                Address address = await _context.Addresses
+                    .FirstOrDefaultAsync(x => x.Id == request.AddressId &&
                         x.UserId == request.UserId, cancellationToken)
-                    ?? throw new NotFoundException($"Shipping address {request.ShippingAddressId} does not exist");
+                    ?? throw new NotFoundException($"Address {request.AddressId} does not exist");
 
-                shippingAddress.Name = _securityManager.Encrypt(request.Name);
-                shippingAddress.Phone = _securityManager.Encrypt(request.Phone);
-                shippingAddress.Street = request.Street;
-                shippingAddress.City = request.City;
-                shippingAddress.State = request.State;
-                shippingAddress.PostalCode = request.PostalCode;
-                shippingAddress.Comments = request.Comments;
+                address.Recipient = _securityManager.Encrypt(request.Recipient);
+                address.Phone = _securityManager.Encrypt(request.Phone);
+                address.Street = request.Street;
+                address.StreetNumber = request.StreetNumber;
+                address.Neighbourhood = request.Neighbourhood;
+                address.City = request.City;
+                address.State = request.State;
+                address.PostalCode = request.PostalCode;
+                address.Comments = request.Comments;
 
-                _context.ShippingAddresses.Update(shippingAddress);
+                _context.Addresses.Update(address);
                 await _context.SaveChangesAsync(cancellationToken);
 
                 return new OkObjectResult(new Response
@@ -115,7 +134,7 @@ namespace Ecommerce.Controllers.Shipping.EditAddress
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in editing shipping address {shippingAddressId}", request.ShippingAddressId);
+                _logger.LogError(ex, "Error in editing address {addressId}", request.AddressId);
                 throw;
             }
         }

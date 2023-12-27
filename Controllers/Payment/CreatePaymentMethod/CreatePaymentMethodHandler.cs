@@ -5,6 +5,7 @@ using Ecommerce.Common.Models.Responses;
 using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 namespace Ecommerce.Controllers.Payment.CreatePaymentMethod
@@ -21,7 +22,7 @@ namespace Ecommerce.Controllers.Payment.CreatePaymentMethod
         /// Card owner.
         /// </summary>
         [JsonRequired]
-        public string Name { get; set; } = string.Empty;
+        public string CardOwner { get; set; } = string.Empty;
  
         /// <summary>
         /// Card number.
@@ -46,6 +47,12 @@ namespace Ecommerce.Controllers.Payment.CreatePaymentMethod
         /// </summary>
         [JsonRequired]
         public int ExpiryYear { get; set; }
+
+        /// <summary>
+        /// Billing address ID.
+        /// </summary>
+        [JsonRequired]
+        public int BillingAddressId { get; set; }
     }
 
     public class CreatePaymentMethodHandler : IRequestHandler<CreatePaymentMethodForm, IActionResult>
@@ -73,14 +80,20 @@ namespace Ecommerce.Controllers.Payment.CreatePaymentMethod
                     throw new BadRequestException(validationResult.ToString());
                 }
 
+                var billingAddress = await _context.Addresses
+                    .FirstOrDefaultAsync(x => x.Id == request.BillingAddressId &&
+                        x.UserId == request.UserId, cancellationToken)
+                    ?? throw new BadRequestException($"Address {request.BillingAddressId} does not exist");
+                
                 var paymentMethod = new PaymentMethod
                 {
                     UserId = request.UserId,
-                    Name = _securityManager.Encrypt(request.Name),
+                    CardOwner = _securityManager.Encrypt(request.CardOwner),
                     CardNumber = _securityManager.Encrypt(request.CardNumber),
                     CVV = _securityManager.Encrypt(request.CVV),
                     ExpiryMonth = _securityManager.Encrypt(request.ExpiryMonth.ToString("00")),
                     ExpiryYear = _securityManager.Encrypt(request.ExpiryYear.ToString("0000")),
+                    BillingAddress = billingAddress
                 };
                 _context.PaymentMethods.Add(paymentMethod);
                 await _context.SaveChangesAsync(cancellationToken);

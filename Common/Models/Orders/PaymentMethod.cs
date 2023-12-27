@@ -23,7 +23,7 @@ namespace Ecommerce.Common.Models.Orders
         /// Card owner.
         /// </summary>
         /// <example>John Doe</example>
-        public string Name { get; set; } = string.Empty;
+        public string CardOwner { get; set; } = string.Empty;
 
         /// <summary>
         /// Card number.
@@ -56,6 +56,17 @@ namespace Ecommerce.Common.Models.Orders
         /// </summary>
         /// <example>2024</example>
         public string ExpiryYear { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Billing address ID.
+        /// </summary>
+        [JsonIgnore]
+        public int BillingAddressId { get; set; }
+
+        /// <summary>
+        /// Billing address.
+        /// </summary>
+        public Address BillingAddress { get; set; } = new Address();
 
         /// <summary>
         /// Datetime of creation.

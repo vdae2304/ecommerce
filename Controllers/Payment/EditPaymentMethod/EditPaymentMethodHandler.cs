@@ -27,7 +27,7 @@ namespace Ecommerce.Controllers.Payment.EditPaymentMethod
         /// <summary>
         /// Card owner.
         /// </summary>
-        public string? Name { get; set; }
+        public string? CardOwner { get; set; }
 
         /// <summary>
         /// Card verification value.
@@ -43,6 +43,11 @@ namespace Ecommerce.Controllers.Payment.EditPaymentMethod
         /// Year of expiration.
         /// </summary>
         public int? ExpiryYear { get; set; }
+
+        /// <summary>
+        /// Billing address ID.
+        /// </summary>
+        public int? BillingAddressId { get; set; }
     }
 
     public class EditPaymentMethodHandler : IRequestHandler<EditPaymentMethodRequest, IActionResult>
@@ -74,9 +79,9 @@ namespace Ecommerce.Controllers.Payment.EditPaymentMethod
                         x.UserId == request.UserId, cancellationToken)
                     ?? throw new NotFoundException($"Payment method {request.PaymentMethodId} does not exist");
 
-                if (request.Name != null)
+                if (request.CardOwner != null)
                 {
-                    paymentMethod.Name = _securityManager.Encrypt(request.Name);
+                    paymentMethod.CardOwner = _securityManager.Encrypt(request.CardOwner);
                 }
                 if (request.CVV != null)
                 {
@@ -89,6 +94,13 @@ namespace Ecommerce.Controllers.Payment.EditPaymentMethod
                 if (request.ExpiryYear != null)
                 {
                     paymentMethod.ExpiryYear = _securityManager.Encrypt(request.ExpiryYear.Value.ToString("0000"));
+                }
+                if (request.BillingAddressId != null)
+                {
+                    paymentMethod.BillingAddress = await _context.Addresses
+                        .FirstOrDefaultAsync(x => x.Id == request.BillingAddressId &&
+                            x.UserId == request.UserId, cancellationToken)
+                        ?? throw new BadRequestException($"Address {request.BillingAddressId} does not exist");
                 }
 
                 _context.PaymentMethods.Update(paymentMethod);

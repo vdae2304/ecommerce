@@ -43,7 +43,7 @@ namespace Ecommerce.Controllers.Payment.GetPaymentMethod
                         x.UserId == request.UserId, cancellationToken)
                     ?? throw new NotFoundException($"Payment method {request.PaymentMethodId} does not exist");
 
-                paymentMethod.Name = _securityManager.Decrypt(paymentMethod.Name);
+                paymentMethod.CardOwner = _securityManager.Decrypt(paymentMethod.CardOwner);
                 paymentMethod.CardNumber = _securityManager.Decrypt(paymentMethod.CardNumber);
                 paymentMethod.CVV = _securityManager.Decrypt(paymentMethod.CVV);
                 paymentMethod.ExpiryMonth = _securityManager.Decrypt(paymentMethod.ExpiryMonth);

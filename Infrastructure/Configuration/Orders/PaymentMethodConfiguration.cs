@@ -12,7 +12,7 @@ namespace Ecommerce.Infrastructure.Configuration.Orders
             builder.ToTable("PaymentMethods");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Name).HasMaxLength(256).IsRequired();
+            builder.Property(x => x.CardOwner).HasMaxLength(256).IsRequired();
             builder.Property(x => x.CardNumber).HasMaxLength(256).IsRequired();
             builder.Property(x => x.CVV).HasMaxLength(256).IsRequired();
             builder.Property(x => x.ExpiryMonth).HasMaxLength(256).IsRequired();
@@ -22,6 +22,11 @@ namespace Ecommerce.Infrastructure.Configuration.Orders
                 .WithMany()
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x => x.BillingAddress)
+                .WithMany()
+                .HasForeignKey(x => x.BillingAddressId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(x => x.CreatedAt).HasPrecision(0).IsRequired();
             builder.Property(x => x.UpdatedAt).HasPrecision(0).IsRequired();

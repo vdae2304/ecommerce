@@ -6,7 +6,7 @@ namespace Ecommerce.Controllers.Payment.EditPaymentMethod
     {
         public EditPaymentMethodValidator()
         {
-            RuleFor(x => x.Name)
+            RuleFor(x => x.CardOwner)
                 .Matches(@"^[A-Za-zÀ-ÖØ-öø-ÿ ]*$").WithMessage("Field {PropertyName} is not in a valid format");
 
             RuleFor(x => x.CVV)

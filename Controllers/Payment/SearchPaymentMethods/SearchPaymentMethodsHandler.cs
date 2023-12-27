@@ -57,7 +57,7 @@ namespace Ecommerce.Controllers.Payment.SearchPaymentMethods
 
                 foreach (PaymentMethod paymentMethod in paymentMethods)
                 {
-                    paymentMethod.Name = _securityManager.Decrypt(paymentMethod.Name);
+                    paymentMethod.CardOwner = _securityManager.Decrypt(paymentMethod.CardOwner);
                     paymentMethod.CardNumber = _securityManager.Decrypt(paymentMethod.CardNumber);
                     paymentMethod.CVV = _securityManager.Decrypt(paymentMethod.CVV);
                     paymentMethod.ExpiryMonth = _securityManager.Decrypt(paymentMethod.ExpiryMonth);

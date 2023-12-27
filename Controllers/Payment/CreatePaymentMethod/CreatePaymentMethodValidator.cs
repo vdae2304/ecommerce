@@ -6,7 +6,7 @@ namespace Ecommerce.Controllers.Payment.CreatePaymentMethod
     {
         public CreatePaymentMethodValidator()
         {
-            RuleFor(x => x.Name)
+            RuleFor(x => x.CardOwner)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
                 .Matches(@"^[A-Za-zÀ-ÖØ-öø-ÿ ]*$").WithMessage("Field {PropertyName} is not in a valid format");
 
@@ -31,6 +31,9 @@ namespace Ecommerce.Controllers.Payment.CreatePaymentMethod
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
                 .GreaterThanOrEqualTo(DateTime.Today.Year)
                     .WithMessage("Field {PropertyName} cannot be less than {ComparisonValue}");
+
+            RuleFor(x => x.BillingAddressId)
+                .NotNull().WithMessage("Field {PropertyName} is required");
         }
     }
 }

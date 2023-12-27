@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ecommerce.Controllers.Shipping.SearchAddresses
+namespace Ecommerce.Controllers.Addresses.SearchAddresses
 {
     public record AddressFilters : IRequest<IActionResult>
     {
@@ -46,37 +46,37 @@ namespace Ecommerce.Controllers.Shipping.SearchAddresses
         {
             try
             {
-                var query = _context.ShippingAddresses.Where(x => x.UserId == filters.UserId);
+                var query = _context.Addresses.Where(x => x.UserId == filters.UserId);
 
                 int total = await query.CountAsync(cancellationToken);
-                List<ShippingAddress> shippingAddresses = await query
+                List<Address> addresses = await query
                     .OrderByDescending(x => x.CreatedAt)
                     .Skip(filters.Offset)
                     .Take(filters.Limit)
                     .ToListAsync(cancellationToken);
 
-                foreach (ShippingAddress shippingAddress in shippingAddresses)
+                foreach (Address address in addresses)
                 {
-                    shippingAddress.Name = _securityManager.Decrypt(shippingAddress.Name);
-                    shippingAddress.Phone = _securityManager.Decrypt(shippingAddress.Phone);
+                    address.Recipient = _securityManager.Decrypt(address.Recipient);
+                    address.Phone = _securityManager.Decrypt(address.Phone);
                 }
 
-                return new OkObjectResult(new Response<SearchItems<ShippingAddress>>
+                return new OkObjectResult(new Response<SearchItems<Address>>
                 {
                     Success = true,
                     Message = "Ok.",
-                    Data = new SearchItems<ShippingAddress>
+                    Data = new SearchItems<Address>
                     {
                         Total = total,
                         Offset = filters.Offset,
                         Limit = filters.Limit,
-                        Items = shippingAddresses
+                        Items = addresses
                     }
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in getting shipping addresses for user {userId}", filters.UserId);
+                _logger.LogError(ex, "Error in getting addresses for user {userId}", filters.UserId);
                 throw;
             }
         }
