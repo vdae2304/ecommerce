@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Ecommerce.Controllers.IAM.ChangePassword
+namespace Ecommerce.Controllers.IAM.Password
 {
     public class ForgotPasswordValidator : AbstractValidator<ForgotPasswordRequest>
     {
