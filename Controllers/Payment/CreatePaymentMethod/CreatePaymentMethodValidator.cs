@@ -13,7 +13,8 @@ namespace Ecommerce.Controllers.Payment.CreatePaymentMethod
             RuleFor(x => x.CardNumber)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
                 .Length(16).WithMessage("Field {PropertyName} must contain 16 characters")
-                .Matches(@"^[0-9]*$").WithMessage("Field {PropertyName} must contain digits only");
+                .Matches(@"^[0-9]*$").WithMessage("Field {PropertyName} must contain digits only")
+                .CreditCard().WithMessage("Field {PropertyName} is not a valid card number");
 
             RuleFor(x => x.CVV)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
