@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
 
-namespace Ecommerce.Controllers.IAM.ChangePassword
+namespace Ecommerce.Controllers.IAM.Password
 {
     public record ChangePasswordRequest : IRequest<IActionResult>
     {

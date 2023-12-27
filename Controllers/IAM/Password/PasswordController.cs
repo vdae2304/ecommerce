@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ecommerce.Controllers.IAM.ChangePassword
+namespace Ecommerce.Controllers.IAM.Password
 {
     [Route("api/iam")]
     [ApiController]

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace Ecommerce.Controllers.IAM.ChangePassword
+namespace Ecommerce.Controllers.IAM.Password
 {
     public record ForgotPasswordRequest : IRequest<IActionResult>
     {
