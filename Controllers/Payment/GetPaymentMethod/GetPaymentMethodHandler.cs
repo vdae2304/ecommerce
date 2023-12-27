@@ -40,6 +40,8 @@ namespace Ecommerce.Controllers.Payment.GetPaymentMethod
             {
                 PaymentMethod paymentMethod = await _context.PaymentMethods
                     .Include(x => x.BillingAddress)
+                    .AsSplitQuery()
+                    .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == request.PaymentMethodId &&
                         x.UserId == request.UserId, cancellationToken)
                     ?? throw new NotFoundException($"Payment method {request.PaymentMethodId} does not exist");
@@ -49,8 +51,13 @@ namespace Ecommerce.Controllers.Payment.GetPaymentMethod
                 paymentMethod.CVV = _securityManager.Decrypt(paymentMethod.CVV);
                 paymentMethod.ExpiryMonth = _securityManager.Decrypt(paymentMethod.ExpiryMonth);
                 paymentMethod.ExpiryYear = _securityManager.Decrypt(paymentMethod.ExpiryYear);
-                paymentMethod.BillingAddress.Recipient = _securityManager.Decrypt(paymentMethod.BillingAddress.Recipient);
-                paymentMethod.BillingAddress.Phone = _securityManager.Decrypt(paymentMethod.BillingAddress.Phone);
+                if (paymentMethod.BillingAddress != null)
+                {
+                    paymentMethod.BillingAddress.Recipient =
+                        _securityManager.Decrypt(paymentMethod.BillingAddress.Recipient);
+                    paymentMethod.BillingAddress.Phone =
+                        _securityManager.Decrypt(paymentMethod.BillingAddress.Phone);
+                }
 
                 return new OkObjectResult(new Response<PaymentMethod>
                 {

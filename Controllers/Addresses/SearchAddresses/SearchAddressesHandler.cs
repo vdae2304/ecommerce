@@ -46,7 +46,9 @@ namespace Ecommerce.Controllers.Addresses.SearchAddresses
         {
             try
             {
-                var query = _context.Addresses.Where(x => x.UserId == filters.UserId);
+                var query = _context.Addresses
+                    .Where(x => x.UserId == filters.UserId)
+                    .AsNoTracking();
 
                 int total = await query.CountAsync(cancellationToken);
                 List<Address> addresses = await query

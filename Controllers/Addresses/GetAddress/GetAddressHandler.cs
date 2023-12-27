@@ -40,6 +40,7 @@ namespace Ecommerce.Controllers.Addresses.GetAddress
             try
             {
                 Address address = await _context.Addresses
+                    .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == request.AddressId &&
                         x.UserId == request.UserId, cancellationToken)
                     ?? throw new NotFoundException($"Address {request.AddressId} does not exist");

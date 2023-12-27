@@ -46,11 +46,14 @@ namespace Ecommerce.Controllers.Payment.SearchPaymentMethods
         {
             try
             {
-                var query = _context.PaymentMethods.Where(x => x.UserId == filters.UserId);
+                var query = _context.PaymentMethods
+                    .Include(x => x.BillingAddress)
+                    .Where(x => x.UserId == filters.UserId)
+                    .AsSplitQuery()
+                    .AsNoTracking();
 
                 int total = await query.CountAsync(cancellationToken);
                 List<PaymentMethod> paymentMethods = await query
-                    .Include(x => x.BillingAddress)
                     .OrderByDescending(x => x.CreatedAt)
                     .Skip(filters.Offset)
                     .Take(filters.Limit)
@@ -63,8 +66,13 @@ namespace Ecommerce.Controllers.Payment.SearchPaymentMethods
                     paymentMethod.CVV = _securityManager.Decrypt(paymentMethod.CVV);
                     paymentMethod.ExpiryMonth = _securityManager.Decrypt(paymentMethod.ExpiryMonth);
                     paymentMethod.ExpiryYear = _securityManager.Decrypt(paymentMethod.ExpiryYear);
-                    paymentMethod.BillingAddress.Recipient = _securityManager.Decrypt(paymentMethod.BillingAddress.Recipient);
-                    paymentMethod.BillingAddress.Phone = _securityManager.Decrypt(paymentMethod.BillingAddress.Phone);
+                    if (paymentMethod.BillingAddress != null)
+                    {
+                        paymentMethod.BillingAddress.Recipient =
+                            _securityManager.Decrypt(paymentMethod.BillingAddress.Recipient);
+                        paymentMethod.BillingAddress.Phone =
+                            _securityManager.Decrypt(paymentMethod.BillingAddress.Phone);
+                    }
                 }
 
                 return new OkObjectResult(new Response<SearchItems<PaymentMethod>>
