@@ -14,7 +14,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
             
             RuleFor(x => x.Sku)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
-                .Length(6, 12).WithMessage("Field {PropertyName} must contain between {MinLength} and {MaxLength} characters")
+                .Length(6, 24).WithMessage("Field {PropertyName} must contain between {MinLength} and {MaxLength} characters")
                 .Matches(@"^[A-z][A-Z0-9]*$").WithMessage("Field {PropertyName} is not in a valid format")
                 .MustAsync(IsSkuUniqueAsync).WithMessage("Field {PropertyName} must be unique");
 
@@ -28,6 +28,11 @@ namespace Ecommerce.Controllers.Products.CreateProduct
             RuleFor(x => x.Price)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
                 .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
+
+            RuleFor(x => x.Price)
+                .LessThan(x => x.CrossedOutPrice)
+                .WithMessage("Field {PropertyName} must be less than {ComparisonProperty}")
+                .When(x => x.CrossedOutPrice != null);
 
             RuleForEach(x => x.CategoryIds)
                 .MustAsync(CategoryExistsAsync).WithMessage("Category {PropertyValue} does not exist");

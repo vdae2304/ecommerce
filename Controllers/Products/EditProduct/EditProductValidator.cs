@@ -13,6 +13,12 @@ namespace Ecommerce.Controllers.Products.EditProduct
         {
             _context = context;
 
+            RuleFor(x => x.Sku)
+                .NotEmpty().WithMessage("Field {PropertyName} is required")
+                .Length(6, 24).WithMessage("Field {PropertyName} must contain between {MinLength} and {MaxLength} characters")
+                .Matches(@"^[A-z][A-Z0-9]*$").WithMessage("Field {PropertyName} is not in a valid format")
+                .MustAsync(IsSkuUniqueAsync).WithMessage("Field {PropertyName} must be unique");
+
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Field {PropertyName} is required")
                 .MaximumLength(128).WithMessage("Field {PropertyName} cannot have more than {MaxLength} characters");
@@ -65,6 +71,11 @@ namespace Ecommerce.Controllers.Products.EditProduct
 
             RuleFor(x => x.InStock)
                 .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
+        }
+
+        private async Task<bool> IsSkuUniqueAsync(EditProductForm request, string sku, CancellationToken cancellationToken = default)
+        {
+            return !await _context.Products.AnyAsync(x => x.Id != request.ProductId && x.Sku == sku, cancellationToken);
         }
 
         private async Task<bool> CategoryExistsAsync(int id, CancellationToken cancellationToken = default)

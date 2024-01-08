@@ -37,6 +37,11 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         public decimal Price { get; set; }
 
         /// <summary>
+        /// If not null, display a price to compare to.
+        /// </summary>
+        public decimal? CrossedOutPrice { get; set; }
+
+        /// <summary>
         /// ID of the categories the product is assigned to.
         /// </summary>
         public IEnumerable<int> CategoryIds { get; set; } = new List<int>();
