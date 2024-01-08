@@ -12,7 +12,7 @@ namespace Ecommerce.Infrastructure.Configuration.Schema
             builder.HasKey(x => x.Id);
             builder.HasIndex(x => x.Sku).IsUnique();
 
-            builder.Property(x => x.Sku).HasMaxLength(12).IsRequired();
+            builder.Property(x => x.Sku).HasMaxLength(24).IsRequired();
             builder.Property(x => x.Name).HasMaxLength(128).IsRequired();
             builder.Property(x => x.Description).IsRequired();
             builder.Property(x => x.Price).HasPrecision(10, 4).IsRequired();

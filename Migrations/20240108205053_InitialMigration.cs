@@ -73,7 +73,7 @@ namespace Ecommerce.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    sku = table.Column<string>(type: "varchar(12)", maxLength: 12, nullable: false),
+                    sku = table.Column<string>(type: "varchar(24)", maxLength: 24, nullable: false),
                     name = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
                     description = table.Column<string>(type: "longtext", nullable: false),
                     price = table.Column<decimal>(type: "decimal(10,4)", precision: 10, scale: 4, nullable: false),

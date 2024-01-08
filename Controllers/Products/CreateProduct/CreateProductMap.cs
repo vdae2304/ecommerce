@@ -12,6 +12,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+                .ForMember(dest => dest.CrossedOutPrice, opt => opt.MapFrom(src => src.CrossedOutPrice))
                 .ForMember(dest => dest.Length, opt => opt.MapFrom(src => src.Length))
                 .ForMember(dest => dest.Width, opt => opt.MapFrom(src => src.Width))
                 .ForMember(dest => dest.Height, opt => opt.MapFrom(src => src.Height))

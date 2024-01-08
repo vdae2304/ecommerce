@@ -20,6 +20,12 @@ namespace Ecommerce.Controllers.Products.EditProduct
         public int ProductId { get; set; }
 
         /// <summary>
+        /// An unique identifier for the product.
+        /// </summary>
+        [JsonRequired]
+        public string Sku { get; set; } = string.Empty;
+
+        /// <summary>
         /// Product name.
         /// </summary>
         [JsonRequired]
@@ -103,6 +109,12 @@ namespace Ecommerce.Controllers.Products.EditProduct
         /// Default is false.
         /// </summary>
         public bool Unlimited { get; set; } = false;
+
+        /// <summary>
+        /// Whether the product is enabled or not.
+        /// Default is true.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
     }
 
     public class EditProductHandler : IRequestHandler<EditProductForm, IActionResult>
@@ -134,6 +146,7 @@ namespace Ecommerce.Controllers.Products.EditProduct
                     .FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken)
                     ?? throw new NotFoundException($"Product {request.ProductId} does not exist");
 
+                product.Sku = request.Sku;
                 product.Name = request.Name;
                 product.Description = request.Description;
                 product.Price = request.Price;
@@ -148,6 +161,7 @@ namespace Ecommerce.Controllers.Products.EditProduct
                 product.MaxPurchaseQuantity = request.MaxPurchaseQuantity;
                 product.InStock = request.InStock;
                 product.Unlimited = request.Unlimited;
+                product.Enabled = request.Enabled;
 
                 List<ProductCategories> oldCategories = await _context.ProductCategories
                     .Where(x => x.ProductId == request.ProductId)

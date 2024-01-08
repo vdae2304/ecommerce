@@ -314,8 +314,8 @@ namespace Ecommerce.Migrations
 
                     b.Property<string>("Sku")
                         .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("varchar(12)")
+                        .HasMaxLength(24)
+                        .HasColumnType("varchar(24)")
                         .HasColumnName("sku");
 
                     b.Property<int?>("ThumbnailId")
