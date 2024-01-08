@@ -42,7 +42,7 @@ namespace Ecommerce.Controllers.Products.DeleteImage
 
                 if (product.Thumbnail != null)
                 {
-                    await _fileRepository.DeleteFileAsync(product.Thumbnail.FileId);
+                    await _fileRepository.DeleteFileAsync(product.Thumbnail.Filename);
                     _context.MediaImages.Remove(product.Thumbnail);
                     await _context.SaveChangesAsync(cancellationToken);
                 }

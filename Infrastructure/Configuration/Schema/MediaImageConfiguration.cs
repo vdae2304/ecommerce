@@ -10,10 +10,12 @@ namespace Ecommerce.Infrastructure.Configuration.Schema
         {
             builder.ToTable("MediaImages");
             builder.HasKey(x => x.Id);
-            builder.HasIndex(x => x.FileId).IsUnique();
+            builder.HasIndex(x => x.Url).IsUnique();
+            builder.HasIndex(x => x.Filename).IsUnique();
 
-            builder.Property(x => x.FileId).IsRequired();
             builder.Property(x => x.Url).IsRequired();
+            builder.Property(x => x.Filename).HasMaxLength(128).IsRequired();
+            builder.Property(x => x.MimeType).HasMaxLength(128).IsRequired();
             builder.Property(x => x.Width).IsRequired();
             builder.Property(x => x.Height).IsRequired();
 

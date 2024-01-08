@@ -43,13 +43,13 @@ namespace Ecommerce.Controllers.Products.DeleteProduct
 
                 if (product.Thumbnail != null)
                 {
-                    await _fileRepository.DeleteFileAsync(product.Thumbnail.FileId);
+                    await _fileRepository.DeleteFileAsync(product.Thumbnail.Filename);
                     _context.MediaImages.Remove(product.Thumbnail);
                 }
 
                 foreach (MediaImage galleryImage in product.GalleryImages)
                 {
-                    await _fileRepository.DeleteFileAsync(galleryImage.FileId);
+                    await _fileRepository.DeleteFileAsync(galleryImage.Filename);
                     _context.MediaImages.Remove(galleryImage);
                 }
 

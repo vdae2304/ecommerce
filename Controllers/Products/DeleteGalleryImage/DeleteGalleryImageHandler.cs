@@ -48,7 +48,7 @@ namespace Ecommerce.Controllers.Products.DeleteGalleryImage
                     .FirstOrDefault(x => x.Id == request.ImageId)
                     ?? throw new NotFoundException($"Image {request.ImageId} does not exist");
 
-                await _fileRepository.DeleteFileAsync(image.FileId);
+                await _fileRepository.DeleteFileAsync(image.Filename);
                 _context.MediaImages.Remove(image);
                 await _context.SaveChangesAsync(cancellationToken);
 
