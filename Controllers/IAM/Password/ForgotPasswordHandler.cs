@@ -47,7 +47,7 @@ namespace Ecommerce.Controllers.IAM.Password
                 if (user != null)
                 {
                     string token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    await _emailNotification.SendEmail(new EmailMessage
+                    await _emailNotification.SendEmailAsync(new EmailMessage
                     {
                         Recipient = request.Email,
                         Subject = "Forgot password",

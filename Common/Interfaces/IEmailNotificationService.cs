@@ -39,6 +39,6 @@ namespace Ecommerce.Common.Interfaces
         /// </summary>
         /// <param name="message">Email message to send.</param>
         /// <returns></returns>
-        public Task SendEmail(EmailMessage message);
+        public Task SendEmailAsync(EmailMessage message);
     }
 }

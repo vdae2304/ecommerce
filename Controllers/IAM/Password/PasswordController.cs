@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.Controllers.IAM.Password
 {
-    [Route("api/iam")]
+    [Route("api/iam/password")]
     [ApiController]
     public class PasswordController : ControllerBase
     {
@@ -27,14 +27,14 @@ namespace Ecommerce.Controllers.IAM.Password
         /// <response code="200">Ok. Change password.</response>
         /// <response code="400">Bad request. Invalid field.</response>
         /// <response code="401">Unauthorized. User is not logged in.</response>
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("application/x-www-form-urlencoded")]
         [Produces("application/json")]
-        [HttpPost("password")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpPost]
         public async Task<IActionResult> Change([FromForm] ChangePasswordRequest request)
         {
             request.UserId = User.GetUserId() ?? throw new UnauthorizedException("");
@@ -53,7 +53,7 @@ namespace Ecommerce.Controllers.IAM.Password
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("application/x-www-form-urlencoded")]
         [Produces("application/json")]
-        [HttpPost("forgot-password")]
+        [HttpPost("forgot")]
         public async Task<IActionResult> Forgot([FromForm] ForgotPasswordRequest request)
         {
             _logger.LogInformation("Password reset token requested for {email}", request.Email);
@@ -71,7 +71,7 @@ namespace Ecommerce.Controllers.IAM.Password
         [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
         [Consumes("application/x-www-form-urlencoded")]
         [Produces("application/json")]
-        [HttpPost("reset-password")]
+        [HttpPost("reset")]
         public async Task<IActionResult> Reset([FromForm] ResetPasswordRequest request)
         {
             _logger.LogInformation("Change password for {email}", request.Email);
