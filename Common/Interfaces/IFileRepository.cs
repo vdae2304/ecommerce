@@ -1,4 +1,6 @@
-﻿namespace Ecommerce.Common.Interfaces
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Ecommerce.Common.Interfaces
 {
     /// <summary>
     /// File repository.
@@ -11,6 +13,20 @@
         /// <param name="filename">Filename.</param>
         /// <returns></returns>
         public string GetFileUrl(string filename);
+
+        /// <summary>
+        /// Download a file from the server.
+        /// </summary>
+        /// <param name="filename">Filename.</param>
+        /// <returns>File contents.</returns>
+        public byte[]? DownloadFile(string filename);
+
+        /// <summary>
+        /// Asynchronously download a file from the server.
+        /// </summary>
+        /// <param name="filename">Filename.</param>
+        /// <returns>File contents.</returns>
+        public Task<byte[]?> DownloadFileAsync(string filename);
 
         /// <summary>
         /// Upload a file to the server.
