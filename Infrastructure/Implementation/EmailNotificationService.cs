@@ -39,7 +39,7 @@ namespace Ecommerce.Infrastructure.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task SendEmail(EmailMessage message)
+        public async Task SendEmailAsync(EmailMessage message)
         {
             var smtpClient = new SmtpClient
             {
