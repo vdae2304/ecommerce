@@ -9,6 +9,8 @@ namespace Ecommerce.Infrastructure.Configuration.IAM
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
             builder.ToTable("Users");
+            builder.Property(x => x.CreatedAt).HasPrecision(0).IsRequired();
+            builder.Property(x => x.UpdatedAt).HasPrecision(0).IsRequired();
         }
     }
 }
