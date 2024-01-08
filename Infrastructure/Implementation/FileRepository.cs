@@ -1,22 +1,43 @@
-﻿using Ecommerce.Common.Exceptions;
-using Ecommerce.Common.Interfaces;
+﻿using Ecommerce.Common.Interfaces;
 
 namespace Ecommerce.Infrastructure.Implementation
 {
     /// <inheritdoc/>
     public class FileRepository : IFileRepository
     {
-        private readonly string _rootPath;
+        private readonly string _path;
 
         public FileRepository(IConfiguration config)
         {
-            _rootPath = config["FileStorage:RootPath"] ?? string.Empty;
+            _path = config["FileStorage:Path"] ?? string.Empty;
         }
 
         /// <inheritdoc/>
         public string GetFileUrl(string filename)
         {
-            return Path.Combine(_rootPath, filename);
+            return Path.Combine(_path, filename);
+        }
+
+        /// <inheritdoc/>
+        public byte[]? DownloadFile(string filename)
+        {
+            string path = GetFileUrl(filename);
+            if (File.Exists(path))
+            {
+                return File.ReadAllBytes(path);
+            }
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public async Task<byte[]?> DownloadFileAsync(string filename)
+        {
+            string path = GetFileUrl(filename);
+            if (File.Exists(path))
+            {
+                return await File.ReadAllBytesAsync(path);
+            }
+            return null;
         }
 
         /// <inheritdoc/>
@@ -28,10 +49,11 @@ namespace Ecommerce.Infrastructure.Implementation
         }
 
         /// <inheritdoc/>
-        public Task UploadFileAsync(Stream file, string filename)
+        public async Task UploadFileAsync(Stream file, string filename)
         {
-            UploadFile(file, filename);
-            return Task.CompletedTask;
+            var stream = new FileStream(GetFileUrl(filename), FileMode.Create);
+            await file.CopyToAsync(stream);
+            stream.Close();
         }
 
         /// <inheritdoc/>
