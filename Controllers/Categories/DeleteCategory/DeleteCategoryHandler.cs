@@ -42,7 +42,7 @@ namespace Ecommerce.Controllers.Categories.DeleteCategory
 
                 if (category.Thumbnail != null)
                 {
-                    await _fileRepository.DeleteFileAsync(category.Thumbnail.FileId);
+                    await _fileRepository.DeleteFileAsync(category.Thumbnail.Filename);
                     _context.MediaImages.Remove(category.Thumbnail);
                 }
 

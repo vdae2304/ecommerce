@@ -54,21 +54,23 @@ namespace Ecommerce.Controllers.Categories.UploadImage
 
                 var image = await Image.LoadAsync(request.ImageFile.OpenReadStream(), cancellationToken);
 
-                string fileId = Guid.NewGuid().ToString() + Path.GetExtension(request.ImageFile.FileName);
-                await _fileRepository.UploadFileAsync(request.ImageFile.OpenReadStream(), fileId);
+                string filename = Guid.NewGuid().ToString() + Path.GetExtension(request.ImageFile.FileName);
+                string mimeType = request.ImageFile.ContentType;
+                await _fileRepository.UploadFileAsync(request.ImageFile.OpenReadStream(), filename);
 
                 MediaImage? oldThumbnail = category.Thumbnail;
                 category.Thumbnail = new MediaImage
                 {
-                    FileId = fileId,
-                    Url = _fileRepository.GetFileUrl(fileId),
+                    Url = _fileRepository.GetFileUrl(filename),
+                    Filename = filename,
+                    MimeType = mimeType,
                     Width = image.Width,
                     Height = image.Height
                 };
 
                 if (oldThumbnail != null)
                 {
-                    await _fileRepository.DeleteFileAsync(oldThumbnail.FileId);
+                    await _fileRepository.DeleteFileAsync(oldThumbnail.Filename);
                     _context.MediaImages.Remove(oldThumbnail);
                 }
 
