@@ -67,6 +67,11 @@ namespace Ecommerce.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("concurrency_stamp");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetime(0)")
+                        .HasColumnName("created_at");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)")
@@ -113,6 +118,11 @@ namespace Ecommerce.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("two_factor_enabled");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetime(0)")
+                        .HasColumnName("updated_at");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -197,14 +207,21 @@ namespace Ecommerce.Migrations
                         .HasColumnType("datetime(0)")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("FileId")
+                    b.Property<string>("Filename")
                         .IsRequired()
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("file_id");
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)")
+                        .HasColumnName("filename");
 
                     b.Property<int>("Height")
                         .HasColumnType("int")
                         .HasColumnName("height");
+
+                    b.Property<string>("MimeType")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("varchar(128)")
+                        .HasColumnName("mime_type");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasPrecision(0)
@@ -213,7 +230,7 @@ namespace Ecommerce.Migrations
 
                     b.Property<string>("Url")
                         .IsRequired()
-                        .HasColumnType("longtext")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("url");
 
                     b.Property<int>("Width")
@@ -223,9 +240,13 @@ namespace Ecommerce.Migrations
                     b.HasKey("Id")
                         .HasName("pk_media_images");
 
-                    b.HasIndex("FileId")
+                    b.HasIndex("Filename")
                         .IsUnique()
-                        .HasDatabaseName("ix_media_images_file_id");
+                        .HasDatabaseName("ix_media_images_filename");
+
+                    b.HasIndex("Url")
+                        .IsUnique()
+                        .HasDatabaseName("ix_media_images_url");
 
                     b.ToTable("MediaImages", (string)null);
                 });
