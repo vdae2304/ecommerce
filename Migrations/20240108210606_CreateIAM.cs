@@ -33,7 +33,7 @@ namespace Ecommerce.Migrations
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     user_name = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
                     normalized_user_name = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
                     email = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true),
@@ -49,7 +49,7 @@ namespace Ecommerce.Migrations
                     lockout_enabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     access_failed_count = table.Column<int>(type: "int", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false),
-                    updated_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false)
                 },
                 constraints: table =>
                 {
