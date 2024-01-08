@@ -21,8 +21,9 @@ namespace Ecommerce.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    file_id = table.Column<string>(type: "varchar(255)", nullable: false),
-                    url = table.Column<string>(type: "longtext", nullable: false),
+                    url = table.Column<string>(type: "varchar(255)", nullable: false),
+                    filename = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
+                    mime_type = table.Column<string>(type: "varchar(128)", maxLength: 128, nullable: false),
                     width = table.Column<int>(type: "int", nullable: false),
                     height = table.Column<int>(type: "int", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime(0)", precision: 0, nullable: false),
@@ -190,9 +191,15 @@ namespace Ecommerce.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_media_images_file_id",
+                name: "ix_media_images_filename",
                 table: "MediaImages",
-                column: "file_id",
+                column: "filename",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_media_images_url",
+                table: "MediaImages",
+                column: "url",
                 unique: true);
 
             migrationBuilder.CreateIndex(
