@@ -7,7 +7,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
     {
         public CreateProductMap()
         {
-            CreateMap<CreateProductForm, Product>()
+            CreateMap<CreateProductRequest, Product>()
                 .ForMember(dest => dest.Sku, opt => opt.MapFrom(src => src.Sku))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
@@ -31,7 +31,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
     {
         public CreateAttributeMap()
         {
-            CreateMap<CreateAttributeForm, ProductAttribute>()
+            CreateMap<CreateAttributeRequest, ProductAttribute>()
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Value));
         }

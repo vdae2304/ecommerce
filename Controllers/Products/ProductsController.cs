@@ -33,10 +33,10 @@ namespace Ecommerce.Controllers.Products
         /// <param name="filters">Search filters.</param>
         /// <response code="200">Ok. Return the list of products.</response>
         [ProducesResponseType(typeof(Response<SearchItems<Product>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpGet]
-        public async Task<IActionResult> Search([FromQuery] ProductFilters filters)
+        public async Task<IActionResult> Search([FromQuery] SearchProductsRequest filters)
         {
             _logger.LogInformation("Search products");
             return await _mediator.Send(filters);
@@ -49,8 +49,8 @@ namespace Ecommerce.Controllers.Products
         /// <response code="200">Ok. Return the product details.</response>
         /// <response code="404">Not Found. Product does not exist.</response>
         [ProducesResponseType(typeof(Response<Product>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpGet("{productId}")]
         public async Task<IActionResult> Get(int productId)
@@ -66,12 +66,12 @@ namespace Ecommerce.Controllers.Products
         /// <response code="200">Ok. Return the ID of the product created.</response>
         /// <response code="400">Bad request. Invalid field.</response>
         [ProducesResponseType(typeof(Response<CreatedId>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("application/json")]
         [Produces("application/json")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateProductForm request)
+        public async Task<IActionResult> Create([FromBody] CreateProductRequest request)
         {
             _logger.LogInformation("Create product {sku}", request.Sku);
             return await _mediator.Send(request);
@@ -85,12 +85,12 @@ namespace Ecommerce.Controllers.Products
         /// <response code="200">Ok. Update the product values.</response>
         /// <response code="400">Bad request. Invalid field.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("application/json")]
         [Produces("application/json")]
         [HttpPut("{productId}")]
-        public async Task<IActionResult> Edit(int productId, [FromBody] EditProductForm request)
+        public async Task<IActionResult> Edit(int productId, [FromBody] EditProductRequest request)
         {
             request.ProductId = productId;
             _logger.LogInformation("Edit product {productId}", productId);
@@ -104,8 +104,8 @@ namespace Ecommerce.Controllers.Products
         /// <response code="200">Ok. Delete the product.</response>
         /// <response code="404">Not Found. Product does not exist.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpDelete("{productId}")]
         public async Task<IActionResult> Delete(int productId)
@@ -123,9 +123,9 @@ namespace Ecommerce.Controllers.Products
         /// <response code="400">Bad request. Invalid file.</response>
         /// <response code="404">Not Found. Product does not exist.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
         [Produces("application/json")]
         [HttpPost("{productId}/image")]
@@ -142,8 +142,8 @@ namespace Ecommerce.Controllers.Products
         /// <response code="200">Ok. Delete the image.</response>
         /// <response code="404">Not Found. Product does not exist.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpDelete("{productId}/image")]
         public async Task<IActionResult> DeleteImage(int productId)
@@ -161,9 +161,9 @@ namespace Ecommerce.Controllers.Products
         /// <response code="400">Bad request. Invalid file.</response>
         /// <response code="404">Not Found. Product does not exist.</response>
         [ProducesResponseType(typeof(Response<CreatedId>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
         [Produces("application/json")]
         [HttpPost("{productId}/gallery")]
@@ -181,8 +181,8 @@ namespace Ecommerce.Controllers.Products
         /// <response code="200">Ok. Delete the image.</response>
         /// <response code="404">Not Found. Product or image does not exist.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpDelete("{productId}/gallery/{imageId}")]
         public async Task<IActionResult> DeleteGalleryImage(int productId, int imageId)

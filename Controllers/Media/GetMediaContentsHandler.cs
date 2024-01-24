@@ -6,14 +6,6 @@ using Microsoft.AspNetCore.StaticFiles;
 
 namespace Ecommerce.Controllers.Media
 {
-    public record GetMediaContentsRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Filename.
-        /// </summary>
-        public string Filename { get; set; } = string.Empty;
-    }
-
     public class GetMediaContentsHandler : IRequestHandler<GetMediaContentsRequest, IActionResult>
     {
         private readonly IFileRepository _fileRepository;
@@ -30,7 +22,7 @@ namespace Ecommerce.Controllers.Media
             try
             {
                 byte[] file = await _fileRepository.DownloadFileAsync(request.Filename)
-                    ?? throw new NotFoundException("File not found");
+                    ?? throw new NotFoundException();
 
                 var fileExtension = new FileExtensionContentTypeProvider();
                 if (!fileExtension.TryGetContentType(request.Filename, out string? contentType))

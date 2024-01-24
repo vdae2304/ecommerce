@@ -2,22 +2,13 @@
 using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.IAM;
 using Ecommerce.Common.Models.Responses;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.IAM.Password
 {
-    public record ForgotPasswordRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Email address.
-        /// </summary>
-        [Required]
-        public string Email { get; set; } = string.Empty;
-    }
-
     public class ForgotPasswordHandler : IRequestHandler<ForgotPasswordRequest, IActionResult>
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -37,11 +28,7 @@ namespace Ecommerce.Controllers.IAM.Password
             try
             {
                 var validator = new ForgotPasswordValidator();
-                var validationResult = validator.Validate(request);
-                if (!validationResult.IsValid)
-                {
-                    throw new BadRequestException(validationResult.ToString());
-                }
+                await validator.ValidateAndThrowAsync(request, cancellationToken);
 
                 ApplicationUser? user = await _userManager.FindByEmailAsync(request.Email);
                 if (user != null)

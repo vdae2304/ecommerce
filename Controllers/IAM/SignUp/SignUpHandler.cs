@@ -2,32 +2,13 @@
 using Ecommerce.Common.Exceptions;
 using Ecommerce.Common.Models.IAM;
 using Ecommerce.Common.Models.Responses;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.IAM.SignUp
 {
-    public record SignUpRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Username.
-        /// </summary>
-        [Required]
-        public string UserName { get; set; } = string.Empty;
-        /// <summary>
-        /// Password.
-        /// </summary>
-        [Required]
-        public string Password { get; set; } = string.Empty;
-        /// <summary>
-        /// Email address.
-        /// </summary>
-        [Required]
-        public string Email { get; set; } = string.Empty;
-    }
-
     public class SignUpHandler : IRequestHandler<SignUpRequest, IActionResult>
     {
         private readonly IMapper _mapper;
@@ -47,11 +28,7 @@ namespace Ecommerce.Controllers.IAM.SignUp
             try
             {
                 var validator = new SignUpValidator(_userManager);
-                var validationResult = await validator.ValidateAsync(request, cancellationToken);
-                if (!validationResult.IsValid)
-                {
-                    throw new BadRequestException(validationResult.ToString());
-                }
+                await validator.ValidateAndThrowAsync(request, cancellationToken);
 
                 ApplicationUser user = _mapper.Map<ApplicationUser>(request);
 

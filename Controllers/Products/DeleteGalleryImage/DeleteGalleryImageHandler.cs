@@ -9,18 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Products.DeleteGalleryImage
 {
-    public record DeleteGalleryImageRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Product ID.
-        /// </summary>
-        public int ProductId { get; set; }
-        /// <summary>
-        /// Image ID.
-        /// </summary>
-        public int ImageId { get; set; }
-    }
-
     public class DeleteGalleryImageHandler : IRequestHandler<DeleteGalleryImageRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
@@ -42,11 +30,11 @@ namespace Ecommerce.Controllers.Products.DeleteGalleryImage
                 Product product = await _context.Products
                     .Include(x => x.GalleryImages)
                     .FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken)
-                    ?? throw new NotFoundException($"Product {request.ProductId} does not exist");
+                    ?? throw new NotFoundException();
 
                 MediaImage image = product.GalleryImages
                     .FirstOrDefault(x => x.Id == request.ImageId)
-                    ?? throw new NotFoundException($"Image {request.ImageId} does not exist");
+                    ?? throw new NotFoundException();
 
                 await _fileRepository.DeleteFileAsync(image.Filename);
                 _context.MediaImages.Remove(image);

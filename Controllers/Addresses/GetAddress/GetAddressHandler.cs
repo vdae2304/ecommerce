@@ -9,18 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Addresses.GetAddress
 {
-    public record GetAddressRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// User ID linked to the address.
-        /// </summary>
-        public int UserId { get; set; }
-        /// <summary>
-        /// Address ID.
-        /// </summary>
-        public int AddressId { get; set; }
-    }
-
     public class GetAddressHandler : IRequestHandler<GetAddressRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
@@ -43,7 +31,7 @@ namespace Ecommerce.Controllers.Addresses.GetAddress
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == request.AddressId &&
                         x.UserId == request.UserId, cancellationToken)
-                    ?? throw new NotFoundException($"Address {request.AddressId} does not exist");
+                    ?? throw new NotFoundException();
 
                 address.Recipient = _securityManager.Decrypt(address.Recipient);
                 address.Phone = _securityManager.Decrypt(address.Phone);

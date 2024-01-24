@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Categories.EditCategory
 {
-    public class EditCategoryValidator : AbstractValidator<EditCategoryForm>
+    public class EditCategoryValidator : AbstractValidator<EditCategoryRequest>
     {
         private readonly ApplicationDbContext _context;
 

@@ -8,14 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Products.GetProduct
 {
-    public record GetProductRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Product ID.
-        /// </summary>
-        public int ProductId { get; set; }
-    }
-
     public class GetProductHandler : IRequestHandler<GetProductRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
@@ -39,7 +31,7 @@ namespace Ecommerce.Controllers.Products.GetProduct
                     .AsSplitQuery()
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken)
-                    ?? throw new NotFoundException($"Product {request.ProductId} does not exist");
+                    ?? throw new NotFoundException();
 
                 return new OkObjectResult(new Response<Product> 
                 {

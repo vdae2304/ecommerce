@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Products.CreateProduct
 {
-    public class CreateProductValidator : AbstractValidator<CreateProductForm>
+    public class CreateProductValidator : AbstractValidator<CreateProductRequest>
     {
         private readonly ApplicationDbContext _context;
 
@@ -83,7 +83,7 @@ namespace Ecommerce.Controllers.Products.CreateProduct
         }
     }
 
-    public class CreateAttributeValidator : AbstractValidator<CreateAttributeForm>
+    public class CreateAttributeValidator : AbstractValidator<CreateAttributeRequest>
     {
         public CreateAttributeValidator()
         {

@@ -24,8 +24,8 @@ namespace Ecommerce.Controllers.IAM.Login
         /// <response code="200">Ok. Return a token.</response>
         /// <response code="401">Unauthorized. Invalid credentials.</response>
         [ProducesResponseType(typeof(Response<Authentication>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("application/x-www-form-urlencoded")]
         [Produces("application/json")]
         [HttpPost]

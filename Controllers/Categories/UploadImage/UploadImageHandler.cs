@@ -3,6 +3,7 @@ using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
 using Ecommerce.Infrastructure.Data;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,18 +11,6 @@ using SixLabors.ImageSharp;
 
 namespace Ecommerce.Controllers.Categories.UploadImage
 {
-    public record UploadImageRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Category ID.
-        /// </summary>
-        public int CategoryId { get; set; }
-        /// <summary>
-        /// Image file.
-        /// </summary>
-        public IFormFile ImageFile { get; set; }
-    }
-
     public class UploadImageHandler : IRequestHandler<UploadImageRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
@@ -41,16 +30,12 @@ namespace Ecommerce.Controllers.Categories.UploadImage
             try
             {
                 var validator = new UploadImageValidator();
-                var validationResult = validator.Validate(request);
-                if (!validationResult.IsValid)
-                {
-                    throw new BadRequestException(validationResult.ToString());
-                }
+                await validator.ValidateAndThrowAsync(request, cancellationToken);
 
                 Category category = await _context.Categories
                     .Include(x => x.Thumbnail)
                     .FirstOrDefaultAsync(x => x.Id == request.CategoryId, cancellationToken)
-                    ?? throw new NotFoundException($"Category {request.CategoryId} does not exist");
+                    ?? throw new NotFoundException();
 
                 var image = await Image.LoadAsync(request.ImageFile.OpenReadStream(), cancellationToken);
 

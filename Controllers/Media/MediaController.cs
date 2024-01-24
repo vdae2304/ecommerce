@@ -25,8 +25,8 @@ namespace Ecommerce.Controllers.Media
         /// <response code="404">Not Found. File does not exist.</response>
         /// <returns></returns>
         [ProducesResponseType(typeof(byte[]), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [HttpGet("{filename}")]
         public async Task<IActionResult> Get(string filename)
         {

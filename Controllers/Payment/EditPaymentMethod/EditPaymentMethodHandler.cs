@@ -3,53 +3,13 @@ using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Orders;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Infrastructure.Data;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 
 namespace Ecommerce.Controllers.Payment.EditPaymentMethod
 {
-    public record EditPaymentMethodRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// User ID linked to the payment method.
-        /// </summary>
-        [JsonIgnore]
-        public int UserId { get; set; }
-
-        /// <summary>
-        /// Payment method ID.
-        /// </summary>
-        [JsonIgnore]
-        public int PaymentMethodId { get; set; }
-
-        /// <summary>
-        /// Card owner.
-        /// </summary>
-        public string? CardOwner { get; set; }
-
-        /// <summary>
-        /// Card verification value.
-        /// </summary>
-        public string? CVV { get; set; }
-
-        /// <summary>
-        /// Month of expiration.
-        /// </summary>
-        public int? ExpiryMonth { get; set; }
-
-        /// <summary>
-        /// Year of expiration.
-        /// </summary>
-        public int? ExpiryYear { get; set; }
-
-        /// <summary>
-        /// Billing address ID.
-        /// </summary>
-        public int? BillingAddressId { get; set; }
-    }
-
     public class EditPaymentMethodHandler : IRequestHandler<EditPaymentMethodRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
@@ -68,16 +28,12 @@ namespace Ecommerce.Controllers.Payment.EditPaymentMethod
             try
             {
                 var validator = new EditPaymentMethodValidator();
-                var validationResult = validator.Validate(request);
-                if (!validationResult.IsValid)
-                {
-                    throw new BadRequestException(validationResult.ToString());
-                }
+                await validator.ValidateAndThrowAsync(request, cancellationToken);
 
                 PaymentMethod paymentMethod = await _context.PaymentMethods
                     .FirstOrDefaultAsync(x => x.Id == request.PaymentMethodId &&
                         x.UserId == request.UserId, cancellationToken)
-                    ?? throw new NotFoundException($"Payment method {request.PaymentMethodId} does not exist");
+                    ?? throw new NotFoundException();
 
                 if (request.CardOwner != null)
                 {
