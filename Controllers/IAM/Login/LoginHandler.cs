@@ -5,25 +5,9 @@ using Ecommerce.Common.Models.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace Ecommerce.Controllers.IAM.Login
 {
-    public record LoginRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Username.
-        /// </summary>
-        [Required]
-        public string UserName { get; set; } = string.Empty;
-        /// <summary>
-        /// Password.
-        /// </summary>
-        [Required]
-        public string Password { get; set; } = string.Empty;
-    }
-
     public class LoginHandler : IRequestHandler<LoginRequest, IActionResult>
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -45,7 +29,7 @@ namespace Ecommerce.Controllers.IAM.Login
         {
             try
             {
-                var user = await _userManager.FindByNameAsync(request.UserName)
+                ApplicationUser user = await _userManager.FindByNameAsync(request.UserName)
                     ?? throw new UnauthorizedException("Your username or password is incorrect");
 
                 var result = await _signInManager.PasswordSignInAsync(user, request.Password, false, false);

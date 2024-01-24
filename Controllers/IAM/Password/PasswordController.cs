@@ -28,16 +28,16 @@ namespace Ecommerce.Controllers.IAM.Password
         /// <response code="400">Bad request. Invalid field.</response>
         /// <response code="401">Unauthorized. User is not logged in.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("application/x-www-form-urlencoded")]
         [Produces("application/json")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public async Task<IActionResult> Change([FromForm] ChangePasswordRequest request)
         {
-            request.UserId = User.GetUserId() ?? throw new UnauthorizedException("");
+            request.UserId = User.GetUserId()!.Value;
             _logger.LogInformation("Change password for {userId}", request.UserId);
             return await _mediator.Send(request);
         }
@@ -49,8 +49,8 @@ namespace Ecommerce.Controllers.IAM.Password
         /// <response code="200">Ok. Send a password reset token by email.</response>
         /// <response code="400">Bad request. Invalid field.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("application/x-www-form-urlencoded")]
         [Produces("application/json")]
         [HttpPost("forgot")]
@@ -67,8 +67,8 @@ namespace Ecommerce.Controllers.IAM.Password
         /// <response code="200">Ok. Change password.</response>
         /// <response code="400">Bad request. Invalid field.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("application/x-www-form-urlencoded")]
         [Produces("application/json")]
         [HttpPost("reset")]

@@ -7,37 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Categories.SearchCategories
 {
-    public record CategoryFilters : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Categories to search for.
-        /// </summary>
-        public string? Keyword { get; set; }
-
-        /// <summary>
-        /// Search for categories that are a subcategory of this.
-        /// Set to 0 to get root categories.
-        /// </summary>
-        public int? Parent { get; set; }
-
-        /// <summary>
-        /// If true, show only enabled categories.
-        /// If false, show only disabled categories.
-        /// </summary>
-        public bool? Enabled { get; set; }
-
-        /// <summary>
-        /// Number of items to skip at the beginning.
-        /// </summary>
-        public int Offset { get; set; } = 0;
-
-        /// <summary>
-        /// Maximum number of items to return.
-        /// </summary>
-        public int Limit { get; set; } = 100;
-    }
-
-    public class SearchCategoriesHandler : IRequestHandler<CategoryFilters, IActionResult>
+    public class SearchCategoriesHandler : IRequestHandler<SearchCategoriesRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<SearchCategoriesHandler> _logger;
@@ -48,7 +18,7 @@ namespace Ecommerce.Controllers.Categories.SearchCategories
             _logger = logger;
         }
 
-        public async Task<IActionResult> Handle(CategoryFilters filters, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(SearchCategoriesRequest filters, CancellationToken cancellationToken)
         {
             try
             {

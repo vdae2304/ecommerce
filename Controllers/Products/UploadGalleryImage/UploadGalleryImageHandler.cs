@@ -3,6 +3,7 @@ using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Common.Models.Schema;
 using Ecommerce.Infrastructure.Data;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,18 +11,6 @@ using SixLabors.ImageSharp;
 
 namespace Ecommerce.Controllers.Products.UploadGalleryImage
 {
-    public record UploadGalleryImageRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Product ID.
-        /// </summary>
-        public int ProductId { get; set; }
-        /// <summary>
-        /// Image file.
-        /// </summary>
-        public IFormFile ImageFile { get; set; }
-    }
-
     public class UploadGalleryImageHandler : IRequestHandler<UploadGalleryImageRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
@@ -41,15 +30,11 @@ namespace Ecommerce.Controllers.Products.UploadGalleryImage
             try
             {
                 var validator = new UploadGalleryImageValidator();
-                var validationResult = validator.Validate(request);
-                if (!validationResult.IsValid)
-                {
-                    throw new BadRequestException(validationResult.ToString());
-                }
+                await validator.ValidateAndThrowAsync(request, cancellationToken);
 
                 Product product = await _context.Products
                     .FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken)
-                    ?? throw new NotFoundException($"Product {request.ProductId} does not exist");
+                    ?? throw new NotFoundException();
 
                 var image = await Image.LoadAsync(request.ImageFile.OpenReadStream(), cancellationToken);
 

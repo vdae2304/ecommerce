@@ -2,7 +2,7 @@
 
 namespace Ecommerce.Controllers.Addresses.CreateAddress
 {
-    public class CreateAddressValidator : AbstractValidator<CreateAddressForm>
+    public class CreateAddressValidator : AbstractValidator<CreateAddressRequest>
     {
         public CreateAddressValidator()
         {

@@ -4,31 +4,11 @@ using Ecommerce.Common.Models.Responses;
 using Ecommerce.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Addresses.SearchAddresses
 {
-    public record AddressFilters : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// User ID linked to the addresses.
-        /// </summary>
-        [BindNever]
-        public int UserId { get; set; }
-
-        /// <summary>
-        /// Number of items to skip at the beginning.
-        /// </summary>
-        public int Offset { get; set; } = 0;
-
-        /// <summary>
-        /// Maximum number of items to return.
-        /// </summary>
-        public int Limit { get; set; } = 100;
-    }
-
-    public class SearchAddressesHandler : IRequestHandler<AddressFilters, IActionResult>
+    public class SearchAddressesHandler : IRequestHandler<SearchAddressesRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
         private readonly ISecurityManager _securityManager;
@@ -42,7 +22,7 @@ namespace Ecommerce.Controllers.Addresses.SearchAddresses
             _logger = logger;
         }
 
-        public async Task<IActionResult> Handle(AddressFilters filters, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(SearchAddressesRequest filters, CancellationToken cancellationToken)
         {
             try
             {

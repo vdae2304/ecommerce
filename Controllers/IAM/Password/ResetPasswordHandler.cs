@@ -1,32 +1,13 @@
 ﻿using Ecommerce.Common.Exceptions;
 using Ecommerce.Common.Models.IAM;
 using Ecommerce.Common.Models.Responses;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.IAM.Password
 {
-    public record ResetPasswordRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Email address.
-        /// </summary>
-        [Required]
-        public string Email { get; set; } = string.Empty;
-        /// <summary>
-        /// New password.
-        /// </summary>
-        [Required]
-        public string NewPassword { get; set; } = string.Empty;
-        /// <summary>
-        /// Password reset token.
-        /// </summary>
-        [Required]
-        public string Token { get; set; } = string.Empty;
-    }
-
     public class ResetPasswordHandler : IRequestHandler<ResetPasswordRequest, IActionResult>
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -43,11 +24,7 @@ namespace Ecommerce.Controllers.IAM.Password
             try
             {
                 var validator = new ResetPasswordValidator();
-                var validationResult = validator.Validate(request);
-                if (!validationResult.IsValid)
-                {
-                    throw new BadRequestException(validationResult.ToString());
-                }
+                await validator.ValidateAndThrowAsync(request, cancellationToken);
 
                 ApplicationUser? user = await _userManager.FindByEmailAsync(request.Email);
                 if (user != null)

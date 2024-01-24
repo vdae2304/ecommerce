@@ -9,14 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Products.DeleteImage
 {
-    public record DeleteImageRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Product ID.
-        /// </summary>
-        public int ProductId { get; set; }
-    }
-
     public class DeleteImageHandler : IRequestHandler<DeleteImageRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
@@ -38,7 +30,7 @@ namespace Ecommerce.Controllers.Products.DeleteImage
                 Product product = await _context.Products
                     .Include(x => x.Thumbnail)
                     .FirstOrDefaultAsync(x => x.Id == request.ProductId, cancellationToken)
-                    ?? throw new NotFoundException($"Product {request.ProductId} does not exist");
+                    ?? throw new NotFoundException();
 
                 if (product.Thumbnail != null)
                 {

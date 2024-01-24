@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Categories.CreateCategory
 {
-    public class CreateCategoryValidator : AbstractValidator<CreateCategoryForm>
+    public class CreateCategoryValidator : AbstractValidator<CreateCategoryRequest>
     {
         private readonly ApplicationDbContext _context;
 

@@ -9,26 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Payment.SearchPaymentMethods
 {
-    public record PaymentMethodFilters : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// User ID linked to the payment methods.
-        /// </summary>
-        [BindNever]
-        public int UserId { get; set; }
-
-        /// <summary>
-        /// Number of items to skip at the beginning.
-        /// </summary>
-        public int Offset { get; set; } = 0;
-
-        /// <summary>
-        /// Maximum number of items to return.
-        /// </summary>
-        public int Limit { get; set; } = 100;
-    }
-
-    public class SearchPaymentMethodsHandler : IRequestHandler<PaymentMethodFilters, IActionResult>
+    public class SearchPaymentMethodsHandler : IRequestHandler<SearchPaymentMethodsRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
         private readonly ISecurityManager _securityManager;
@@ -42,7 +23,7 @@ namespace Ecommerce.Controllers.Payment.SearchPaymentMethods
             _logger = logger;
         }
 
-        public async Task<IActionResult> Handle(PaymentMethodFilters filters, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(SearchPaymentMethodsRequest filters, CancellationToken cancellationToken)
         {
             try
             {

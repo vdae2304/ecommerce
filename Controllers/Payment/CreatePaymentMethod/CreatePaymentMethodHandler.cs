@@ -3,59 +3,14 @@ using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.Orders;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Infrastructure.Data;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 
 namespace Ecommerce.Controllers.Payment.CreatePaymentMethod
 {
-    public record CreatePaymentMethodForm : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// User ID linked to the payment method.
-        /// </summary>
-        [JsonIgnore]
-        public int UserId { get; set; }
-
-        /// <summary>
-        /// Card owner.
-        /// </summary>
-        [JsonRequired]
-        public string CardOwner { get; set; } = string.Empty;
- 
-        /// <summary>
-        /// Card number.
-        /// </summary>
-        [JsonRequired]
-        public string CardNumber { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Card verification value.
-        /// </summary>
-        [JsonRequired]
-        public string CVV { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Month of expiration.
-        /// </summary>
-        [JsonRequired]
-        public int ExpiryMonth { get; set; }
-
-        /// <summary>
-        /// Year of expiration.
-        /// </summary>
-        [JsonRequired]
-        public int ExpiryYear { get; set; }
-
-        /// <summary>
-        /// Billing address ID.
-        /// </summary>
-        [JsonRequired]
-        public int BillingAddressId { get; set; }
-    }
-
-    public class CreatePaymentMethodHandler : IRequestHandler<CreatePaymentMethodForm, IActionResult>
+    public class CreatePaymentMethodHandler : IRequestHandler<CreatePaymentMethodRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
         private readonly ISecurityManager _securityManager;
@@ -69,16 +24,12 @@ namespace Ecommerce.Controllers.Payment.CreatePaymentMethod
             _logger = logger;
         }
 
-        public async Task<IActionResult> Handle(CreatePaymentMethodForm request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(CreatePaymentMethodRequest request, CancellationToken cancellationToken)
         {
             try
             {
                 var validator = new CreatePaymentMethodValidator();
-                var validationResult = validator.Validate(request);
-                if (!validationResult.IsValid)
-                {
-                    throw new BadRequestException(validationResult.ToString());
-                }
+                await validator.ValidateAndThrowAsync(request, cancellationToken);
 
                 var billingAddress = await _context.Addresses
                     .FirstOrDefaultAsync(x => x.Id == request.BillingAddressId &&

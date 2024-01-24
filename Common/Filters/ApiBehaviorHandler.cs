@@ -7,13 +7,13 @@ namespace Ecommerce.Common.Filters
     {
         public static IActionResult InvalidModelState(ActionContext context)
         {
-            var errors = context.ModelState.Values
-                .SelectMany(x => x.Errors)
-                .Select(x => x.ErrorMessage);
-            return new BadRequestObjectResult(new Response
+            return new BadRequestObjectResult(new ErrorResponse
             {
                 Success = false,
-                Message = string.Join(" ", errors)
+                Message = "Bad Request",
+                Errors = context.ModelState.Values
+                    .SelectMany(x => x.Errors)
+                    .Select(x => x.ErrorMessage)
             });
         }
     }

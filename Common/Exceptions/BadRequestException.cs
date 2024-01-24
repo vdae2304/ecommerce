@@ -2,6 +2,16 @@
 {
     public class BadRequestException : Exception
     {
-        public BadRequestException(string message) : base(message) { }
+        public string[] Errors { get; set; }
+
+        public BadRequestException()
+        {
+            Errors = Array.Empty<string>();
+        }
+
+        public BadRequestException(params string[] errors)
+        {
+            Errors = errors;
+        }
     }
 }

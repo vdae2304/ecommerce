@@ -8,18 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Payment.DeletePaymentMethod
 {
-    public record DeletePaymentMethodRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// User ID linked to the payment method.
-        /// </summary>
-        public int UserId { get; set; }
-        /// <summary>
-        /// Payment method ID.
-        /// </summary>
-        public int PaymentMethodId { get; set; }
-    }
-
     public class DeletePaymentMethodHandler : IRequestHandler<DeletePaymentMethodRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
@@ -38,7 +26,7 @@ namespace Ecommerce.Controllers.Payment.DeletePaymentMethod
                 PaymentMethod paymentMethod = await _context.PaymentMethods
                     .FirstOrDefaultAsync(x => x.Id == request.PaymentMethodId &&
                     x.UserId == request.UserId, cancellationToken)
-                    ?? throw new NotFoundException($"Payment method {request.PaymentMethodId} does not exist");
+                    ?? throw new NotFoundException();
 
                 _context.PaymentMethods.Remove(paymentMethod);
                 await _context.SaveChangesAsync(cancellationToken);

@@ -31,10 +31,10 @@ namespace Ecommerce.Controllers.Categories
         /// <param name="filters">Search filters.</param>
         /// <response code="200">Ok. Return the list of categories.</response>
         [ProducesResponseType(typeof(Response<SearchItems<Category>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpGet]
-        public async Task<IActionResult> Search([FromQuery] CategoryFilters filters)
+        public async Task<IActionResult> Search([FromQuery] SearchCategoriesRequest filters)
         {
             _logger.LogInformation("Search categories");
             return await _mediator.Send(filters);
@@ -47,8 +47,8 @@ namespace Ecommerce.Controllers.Categories
         /// <response code="200">Ok. Return the category details.</response>
         /// <response code="404">Not Found. Category does not exist.</response>
         [ProducesResponseType(typeof(Response<Category>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpGet("{categoryId}")]
         public async Task<IActionResult> Get(int categoryId)
@@ -64,12 +64,12 @@ namespace Ecommerce.Controllers.Categories
         /// <response code="200">Ok. Return the ID of the category created.</response>
         /// <response code="400">Bad request. Invalid field.</response>
         [ProducesResponseType(typeof(Response<CreatedId>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("application/json")]
         [Produces("application/json")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateCategoryForm request)
+        public async Task<IActionResult> Create([FromBody] CreateCategoryRequest request)
         {
             _logger.LogInformation("Create category {name}", request.Name);
             return await _mediator.Send(request);
@@ -83,12 +83,12 @@ namespace Ecommerce.Controllers.Categories
         /// <response code="200">Ok. Update the category values.</response>
         /// <response code="400">Bad request. Invalid field.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("application/json")]
         [Produces("application/json")]
         [HttpPut("{categoryId}")]
-        public async Task<IActionResult> Edit(int categoryId, [FromBody] EditCategoryForm request)
+        public async Task<IActionResult> Edit(int categoryId, [FromBody] EditCategoryRequest request)
         {
             request.CategoryId = categoryId;
             _logger.LogInformation("Edit category {categoryId}", categoryId);
@@ -102,8 +102,8 @@ namespace Ecommerce.Controllers.Categories
         /// <response code="200">Ok. Delete the category.</response>
         /// <response code="404">Not Found. Category does not exist.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpDelete("{categoryId}")]
         public async Task<IActionResult> Delete(int categoryId)
@@ -121,9 +121,9 @@ namespace Ecommerce.Controllers.Categories
         /// <response code="400">Bad request. Invalid file.</response>
         /// <response code="404">Not Found. Category does not exist.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("multipart/form-data")]
         [Produces("application/json")]
         [HttpPost("{categoryId}/image")]
@@ -140,8 +140,8 @@ namespace Ecommerce.Controllers.Categories
         /// <response code="200">Ok. Delete the image.</response>
         /// <response code="404">Not Found. Category does not exist.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpDelete("{categoryId}/image")]
         public async Task<IActionResult> DeleteImage(int categoryId)

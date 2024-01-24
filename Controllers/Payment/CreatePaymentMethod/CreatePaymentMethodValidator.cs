@@ -2,7 +2,7 @@
 
 namespace Ecommerce.Controllers.Payment.CreatePaymentMethod
 {
-    public class CreatePaymentMethodValidator : AbstractValidator<CreatePaymentMethodForm>
+    public class CreatePaymentMethodValidator : AbstractValidator<CreatePaymentMethodRequest>
     {
         public CreatePaymentMethodValidator()
         {

@@ -8,14 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Categories.GetCategory
 {
-    public record GetCategoryRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// Category ID.
-        /// </summary>
-        public int CategoryId { get; set; } 
-    }
-
     public class GetCategoryHandler : IRequestHandler<GetCategoryRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
@@ -38,7 +30,7 @@ namespace Ecommerce.Controllers.Categories.GetCategory
                     .AsSplitQuery()
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == request.CategoryId, cancellationToken)
-                    ?? throw new NotFoundException($"Category {request.CategoryId} does not exist");
+                    ?? throw new NotFoundException();
 
                 return new OkObjectResult(new Response<Category>
                 {

@@ -8,18 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Addresses.DeleteAddress
 {
-    public record DeleteAddressRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// User ID linked to the address.
-        /// </summary>
-        public int UserId { get; set; }
-        /// <summary>
-        /// Address ID.
-        /// </summary>
-        public int AddressId { get; set; }
-    }
-
     public class DeleteAddressHandler : IRequestHandler<DeleteAddressRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
@@ -38,7 +26,7 @@ namespace Ecommerce.Controllers.Addresses.DeleteAddress
                 Address address = await _context.Addresses
                     .FirstOrDefaultAsync(x => x.Id == request.AddressId &&
                         x.UserId == request.UserId, cancellationToken)
-                    ?? throw new NotFoundException($"Address {request.AddressId} does not exist");
+                    ?? throw new NotFoundException();
 
                 _context.Addresses.Remove(address);
                 await _context.SaveChangesAsync(cancellationToken);

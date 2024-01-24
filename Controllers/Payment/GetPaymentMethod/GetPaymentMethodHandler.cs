@@ -9,17 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Payment.GetPaymentMethod
 {
-    public record GetPaymentMethodRequest : IRequest<IActionResult>
-    {
-        /// <summary>
-        /// User ID linked to the payment method.
-        /// </summary>
-        public int UserId { get; set; }
-        /// <summary>
-        /// Payment method ID.
-        /// </summary>
-        public int PaymentMethodId { get; set; }
-    }
     public class GetPaymentMethodHandler : IRequestHandler<GetPaymentMethodRequest, IActionResult>
     {
         private readonly ApplicationDbContext _context;
@@ -44,7 +33,7 @@ namespace Ecommerce.Controllers.Payment.GetPaymentMethod
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == request.PaymentMethodId &&
                         x.UserId == request.UserId, cancellationToken)
-                    ?? throw new NotFoundException($"Payment method {request.PaymentMethodId} does not exist");
+                    ?? throw new NotFoundException();
 
                 paymentMethod.CardOwner = _securityManager.Decrypt(paymentMethod.CardOwner);
                 paymentMethod.CardNumber = _securityManager.Decrypt(paymentMethod.CardNumber);

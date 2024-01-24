@@ -1,5 +1,4 @@
-﻿using Ecommerce.Common.Exceptions;
-using Ecommerce.Common.Models.Orders;
+﻿using Ecommerce.Common.Models.Orders;
 using Ecommerce.Common.Models.Responses;
 using Ecommerce.Controllers.IAM;
 using Ecommerce.Controllers.Payment.CreatePaymentMethod;
@@ -35,14 +34,14 @@ namespace Ecommerce.Controllers.Payment
         /// <response code="200">Ok. Return the list payment methods.</response>
         /// <response code="401">Unauthorized. User is not logged in.</response>
         [ProducesResponseType(typeof(Response<SearchItems<PaymentMethod>>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpGet]
-        public async Task<IActionResult> Search([FromQuery] PaymentMethodFilters filters)
+        public async Task<IActionResult> Search([FromQuery] SearchPaymentMethodsRequest filters)
         {
-            filters.UserId = User.GetUserId() ?? throw new UnauthorizedException("");
+            filters.UserId = User.GetUserId()!.Value;
             _logger.LogInformation("Get payment methods for user {userId}", filters.UserId);
             return await _mediator.Send(filters);
         }
@@ -55,14 +54,14 @@ namespace Ecommerce.Controllers.Payment
         /// <response code="401">Unauthorized. User is not logged in.</response>
         /// <response code="404">Not Found. Payment method does not exist.</response>
         [ProducesResponseType(typeof(Response<PaymentMethod>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpGet("{paymentMethodId}")]
         public async Task<IActionResult> Get(int paymentMethodId)
         {
-            int userId = User.GetUserId() ?? throw new UnauthorizedException("");
+            int userId = User.GetUserId()!.Value;
             _logger.LogInformation("Get details for payment method {paymentMethodId}", paymentMethodId);
             return await _mediator.Send(new GetPaymentMethodRequest { UserId = userId, PaymentMethodId = paymentMethodId });
         }
@@ -75,15 +74,15 @@ namespace Ecommerce.Controllers.Payment
         /// <response code="400">Bad request. Invalid field.</response>
         /// <response code="401">Unauthorized. User is not logged in.</response>
         [ProducesResponseType(typeof(Response<CreatedId>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("application/json")]
         [Produces("application/json")]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreatePaymentMethodForm request)
+        public async Task<IActionResult> Create([FromBody] CreatePaymentMethodRequest request)
         {
-            request.UserId = User.GetUserId() ?? throw new UnauthorizedException("");
+            request.UserId = User.GetUserId()!.Value;
             _logger.LogInformation("Create payment method");
             return await _mediator.Send(request);
         }
@@ -98,16 +97,16 @@ namespace Ecommerce.Controllers.Payment
         /// <response code="401">Unauthorized. User is not logged in.</response>
         /// <response code="404">Not Found. Payment method does not exist.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Consumes("application/json")]
         [Produces("application/json")]
         [HttpPatch("{paymentMethodId}")]
         public async Task<IActionResult> Edit(int paymentMethodId, [FromBody] EditPaymentMethodRequest request)
         {
-            request.UserId = User.GetUserId() ?? throw new UnauthorizedException("");
+            request.UserId = User.GetUserId()!.Value;
             request.PaymentMethodId = paymentMethodId;
             _logger.LogInformation("Edit payment method {paymentMethodId}", paymentMethodId);
             return await _mediator.Send(request);
@@ -121,14 +120,14 @@ namespace Ecommerce.Controllers.Payment
         /// <response code="401">Unauthorized. User is not logged in.</response>
         /// <response code="404">Not Found. Payment method does not exist.</response>
         [ProducesResponseType(typeof(Response), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(Response), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
         [HttpDelete("{paymentMethodId}")]
         public async Task<IActionResult> Delete(int paymentMethodId)
         {
-            int userId = User.GetUserId() ?? throw new UnauthorizedException("");
+            int userId = User.GetUserId()!.Value;
             _logger.LogInformation("Delete payment method {paymentMethodId}", paymentMethodId);
             return await _mediator.Send(new DeletePaymentMethodRequest { UserId = userId, PaymentMethodId = paymentMethodId });
         }

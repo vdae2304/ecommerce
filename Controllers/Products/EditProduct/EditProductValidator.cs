@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce.Controllers.Products.EditProduct
 {
-    public class EditProductValidator : AbstractValidator<EditProductForm>
+    public class EditProductValidator : AbstractValidator<EditProductRequest>
     {
         private readonly ApplicationDbContext _context;
 
@@ -73,7 +73,7 @@ namespace Ecommerce.Controllers.Products.EditProduct
                 .GreaterThanOrEqualTo(0).WithMessage("Field {PropertyName} cannot be negative");
         }
 
-        private async Task<bool> IsSkuUniqueAsync(EditProductForm request, string sku, CancellationToken cancellationToken = default)
+        private async Task<bool> IsSkuUniqueAsync(EditProductRequest request, string sku, CancellationToken cancellationToken = default)
         {
             return !await _context.Products.AnyAsync(x => x.Id != request.ProductId && x.Sku == sku, cancellationToken);
         }
