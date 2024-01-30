@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ecommerce.Controllers.IAM.Email
 {
-    public class ConfirmEmailRequest : IRequest<IActionResult>
+    public record ConfirmEmailRequest : IRequest<IActionResult>
     {
         /// <summary>
         /// Email address.
