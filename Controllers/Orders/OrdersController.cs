@@ -1,4 +1,5 @@
-﻿using Ecommerce.Common.Models.Responses;
+﻿using Ecommerce.Common.Models.Orders;
+using Ecommerce.Common.Models.Responses;
 using Ecommerce.Controllers.IAM;
 using Ecommerce.Controllers.Orders.CreateOrder;
 using Ecommerce.Controllers.Orders.GetOrder;
@@ -70,7 +71,7 @@ namespace Ecommerce.Controllers.Orders
         /// <response code="200">Ok. Return the order.</response>
         /// <response code="401">Unauthorized. User is not logged in.</response>
         /// <response code="404">Not Found. Order does not exist.</response>
-        [ProducesResponseType(typeof(Response<CreatedId>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response<Order>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
