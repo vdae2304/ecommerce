@@ -13,5 +13,10 @@
         {
             Errors = errors;
         }
+
+        public BadRequestException(IEnumerable<string> errors)
+        {
+            Errors = errors.ToArray();
+        }
     }
 }
