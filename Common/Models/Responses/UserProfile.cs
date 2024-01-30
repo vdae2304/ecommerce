@@ -18,5 +18,9 @@
         /// Email address.
         /// </summary>
         public string Email { get; set; } = string.Empty;
+        /// <summary>
+        /// Is email confirmed.
+        /// </summary>
+        public bool EmailConfirmed { get; set; }
     }
 }

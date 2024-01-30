@@ -26,14 +26,13 @@ namespace Ecommerce.Controllers.IAM.Password
                 var validator = new ResetPasswordValidator();
                 await validator.ValidateAndThrowAsync(request, cancellationToken);
 
-                ApplicationUser? user = await _userManager.FindByEmailAsync(request.Email);
-                if (user != null)
+                ApplicationUser user = await _userManager.FindByEmailAsync(request.Email)
+                    ?? throw new BadRequestException("Invalid email");
+                
+                var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+                if (!result.Succeeded)
                 {
-                    var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
-                    if (!result.Succeeded)
-                    {
-                        throw new BadRequestException("Invalid token");
-                    }
+                    throw new BadRequestException("Invalid token");
                 }
 
                 return new OkObjectResult(new Response

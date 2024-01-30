@@ -1,41 +1,23 @@
 ﻿using Ecommerce.Common.Interfaces;
-using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
 
 namespace Ecommerce.Infrastructure.Implementation
 {
-    /// <summary>
-    /// Email notification service options.
-    /// </summary>
-    public class EmailNotificationOptions
-    {
-        /// <summary>
-        /// Host.
-        /// </summary>
-        public string Host { get; set; } = string.Empty;
-        /// <summary>
-        /// Port.
-        /// </summary>
-        public int Port { get; set; }
-        /// <summary>
-        /// Email sender.
-        /// </summary>
-        public string Sender { get; set; } = string.Empty;
-        /// <summary>
-        /// Password.
-        /// </summary>
-        public string Password { get; set; } = string.Empty;
-    }
-
     /// <inheritdoc/>
     public class EmailNotificationService : IEmailNotificationService
     {
-        private readonly EmailNotificationOptions _options;
+        private readonly string _host;
+        private readonly int _port;
+        private readonly string _sender;
+        private readonly string _password;
 
-        public EmailNotificationService(IOptions<EmailNotificationOptions> options)
+        public EmailNotificationService(IConfiguration configuration)
         {
-            _options = options.Value;
+            _host = configuration["EmailService:Host"] ?? string.Empty;
+            _port = int.Parse(configuration["EmailService:Port"] ?? string.Empty);
+            _sender = configuration["EmailService:Sender"] ?? string.Empty;
+            _password = configuration["EmailService:Password"] ?? string.Empty;
         }
 
         /// <inheritdoc/>
@@ -43,14 +25,14 @@ namespace Ecommerce.Infrastructure.Implementation
         {
             var smtpClient = new SmtpClient
             {
-                Host = _options.Host,
-                Port = _options.Port,
-                Credentials = new NetworkCredential(_options.Sender, _options.Password),
+                Host = _host,
+                Port = _port,
+                Credentials = new NetworkCredential(_sender, _password),
                 EnableSsl = true,
                 Timeout = 60000
             };
 
-            var mailMessage = new MailMessage(_options.Sender, message.Recipient)
+            var mailMessage = new MailMessage(_sender, message.Recipient)
             {
                 Subject = message.Subject,
                 Body = message.Body,

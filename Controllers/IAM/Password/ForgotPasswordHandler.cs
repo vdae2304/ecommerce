@@ -1,5 +1,4 @@
-﻿using Ecommerce.Common.Exceptions;
-using Ecommerce.Common.Interfaces;
+﻿using Ecommerce.Common.Interfaces;
 using Ecommerce.Common.Models.IAM;
 using Ecommerce.Common.Models.Responses;
 using FluentValidation;
