@@ -8,10 +8,10 @@ namespace Ecommerce.Infrastructure.Implementation
         private readonly string _directory;
         private readonly string _host;
 
-        public FileRepository(IConfiguration config)
+        public FileRepository(IConfiguration configuration)
         {
-            _directory = config["FileStorage:Directory"] ?? string.Empty;
-            _host = config["FileStorage:Host"] ?? string.Empty;
+            _directory = configuration["FileStorage:Directory"] ?? string.Empty;
+            _host = configuration["FileStorage:Host"] ?? string.Empty;
         }
 
         /// <inheritdoc/>

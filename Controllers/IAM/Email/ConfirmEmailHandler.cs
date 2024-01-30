@@ -6,30 +6,30 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ecommerce.Controllers.IAM.Password
+namespace Ecommerce.Controllers.IAM.Email
 {
-    public class ResetPasswordHandler : IRequestHandler<ResetPasswordRequest, IActionResult>
+    public class ConfirmEmailHandler : IRequestHandler<ConfirmEmailRequest, IActionResult>
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<ResetPasswordHandler> _logger;
+        private readonly ILogger<ConfirmEmailHandler> _logger;
 
-        public ResetPasswordHandler(UserManager<ApplicationUser> userManager, ILogger<ResetPasswordHandler> logger)
+        public ConfirmEmailHandler(UserManager<ApplicationUser> userManager, ILogger<ConfirmEmailHandler> logger)
         {
             _userManager = userManager;
             _logger = logger;
         }
 
-        public async Task<IActionResult> Handle(ResetPasswordRequest request, CancellationToken cancellationToken)
+        public async Task<IActionResult> Handle(ConfirmEmailRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var validator = new ResetPasswordValidator();
+                var validator = new ConfirmEmailValidator();
                 await validator.ValidateAndThrowAsync(request, cancellationToken);
 
                 ApplicationUser user = await _userManager.FindByEmailAsync(request.Email)
                     ?? throw new BadRequestException("Invalid email");
-                
-                var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
+
+                var result = await _userManager.ConfirmEmailAsync(user, request.Token);
                 if (!result.Succeeded)
                 {
                     throw new BadRequestException("Invalid token");
@@ -43,7 +43,7 @@ namespace Ecommerce.Controllers.IAM.Password
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in changing password for {email}", request.Email);
+                _logger.LogError(ex, "Error in verifying email {email}", request.Email);
                 throw;
             }
         }

@@ -55,9 +55,6 @@ namespace Ecommerce.Infrastructure
                 });
             services.AddAuthorization();
 
-            services.Configure<EmailNotificationOptions>(
-                options => configuration.GetSection("EmailService").Bind(options));
-
             services.AddSingleton(typeof(IFileRepository), typeof(FileRepository));
             services.AddScoped(typeof(ISecurityManager), typeof(SecurityManager));
             services.AddScoped(typeof(IEmailNotificationService), typeof(EmailNotificationService));
