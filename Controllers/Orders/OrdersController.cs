@@ -31,7 +31,7 @@ namespace Ecommerce.Controllers.Orders
         /// <param name="filters">Search filters.</param>
         /// <response code="200">Ok. Return the list of orders.</response>
         /// <response code="401">Unauthorized. User is not logged in.</response>
-        [ProducesResponseType(typeof(Response<SearchItems<CreatedId>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Response<SearchItems<Order>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
         [Produces("application/json")]
